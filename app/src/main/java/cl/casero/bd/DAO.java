@@ -340,6 +340,36 @@ public class DAO {
         crearEstadistica(e);
     }
 
+    public void devolver(Movimiento m, int monto){
+        crearMovimiento(m);
+        actualizarDeuda(m.cliente, m.saldo);
+
+        Estadistica e = new Estadistica();
+
+        e.monto = monto;
+        e.tipo = K.DEVOLUCION;
+        e.fecha = m.fecha;
+        e.tipoVenta = -1;
+        e.cantPrendas = -1;
+
+        crearEstadistica(e);
+    }
+
+    public void condonar(Movimiento m, int monto){
+        crearMovimiento(m);
+        actualizarDeuda(m.cliente, m.saldo);
+
+        Estadistica e = new Estadistica();
+
+        e.monto = monto;
+        e.tipo = K.CONDONACION_DEUDA;
+        e.fecha = m.fecha;
+        e.tipoVenta = -1;
+        e.cantPrendas = -1;
+
+        crearEstadistica(e);
+    }
+
     /**
      *
      * @param m

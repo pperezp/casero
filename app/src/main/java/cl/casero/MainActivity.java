@@ -35,11 +35,14 @@ public class MainActivity extends ActionBarActivity {
     private EditText txtNombreBuscar;
     private ListView lvClientes;
     private int abono;
+    private int montoDevolucion;
+    private String detalleDevolucion;
+    private String detalleCondonacion;
     private TextView lblResultado;
 
 
     /*FECHA!*/
-    private DatePickerDialog.OnDateSetListener myDateListener = new DatePickerDialog.OnDateSetListener() {
+    private DatePickerDialog.OnDateSetListener fechaAbonoListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker arg0, int anio, int mes, int dia) {
             // el mes comienza de 0
@@ -82,6 +85,95 @@ public class MainActivity extends ActionBarActivity {
     };
     /*FECHA!*/
 
+
+    /*LISTENER FECHA DEVOLUCIÓN*/
+    private DatePickerDialog.OnDateSetListener fechaDevolucionListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int anio, int mes, int dia) {
+            // el mes comienza de 0
+            //Toast.makeText(MainActivity.this.getApplicationContext(),"["+abono+"]["+anio+" - "+(mes+1)+" - "+dia+"]", Toast.LENGTH_SHORT).show();
+            // esto se llama cuando el usuario presiona OK en la fecha del abono
+
+            DAO d = new DAO(MainActivity.this);
+
+            Movimiento m = new Movimiento();
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                m.fecha = f.parse(anio+"-"+(mes+1)+"-"+dia);
+            }catch (ParseException ex){
+            }
+
+            m.cliente = (int)K.id;
+            m.detalle = "[Devolución]: $"+montoDevolucion+"\n[Detalle]: "+detalleDevolucion;
+            int saldo = d.getDeuda(m.cliente);
+
+            saldo = saldo - montoDevolucion;
+            m.saldo = saldo;
+
+            d.devolver(m, montoDevolucion);
+
+
+            /*cargo la lista de clientes de nuevo*/
+            String filtro = txtNombreBuscar.getText().toString();
+            K.nombreBusqueda = txtNombreBuscar.getText().toString();
+
+            List<Cliente> clientes = d.getClientes(filtro);
+
+            if(!clientes.isEmpty()){
+                lvClientes.setAdapter(new ClienteAdapter(MainActivity.this, clientes));
+            }else{
+                lvClientes.setAdapter(new ClienteAdapter(MainActivity.this, new ArrayList<Cliente>()));
+            }
+            /*cargo la lista de clientes de nuevo*/
+
+        }
+    };
+    /*LISTENER FECHA DEVOLUCIÓN*/
+
+
+    /*LISTENER FECHA CONDONACIÓN*/
+    private DatePickerDialog.OnDateSetListener fechaCondonacion = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker arg0, int anio, int mes, int dia) {
+            // el mes comienza de 0
+            //Toast.makeText(MainActivity.this.getApplicationContext(),"["+abono+"]["+anio+" - "+(mes+1)+" - "+dia+"]", Toast.LENGTH_SHORT).show();
+            // esto se llama cuando el usuario presiona OK en la fecha del abono
+
+            DAO d = new DAO(MainActivity.this);
+
+            Movimiento m = new Movimiento();
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                m.fecha = f.parse(anio+"-"+(mes+1)+"-"+dia);
+            }catch (ParseException ex){
+            }
+
+            m.cliente = (int)K.id;
+            m.detalle = "[CONDONACIÓN DEUDA]\n[MOTIVO]: "+detalleCondonacion;
+            int saldo = d.getDeuda(m.cliente);
+
+            m.saldo = 0;
+
+            d.condonar(m, saldo);
+
+
+            /*cargo la lista de clientes de nuevo*/
+            String filtro = txtNombreBuscar.getText().toString();
+            K.nombreBusqueda = txtNombreBuscar.getText().toString();
+
+            List<Cliente> clientes = d.getClientes(filtro);
+
+            if(!clientes.isEmpty()){
+                lvClientes.setAdapter(new ClienteAdapter(MainActivity.this, clientes));
+            }else{
+                lvClientes.setAdapter(new ClienteAdapter(MainActivity.this, new ArrayList<Cliente>()));
+            }
+            /*cargo la lista de clientes de nuevo*/
+
+        }
+    };
+    /*LISTENER FECHA CONDONACIÓN*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,7 +198,7 @@ public class MainActivity extends ActionBarActivity {
                 K.id = id;
 
                 //Toast.makeText(MainActivity.this.getApplicationContext(), "ID: "+id, Toast.LENGTH_SHORT).show();
-                CharSequence opciones[] = new CharSequence[] {"Abonar", "Mantención","Ver dirección","Cambiar dirección","Ver detalles"};
+                CharSequence opciones[] = new CharSequence[] {"Abonar", "Mantención","Devolución", "CONDONAR DEUDA","Ver dirección","Cambiar dirección","Ver detalles"};
 
 
 
@@ -163,7 +255,115 @@ public class MainActivity extends ActionBarActivity {
                                 MainActivity.this.startActivity(i);
                                 break;
 
-                            case 2:// ver dirección
+                            case 2: // Devolución
+                                int saldoActual = d.getDeuda((int)K.id);
+
+                                AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
+                                bui.setTitle("Devolución [Saldo Actual: $"+saldoActual+"]");
+
+                                final AlertDialog.Builder bui2 = new AlertDialog.Builder(MainActivity.this);
+                                bui2.setTitle("Devolución [Saldo Actual: $"+saldoActual+"]");
+
+                                // Set up the input
+                                final EditText inpDetalle = new EditText(MainActivity.this);
+                                final EditText inpMonto = new EditText(MainActivity.this);
+
+                                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                                inpMonto.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                                inpMonto.setHint("Monto de devolución:");
+                                inpMonto.requestFocus();
+                                bui.setView(inpMonto);
+
+
+                                inpDetalle.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                                inpDetalle.setHint("Detalle de devolución:");
+                                inpDetalle.requestFocus();
+                                bui2.setView(inpDetalle);
+
+
+
+                                // Set up the buttons
+
+                                bui.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        bui2.show();
+                                    }
+                                });
+                                bui.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                                bui2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        String strDevolucion = inpMonto.getText().toString();
+                                        detalleDevolucion = inpDetalle.getText().toString();
+                                        try {
+                                            montoDevolucion = Integer.parseInt(strDevolucion);
+
+                                            /*FECHA!*/
+                                            showDialog(1);
+                                            /*FECHA!*/
+                                        }catch (NumberFormatException ex){
+                                            Toast.makeText(MainActivity.this.getApplicationContext(),"Ingrese sólo números", Toast.LENGTH_SHORT).show();
+
+                                        }
+                                        //
+                                    }
+                                });
+                                bui2.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                    }
+                                });
+
+                                bui.show();
+
+                                break;
+
+                            case 3: // CONDONAR DEUDA
+                                saldoActual = d.getDeuda((int)K.id);
+
+                                bui = new AlertDialog.Builder(MainActivity.this);
+                                bui.setTitle("Condonar deuda [Saldo Actual: $"+saldoActual+"]");
+
+                                // Set up the input
+
+                                final EditText detCond = new EditText(MainActivity.this);
+
+                                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                                detCond.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                                detCond.setHint("Motivo condonación:");
+                                detCond.requestFocus();
+                                bui.setView(detCond);
+
+                                // Set up the buttons
+
+                                bui.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        detalleCondonacion = detCond.getText().toString();
+                                        /*FECHA!*/
+                                        showDialog(2);
+                                        /*FECHA!*/
+                                    }
+                                });
+                                bui.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                                bui.show();
+                                break;
+
+                            case 4:// ver dirección
                                 Cliente c = d.getCliente(K.id);
 
                                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
@@ -175,7 +375,7 @@ public class MainActivity extends ActionBarActivity {
                                 b.create().show();
                                 break;
 
-                            case 3:// cambiar dirección
+                            case 5:// cambiar dirección
 
                                 Cliente cli = d.getCliente(id);
 
@@ -209,7 +409,7 @@ public class MainActivity extends ActionBarActivity {
                                 builder.show();
                                 break;
 
-                            case 4: // ver detalles
+                            case 6: // ver detalles
                                 Intent i2 = new Intent(MainActivity.this, VisualizarClienteActivity.class);
                                 MainActivity.this.startActivity(i2);
                                 break;
@@ -226,14 +426,20 @@ public class MainActivity extends ActionBarActivity {
     /*FECHA!*/
     @Override
     protected Dialog onCreateDialog(int id) {
+        // el mes comienza de 0
+        Calendar c = Calendar.getInstance();
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
         if (id == 999) {
-            // el mes comienza de 0
-            Calendar c = Calendar.getInstance();
-            int mYear = c.get(Calendar.YEAR);
-            int mMonth = c.get(Calendar.MONTH);
-            int mDay = c.get(Calendar.DAY_OF_MONTH);
-
-            return new DatePickerDialog(this, myDateListener, mYear, mMonth, mDay);
+            // formulario de fecha de abono
+            return new DatePickerDialog(this, fechaAbonoListener, mYear, mMonth, mDay);
+        }else if(id == 1){
+            // formulario de fecha de devolución
+            return new DatePickerDialog(this, fechaDevolucionListener, mYear, mMonth, mDay);
+        }else if(id == 2){
+            // formulario de fecha de condonacion de deuda
+            return new DatePickerDialog(this, fechaCondonacion, mYear, mMonth, mDay);
         }
         return null;
     }
