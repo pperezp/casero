@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cl.casero.MainActivity">
+    <item
+        android:id="@+id/action_crearCliente"
+        android:orderInCategory="100"
+        android:title="Crear cliente"
+        app:showAsAction="never" />
+
+    <item
+    android:id="@+id/action_verEstadisticas"
+    android:orderInCategory="100"
+    android:title="Estadísticas"
+    app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_verDeudaTotal"
+        android:orderInCategory="100"
+        android:title="Deuda TOTAL"
+        app:showAsAction="never" />
+</menu>

@@ -1,0 +1,71 @@
+http://stackoverflow.com/questions/9741300/charts-for-android
+
+tt: Tarjeta terminada  ttt: Total tarjeta terminada (MES)
+
+----------------------------------
+select count(0) from movimiento
+where saldo = 0 and
+fecha > '' and fecha < ''
+----------------------------------
+
+
+
+
+tn: Tarjeta nueva (Las clientas que estan con 0 y vuelven)
+ttn: Total tarjeta nueva (MES)
+
+----------------------------------
+select count(0) from estadistica
+where tipo = K.VENTA and
+tipoVenta = K.VENTA_NUEVA and
+fecha > '' and fecha < ''
+----------------------------------
+
+
+
+Mant: Mantención (Venta nueva a alguien que debe)
+Tmant: Total mantención (MES)
+
+----------------------------------
+select count(0) from estadistica
+where tipo = K.VENTA and
+tipoVenta = K.MANTENCION and
+fecha > '' and fecha < ''
+----------------------------------
+
+tp: total prenda (Numero de articulos)
+ttp: total total prenda
+
+----------------------------------
+select sum(cantPrendas)
+from estadistica
+where tipo = K.VENTA and
+fecha > '' and fecha < ''
+----------------------------------
+
+
+
+
+CD: Cobro diario
+tcd: total cobro diario
+
+----------------------------------
+select sum(monto)
+from estadistica
+where tipo = K.ABONO and
+fecha > '' and fecha < ''
+----------------------------------
+
+
+
+Venta diaria: en pesos
+total venta diaria
+----------------------------------
+select sum(monto)
+from estadistica
+where tipo = K.VENTA and
+fecha > '' and fecha < ''
+----------------------------------
+
+Comparación de meses (IDeal)
+
