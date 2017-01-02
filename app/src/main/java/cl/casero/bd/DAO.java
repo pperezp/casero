@@ -559,6 +559,164 @@ public class DAO {
         return em;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // usado para el grafico
+    public EstadisticaMensual getEstadistica(int mes, int anio){
+        EstadisticaMensual em = new EstadisticaMensual();
+
+        int anioFin = anio, mesFin = mes+1;
+
+        if (mes == 12) {
+            anioFin = (anio + 1);
+            mesFin = 1;
+        }
+
+        String queryFecha = "fecha >= '"+anio+"-"+(mes < 10?"0":"")+mes+"-01' and " +
+            "fecha < '"+anioFin+"-"+(mesFin < 10?"0":"")+mesFin+"-01'";
+        String sel;
+
+        Log.v("Fecha SQL: ",queryFecha);
+
+        conexion = new BD(contexto, RUTA_BD, null, 1);
+        db = conexion.getWritableDatabase();
+
+        // 1.- select tarjetas terminadas
+        sel = "select count(0) from movimiento " +
+                "where saldo = 0 and " +
+                queryFecha;
+
+        cursor = db.rawQuery(sel, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                em.tarTerminadas = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+
+
+
+
+        // 2.- select tarjetas nuevas
+        sel = "select count(0) from estadistica " +
+                "where tipo = '"+K.VENTA+"' and " +
+                "tipoVenta = '"+K.VENTA_NUEVA+"' and " +
+                queryFecha;
+
+        cursor = db.rawQuery(sel, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                em.tarNuevas = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+
+
+
+
+        // 3.- select Mantenciones
+        sel = "select count(0) from estadistica " +
+                "where tipo = '"+K.VENTA+"' and " +
+                "tipoVenta = '"+K.MANTENCION+"' and " +
+                queryFecha;
+
+        cursor = db.rawQuery(sel, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                em.mantenciones = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+
+
+
+        // 4.- select total prendas
+        sel = "select sum(cantPrendas) " +
+                "from estadistica " +
+                "where tipo = '"+K.VENTA+"' and " +
+                queryFecha;
+
+        cursor = db.rawQuery(sel, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                em.totalPrendas = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+
+
+
+
+        // 5.- select cobro
+        sel = "select sum(monto) " +
+                "from estadistica " +
+                "where tipo = '"+K.ABONO+"' and " +
+                queryFecha;
+
+        cursor = db.rawQuery(sel, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                em.cobro = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+
+
+
+
+
+        // 6.- select ventas
+        sel = "select sum(monto) " +
+                "from estadistica " +
+                "where tipo = '"+K.VENTA+"' and " +
+                queryFecha;
+
+        cursor = db.rawQuery(sel, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                em.venta = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+
+
+        db.close();
+
+        return em;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public int getDeudaTotal(){
         conexion = new BD(contexto, RUTA_BD, null, 1);
         db = conexion.getWritableDatabase();

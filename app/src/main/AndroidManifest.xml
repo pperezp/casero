@@ -37,7 +37,10 @@
             android:label="Mantención" />
         <activity
             android:name=".EstadisticaActivity"
-            android:label="@string/title_activity_estadistica"></activity>
+            android:label="@string/title_activity_estadistica" />
+        <activity
+            android:name=".GraficoActivity"
+            android:label="@string/title_activity_grafico"/>
     </application>
 
 </manifest>

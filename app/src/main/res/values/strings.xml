@@ -8,6 +8,7 @@
     <string name="title_activity_abonar">AbonarActivity</string>
     <string name="title_activity_venta">Venta</string>
     <string name="title_activity_estadistica">Estadísticas</string>
+    <string name="title_activity_grafico">Gráfico</string>
 
     <string-array name="meses_array">
         <item>Enero</item>

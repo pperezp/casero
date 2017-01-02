@@ -636,6 +636,9 @@ public class MainActivity extends ActionBarActivity {
             b.setPositiveButton("Ok", null);
 
             b.create().show();
+        }else if(id == R.id.action_verGrafico){
+            Intent i = new Intent(MainActivity.this, GraficoActivity.class);
+            MainActivity.this.startActivity(i);
         }
 
         return super.onOptionsItemSelected(item);

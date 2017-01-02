@@ -9,10 +9,16 @@
         app:showAsAction="never" />
 
     <item
-    android:id="@+id/action_verEstadisticas"
-    android:orderInCategory="100"
-    android:title="Estadísticas"
-    app:showAsAction="never" />
+        android:id="@+id/action_verEstadisticas"
+        android:orderInCategory="100"
+        android:title="Estadísticas"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_verGrafico"
+        android:orderInCategory="100"
+        android:title="Gráfico"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_verDeudaTotal"

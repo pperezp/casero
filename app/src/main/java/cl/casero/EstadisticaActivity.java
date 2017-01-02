@@ -111,7 +111,7 @@ public class EstadisticaActivity extends ActionBarActivity {
 
     private void programarBotones() {
         /*Setiando los años en el spinner*/
-        List<String> list = new ArrayList<>();
+        /*List<String> list = new ArrayList<>();
         for(int i=2016; i<=2100; i++){
             list.add(String.valueOf(i));
         }
@@ -119,7 +119,8 @@ public class EstadisticaActivity extends ActionBarActivity {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spiAnio.setAdapter(dataAdapter);
+        spiAnio.setAdapter(dataAdapter);*/
+        Util.cargarAnios(EstadisticaActivity.this, spiAnio);
         /*Setiando los años en el spinner*/
 
 
