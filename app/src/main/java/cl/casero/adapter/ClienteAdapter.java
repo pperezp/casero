@@ -46,7 +46,7 @@ public class ClienteAdapter extends BaseAdapter {
     public View getView(int position, View contentView, ViewGroup parent) {
         View vi = contentView;
 
-		/*Acá cargo el layout del item tienda*/
+		/*Acá cargo el layout del item cliente*/
         if (contentView == null) {
             LayoutInflater inflater = (LayoutInflater) activity
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);

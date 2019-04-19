@@ -702,21 +702,6 @@ public class DAO {
         return em;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public int getDeudaTotal(){
         conexion = new BD(contexto, RUTA_BD, null, 1);
         db = conexion.getWritableDatabase();
