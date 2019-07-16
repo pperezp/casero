@@ -621,19 +621,6 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_crearCliente) {
-
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        TestMail.testSmtp();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
             Intent i = new Intent(MainActivity.this, CrearClienteActivity.class);
             MainActivity.this.startActivity(i);
         }else if(id == R.id.action_verEstadisticas){
@@ -647,8 +634,6 @@ public class MainActivity extends ActionBarActivity {
 
             int deuda = d.getDeudaTotal();
 
-
-
             b.setMessage("$ "+ Util.getNumeroConPuntos(deuda));
 
             b.setPositiveButton("Ok", null);
@@ -657,6 +642,17 @@ public class MainActivity extends ActionBarActivity {
         }else if(id == R.id.action_verGrafico){
             Intent i = new Intent(MainActivity.this, GraficoActivity.class);
             MainActivity.this.startActivity(i);
+        }else if(id == R.id.action_enviarCorreo){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                try {
+                    TestMail.testSmtp();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                }
+            });
         }
 
         return super.onOptionsItemSelected(item);
