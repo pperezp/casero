@@ -12,9 +12,13 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,6 +32,7 @@ import cl.casero.bd.model.Cliente;
 import cl.casero.bd.model.K;
 import cl.casero.bd.model.Movimiento;
 import cl.casero.bd.model.Util;
+import cl.casero.model.TestMail;
 
 public class MainActivity extends ActionBarActivity {
     private DAO d;
@@ -616,6 +621,19 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_crearCliente) {
+
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        TestMail.testSmtp();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
             Intent i = new Intent(MainActivity.this, CrearClienteActivity.class);
             MainActivity.this.startActivity(i);
         }else if(id == R.id.action_verEstadisticas){
