@@ -7,14 +7,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cl.casero.VentaActivity">
+    tools:context="cl.casero.SaleActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/lblNomVenta"
+        android:id="@+id/saleCustomerNameTextView"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textAlignment="center"
@@ -29,10 +29,10 @@
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:id="@+id/txtDetVenta"
-        android:layout_below="@+id/lblNomVenta"
+        android:id="@+id/saleDetailEditText"
+        android:layout_below="@+id/saleCustomerNameTextView"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/lblNomVenta"
+        android:layout_alignEnd="@+id/saleCustomerNameTextView"
         android:hint="Detalle mantención:" />
 
     <EditText
@@ -40,45 +40,44 @@
         android:layout_height="wrap_content"
         android:inputType="numberSigned"
         android:ems="10"
-        android:id="@+id/txtPrecioVenta"
+        android:id="@+id/saleAmountEditText"
         android:hint="Precio TOTAL:"
-        android:layout_below="@+id/txtCantPrendas"
+        android:layout_below="@+id/saleItemsCountEditText"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/txtDetVenta" />
+        android:layout_alignEnd="@+id/saleDetailEditText" />
 
     <Button
-        android:layout_width="150dp
-        "
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Fecha venta"
-        android:id="@+id/btnFechaVenta"
+        android:id="@+id/saleDateButton"
         android:background="#4caf50"
         android:textColor="#ffffff"
-        android:layout_below="@+id/txtPrecioVenta"
+        android:layout_below="@+id/saleAmountEditText"
         android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Crear mantención"
-        android:id="@+id/btnCrearVenta"
+        android:id="@+id/saleCreateButton"
         android:background="#3f51b5"
         android:textColor="#ffffff"
-        android:layout_below="@+id/btnFechaVenta"
+        android:layout_below="@+id/saleDateButton"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/lblFechaVenta" />
+        android:layout_alignEnd="@+id/saleDateTextView" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="[Fecha]"
-        android:id="@+id/lblFechaVenta"
+        android:id="@+id/saleDateTextView"
         android:paddingTop="10dp"
-        android:layout_below="@+id/txtPrecioVenta"
-        android:layout_above="@+id/btnCrearVenta"
-        android:layout_alignEnd="@+id/txtPrecioVenta"
-        android:layout_toEndOf="@+id/btnFechaVenta"
+        android:layout_below="@+id/saleAmountEditText"
+        android:layout_above="@+id/saleCreateButton"
+        android:layout_alignEnd="@+id/saleAmountEditText"
+        android:layout_toEndOf="@+id/saleDateButton"
         android:paddingLeft="10dp" />
 
     <EditText
@@ -86,10 +85,10 @@
         android:layout_height="wrap_content"
         android:inputType="numberSigned"
         android:ems="10"
-        android:id="@+id/txtCantPrendas"
-        android:layout_below="@+id/txtDetVenta"
+        android:id="@+id/saleItemsCountEditText"
+        android:layout_below="@+id/saleDetailEditText"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/txtPrecioVenta"
+        android:layout_toStartOf="@+id/saleAmountEditText"
         android:hint="Prendas:"
-        android:layout_alignEnd="@+id/txtDetVenta" />
+        android:layout_alignEnd="@+id/saleDetailEditText" />
 </RelativeLayout>

@@ -7,47 +7,47 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cl.casero.VisualizarClienteActivity">
+    tools:context="cl.casero.CustomerViewActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/lblNombre"
+        android:id="@+id/nameCustomerView"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:textAlignment="center"
         android:textStyle="bold"
-        android:layout_alignEnd="@+id/lvDetalle"
+        android:layout_alignEnd="@+id/detailListView"
         android:capitalize="words" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/lvDetalle"
+        android:id="@+id/detailListView"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/btnDireccion" />
+        android:layout_below="@+id/addressButton" />
 
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Fecha Ascendente"
-        android:id="@+id/swOrden"
-        android:layout_below="@+id/lblNombre"
-        android:layout_alignEnd="@+id/lvDetalle"
-        android:layout_above="@+id/lvDetalle" />
+        android:id="@+id/orderSwitch"
+        android:layout_below="@+id/nameCustomerView"
+        android:layout_alignEnd="@+id/detailListView"
+        android:layout_above="@+id/detailListView" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:text="Dirección"
-        android:id="@+id/btnDireccion"
-        android:layout_below="@+id/lblNombre"
-        android:layout_alignStart="@+id/lblNombre"
+        android:id="@+id/addressButton"
+        android:layout_below="@+id/nameCustomerView"
+        android:layout_alignStart="@+id/nameCustomerView"
         android:background="#3f51b5"
         android:textColor="#ffffff" />
 

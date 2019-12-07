@@ -4,57 +4,72 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
-import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import cl.casero.bd.model.Cliente;
-import cl.casero.bd.model.Estadistica;
-import cl.casero.bd.model.EstadisticaMensual;
+import cl.casero.bd.model.Customer;
 import cl.casero.bd.model.K;
-import cl.casero.bd.model.Movimiento;
+import cl.casero.bd.model.MonthlyStatistic;
+import cl.casero.bd.model.Statistic;
+import cl.casero.bd.model.Transaction;
 
 /**
  * Created by Patricio Pérez Pinto on 04/01/2016.
  */
+
+// TODO: Separar esta clase en daos mas pequeños
 public class DAO {
-    private Context contexto;
-    private BD conexion;
-    private SQLiteDatabase db;
+    private Context context;
+    private SQLiteOpenHelperImpl sqLiteOpenHelper;
+    private SQLiteDatabase sqLiteDatabase;
     private Cursor cursor;
+    private String query;
+    private SimpleDateFormat dateFormat;
 
+    private final String DATABASE_PATH = Environment
+        .getExternalStorageDirectory()
+        .getPath()+"/caseroBD/casero.sqlite";
 
-    private final String RUTA_BD =
-            Environment.getExternalStorageDirectory().
-                    getPath()+"/caseroBD/casero.sqlite";
-
-    public DAO(Context contexto) {
-        this.contexto = contexto;
+    public DAO(Context context) {
+        this.context = context;
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     }
 
-    public int crearCliente(Cliente c){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public int createCustomer(Customer customer){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String insert = "insert into cliente values(null, '"+c.nombre+"', '"+c.sector+"', '"+c.direccion+"', '"+c.deuda+"')";
-        Log.v("INSERT CLIENTE", insert);
-        db.execSQL(insert);
+        query =
+            "INSERT INTO " +
+            "   cliente " +
+            "VALUES(" +
+                "null, " +
+                "'"+customer.getName() +"', " +
+                "'"+customer.getSector()+"', " +
+                "'"+customer.getAddress() +"', " +
+                "'"+customer.getDebt() +"'" +
+            ")";
 
-        db.close();
+        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
 
-        return getIDUltimoCliente();
+        return getLastCustomerId();
     }
 
-    private int getIDUltimoCliente(){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    private int getLastCustomerId(){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select max(id) from cliente";
+        query =
+            "SELECT " +
+                "MAX(id) " +
+            "FROM " +
+                "cliente";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         int id = -1;
         if(cursor.moveToFirst()){
@@ -63,397 +78,453 @@ public class DAO {
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
         return id;
     }
 
-    public void crearMovimiento(Movimiento m){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public void createTransaction(Transaction transaction){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-        String fecha = f.format(m.fecha);
-        String insert = "insert into movimiento values(null, '"+fecha+"','"+m.detalle+"','"+m.saldo+"','"+m.cliente+"')";
-        db.execSQL(insert);
-        Log.v("INSERT MOVIMIENTO", insert);
-        db.close();
+        String transactionDate = dateFormat.format(transaction.getDate());
+
+        query =
+            "INSERT INTO " +
+                "movimiento " +
+            "VALUES(" +
+                "NULL, " +
+                "'"+transactionDate+"'," +
+                "'"+transaction.getDetail() +"'," +
+                "'"+transaction.getBalance() +"'," +
+                "'"+transaction.getCustomerId() +"'" +
+            ")";
+
+        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
     }
 
-    public List<Cliente> getClientes(){
-        List<Cliente> lista = new ArrayList<>();
-        Cliente c = null;
+    public List<Customer> getCustomers(){
+        List<Customer> customers = new ArrayList<>();
+        Customer customer;
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select * from cliente";
+        query =
+            "SELECT " +
+                "* " +
+            "FROM " +
+                "cliente";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                c = new Cliente();
+                customer = new Customer();
 
-                c.id = cursor.getInt(0);
-                c.nombre = cursor.getString(1);
-                c.sector = cursor.getString(2);
-                c.direccion = cursor.getString(3);
-                c.deuda = cursor.getInt(4);
+                customer.setId(cursor.getInt(0));
+                customer.setName(cursor.getString(1));
+                customer.setSector(cursor.getString(2));
+                customer.setAddress(cursor.getString(3));
+                customer.setDebt(cursor.getInt(4));
 
-                lista.add(c);
+                customers.add(customer);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return lista;
-
+        return customers;
     }
 
-    public List<Cliente> getTopMorosos(int limite){
-        List<Cliente> lista = new ArrayList<>();
-        Cliente c = null;
+    public List<Customer> getDebtors(int limit){
+        List<Customer> debtors = new ArrayList<>();
+        Customer customer;
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select * from cliente order by deuda desc limit "+limite;
+        query =
+            "SELECT " +
+                "* " +
+            "FROM " +
+                "cliente " +
+            "ORDER BY deuda DESC " +
+            "LIMIT "+limit;
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                c = new Cliente();
+                customer = new Customer();
 
-                c.id = cursor.getInt(0);
-                c.nombre = cursor.getString(1);
-                c.sector = cursor.getString(2);
-                c.direccion = cursor.getString(3);
-                c.deuda = cursor.getInt(4);
+                customer.setId(cursor.getInt(0));
+                customer.setName(cursor.getString(1));
+                customer.setSector(cursor.getString(2));
+                customer.setAddress(cursor.getString(3));
+                customer.setDebt(cursor.getInt(4));
 
-                lista.add(c);
+                debtors.add(customer);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return lista;
-
+        return debtors;
     }
 
-    public List<Cliente> getTopClientesBuenos(int limite){
-        List<Cliente> lista = new ArrayList<>();
-        Cliente c = null;
+    public List<Customer> getBestCustomers(int limit){
+        List<Customer> customers = new ArrayList<>();
+        Customer customer;
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select * from cliente order by deuda asc limit "+limite;
+        query =
+            "SELECT " +
+                "* " +
+            "FROM " +
+                "cliente " +
+            "ORDER BY deuda ASC " +
+            "LIMIT "+limit;
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                c = new Cliente();
+                customer = new Customer();
 
-                c.id = cursor.getInt(0);
-                c.nombre = cursor.getString(1);
-                c.sector = cursor.getString(2);
-                c.direccion = cursor.getString(3);
-                c.deuda = cursor.getInt(4);
+                customer.setId(cursor.getInt(0));
+                customer.setName(cursor.getString(1));
+                customer.setSector(cursor.getString(2));
+                customer.setAddress(cursor.getString(3));
+                customer.setDebt(cursor.getInt(4));
 
-                lista.add(c);
+                customers.add(customer);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return lista;
-
+        return customers;
     }
 
-    public List<Cliente> getClientes(String filtro){
+    public List<Customer> getCustomers(String searchText){
+        List<Customer> customers = new ArrayList<>();
+        Customer customer;
 
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        List<Cliente> lista = new ArrayList<>();
-        Cliente c = null;
+        /*String select = "select * from customer where name like '%"+filtro+"%' " +
+                "or address like '%"+filtro+"%' " +
+                "or sector like '%"+filtro+"%' order by name asc";*/
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        query =
+            "SELECT * FROM cliente WHERE " +
+            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%"+searchText+"%' OR " +
+            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%"+searchText+"%' OR " +
+            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%"+searchText+"%' " +
+            "ORDER BY nombre ASC";
 
-        /*String select = "select * from cliente where nombre like '%"+filtro+"%' " +
-                "or direccion like '%"+filtro+"%' " +
-                "or sector like '%"+filtro+"%' order by nombre asc";*/
-
-        String select = "select * from cliente where REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') like '%"+filtro+"%' " +
-                "or REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') like '%"+filtro+"%' " +
-                "or REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') like '%"+filtro+"%' order by nombre asc";
-
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                c = new Cliente();
+                customer = new Customer();
 
-                c.id = cursor.getInt(0);
-                c.nombre = cursor.getString(1);
-                c.sector = cursor.getString(2);
-                c.direccion = cursor.getString(3);
-                c.deuda = cursor.getInt(4);
+                customer.setId(cursor.getInt(0));
+                customer.setName(cursor.getString(1));
+                customer.setSector(cursor.getString(2));
+                customer.setAddress(cursor.getString(3));
+                customer.setDebt(cursor.getInt(4));
 
-                lista.add(c);
+                customers.add(customer);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return lista;
-
+        return customers;
     }
 
-    public Cliente getCliente(long id){
-        Cliente c = null;
+    public Customer getCustomer(long customerId){
+        Customer customer = null;
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select * from cliente where id = '"+id+"'";
+        query =
+            "SELECT " +
+                "* " +
+            "FROM " +
+                "cliente " +
+            "WHERE " +
+                "id = '"+customerId+"'";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                c = new Cliente();
+                customer = new Customer();
 
-                c.id = cursor.getInt(0);
-                c.nombre = cursor.getString(1);
-                c.sector = cursor.getString(2);
-                c.direccion = cursor.getString(3);
-                c.deuda = cursor.getInt(4);
-
+                customer.setId(cursor.getInt(0));
+                customer.setName(cursor.getString(1));
+                customer.setSector(cursor.getString(2));
+                customer.setAddress(cursor.getString(3));
+                customer.setDebt(cursor.getInt(4));
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return c;
-
+        return customer;
     }
 
-    public int getCantidadClientes(){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public int getCustomersCount(){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select count(0) from cliente";
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "cliente";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
-        int cant = 0;
+        int customersCount = 0;
 
         if(cursor.moveToFirst()){
             do{
-                cant = cursor.getInt(0);
+                customersCount = cursor.getInt(0);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return cant;
-
+        return customersCount;
     }
 
-    public List<Movimiento> getMovimientos(int idCliente, boolean ascendente){
-        List<Movimiento> lista = new ArrayList<>();
-        Movimiento m = null;
+    public List<Transaction> getTransactions(int customerId, boolean ascending){
+        List<Transaction> transactions = new ArrayList<>();
+        Transaction transaction;
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select * from movimiento where cliente = '"+idCliente+"' order by fecha "+(ascendente?"asc":"desc");
+        query =
+            "SELECT " +
+                "* " +
+            "FROM " +
+                "movimiento " +
+            "WHERE " +
+                "cliente = '"+customerId+"' " +
+            "ORDER BY fecha " + (ascending ? "ASC" : "DESC");
 
-        cursor = db.rawQuery(select, null);
-
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                m = new Movimiento();
-            /*"id INTEGER primary key AUTOINCREMENT,"+
-                    "fecha TEXT,"+// TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS").
-                    "detalle TEXT,"+
-                    "saldo INTEGER,"+
-                    "cliente INTEGER," +*/
-                m.id = cursor.getInt(0);
+                transaction = new Transaction();
+
+                transaction.setId(cursor.getInt(0));
                 try{
-                    m.fecha = f.parse(cursor.getString(1));
-                }catch(ParseException ex){
-                    Log.v("PARSE EXCEPTION", ex.getMessage());
-                }
+                    transaction.setDate(dateFormat.parse(cursor.getString(1)));
+                }catch(ParseException ex){}
 
-                m.detalle = cursor.getString(2);
-                m.saldo = cursor.getInt(3);
-                m.cliente = cursor.getInt(4);
+                transaction.setDetail(cursor.getString(2));
+                transaction.setBalance(cursor.getInt(3));
+                transaction.setCustomerId(cursor.getInt(4));
 
-                lista.add(m);
+                transactions.add(transaction);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return lista;
+        return transactions;
     }
 
-    public int getDeuda(int idCliente){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public int getDebt(int customerId){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        //String select = "select saldo from movimiento where cliente = '"+idCliente+"' order by id desc limit 1";
-        String select = "select deuda from cliente where id = '"+idCliente+"'";
-        cursor = db.rawQuery(select, null);
+        query =
+            "SELECT " +
+                "deuda " +
+            "FROM " +
+                "cliente " +
+            "WHERE " +
+                "id = '"+customerId+"'";
 
-        int deuda = 0;
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        int debt = 0;
 
         if(cursor.moveToFirst()){
             do{
-                deuda = cursor.getInt(0);
+                debt = cursor.getInt(0);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return deuda;
+        return debt;
     }
 
-    public void abonar(Movimiento m, int monto){
-        crearMovimiento(m);
-        actualizarDeuda(m.cliente, m.saldo);
+    public void pay(Transaction transaction, int amount){
+        createTransaction(transaction);
+        updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
-        Estadistica e = new Estadistica();
+        // TODO: esto se repite mucho en otros métodos, ver que hacer
+        Statistic statistic = new Statistic();
 
-        e.monto = monto;
-        e.tipo = K.ABONO;
-        e.fecha = m.fecha;
-        e.tipoVenta = -1;
-        e.cantPrendas = -1;
+        statistic.setAmount(amount);
+        statistic.setType(K.PAYMENT);
+        statistic.setDate(transaction.getDate());
+        statistic.setSaleType(-1);
+        statistic.setItemsCount(-1);
 
-        crearEstadistica(e);
+        createStatistic(statistic);
     }
 
-    public void devolver(Movimiento m, int monto){
-        crearMovimiento(m);
-        actualizarDeuda(m.cliente, m.saldo);
+    public void refund(Transaction transaction, int amount){
+        createTransaction(transaction);
+        updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
-        Estadistica e = new Estadistica();
+        Statistic statistic = new Statistic();
 
-        e.monto = monto;
-        e.tipo = K.DEVOLUCION;
-        e.fecha = m.fecha;
-        e.tipoVenta = -1;
-        e.cantPrendas = -1;
+        statistic.setAmount(amount);
+        statistic.setType(K.REFUND);
+        statistic.setDate(transaction.getDate());
+        statistic.setSaleType(-1);
+        statistic.setItemsCount(-1);
 
-        crearEstadistica(e);
+        createStatistic(statistic);
     }
 
-    public void condonar(Movimiento m, int monto){
-        crearMovimiento(m);
-        actualizarDeuda(m.cliente, m.saldo);
+    public void debtCondonation(Transaction transaction, int amount){
+        createTransaction(transaction);
+        updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
-        Estadistica e = new Estadistica();
+        Statistic statistic = new Statistic();
 
-        e.monto = monto;
-        e.tipo = K.CONDONACION_DEUDA;
-        e.fecha = m.fecha;
-        e.tipoVenta = -1;
-        e.cantPrendas = -1;
+        statistic.setAmount(amount);
+        statistic.setType(K.DEBT_CONDONATION);
+        statistic.setDate(transaction.getDate());
+        statistic.setSaleType(-1);
+        statistic.setItemsCount(-1);
 
-        crearEstadistica(e);
+        createStatistic(statistic);
     }
 
     /**
      *
-     * @param m
-     * @param monto
-     * @param cantPrendas
-     * @param tipoVenta puede ser mantencion o venta nueva
+     * @param transaction
+     * @param amount
+     * @param itemCounts
+     * @param saleType puede ser mantencion o venta nueva
      */
-    public void crearVenta(Movimiento m, int monto, int cantPrendas, int tipoVenta){
-        Estadistica e = new Estadistica();
-        actualizarDeuda(m.cliente, m.saldo);
 
-        e.monto = monto;
-        e.tipo = K.VENTA;
-        e.fecha = m.fecha;
-        e.cantPrendas = cantPrendas;
-        e.tipoVenta = tipoVenta;
+    // TODO: Pensar en hacer clase Sale.java
+    public void createSale(Transaction transaction, int amount, int itemCounts, int saleType){
+        Statistic statistic = new Statistic();
+        updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
-        /*
-        esto lo hago antes y se lo entrego como parametro, porque aca estaba mal
+        statistic.setAmount(amount);
+        statistic.setType(K.SALE);
+        statistic.setDate(transaction.getDate());
+        statistic.setSaleType(saleType);
+        statistic.setItemsCount(itemCounts);
 
-        int saldo = getDeuda(m.cliente);
-
-        if(saldo == 0){
-            e.tipoVenta = K.VENTA_NUEVA;
-        }else{
-            e.tipoVenta = K.MANTENCION;
-        }*/
-
-        crearMovimiento(m);
-        crearEstadistica(e);
+        createTransaction(transaction);
+        createStatistic(statistic);
     }
 
-    private void actualizarDeuda(int idCliente, int deudaNueva){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    private void updateDebt(int customerId, int newDebt){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String update = "update cliente set deuda = '"+deudaNueva+"' where id = '"+idCliente+"'";
-        db.execSQL(update);
-        db.close();
+        query =
+            "UPDATE " +
+                "cliente " +
+            "SET " +
+                "deuda = '"+newDebt+"' " +
+            "WHERE " +
+                "id = '"+customerId+"'";
+
+        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
     }
 
-    public void actualizarDireccion(long idCliente, String direccionNueva){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public void updateAddress(long customerId, String newAddress){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String update = "update cliente set direccion = '"+direccionNueva+"' where id = '"+idCliente+"'";
-        db.execSQL(update);
-        db.close();
+        query =
+            "UPDATE " +
+                "cliente " +
+            "SET " +
+                "direccion = '"+newAddress+"' " +
+            "WHERE " +
+                "id = '"+customerId+"'";
+
+        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
     }
 
-    private void crearEstadistica(Estadistica e){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    private void createStatistic(Statistic statistic){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-        String fecha = f.format(e.fecha);
-        String insert = "insert into estadistica values(null, '"+e.tipo+"','"+e.monto+"','"+fecha+"', '"+e.tipoVenta+"','"+e.cantPrendas+"')";
-        db.execSQL(insert);
-        Log.v("INSERT ESTADISTICA", insert);
-        db.close();
+        String date = dateFormat.format(statistic.getDate());
+
+        query =
+            "INSERT INTO " +
+                "estadistica " +
+            "VALUES(" +
+                "null, " +
+                "'"+statistic.getType() +"'," +
+                "'"+statistic.getAmount() +"'," +
+                "'"+date+"'," +
+                "'"+statistic.getSaleType() +"'," +
+                "'"+statistic.getItemsCount() +"'" +
+            ")";
+
+        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
     }
 
-    public EstadisticaMensual getEstadistica(String fecIni, String fecFin, boolean isRango){
-        // si isRango es verdadero, debo incluir ambos dias (>= <=) si no no
-        // si isRango es falso, es porque quiere ver un mes completo
-        // y en ese caso no debo incluir el ultimo dia del rango (que es el 1ero del prox mes)
+    public MonthlyStatistic getMonthlyStatistic(String startDate, String endDate, boolean isDateRange){
+        // si isDateRange es verdadero, debo incluir ambos DAYS (>= <=) si no no
+        // si isDateRange es falso, es porque quiere ver un mes completo
+        // y en ese caso no debo incluir el último día del rango (que es el 1ero del próx. mes)
 
-        EstadisticaMensual em = new EstadisticaMensual();
-        String sel;
+        MonthlyStatistic monthlyStatistic = new MonthlyStatistic();
 
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        // TODO: separar estas consultas (son 6)
 
         // 1.- select tarjetas terminadas
-        sel = "select count(0) from movimiento " +
-                "where saldo = 0 and " +
-                "fecha >= '"+fecIni+"' and " +
-                "fecha <"+(isRango?"=":"")+" '"+fecFin+"'";
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "movimiento " +
+            "WHERE " +
+                "saldo = 0 AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.tarTerminadas = cursor.getInt(0);
+                monthlyStatistic.setFinishedCards(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -462,17 +533,22 @@ public class DAO {
 
 
         // 2.- select tarjetas nuevas
-        sel = "select count(0) from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                "tipoVenta = '"+K.VENTA_NUEVA+"' and " +
-                "fecha >= '"+fecIni+"' and " +
-                "fecha <"+(isRango?"=":"")+" '"+fecFin+"'";
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " +
+                "tipoVenta = '"+K.NEW_SALE +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.tarNuevas = cursor.getInt(0);
+                monthlyStatistic.setNewCards(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -481,17 +557,22 @@ public class DAO {
 
 
         // 3.- select Mantenciones
-        sel = "select count(0) from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                "tipoVenta = '"+K.MANTENCION+"' and " +
-                "fecha >= '"+fecIni+"' and " +
-                "fecha <"+(isRango?"=":"")+" '"+fecFin+"'";
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " +
+                "tipoVenta = '"+K.MAINTENANCE +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.mantenciones = cursor.getInt(0);
+                monthlyStatistic.setMaintenance(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -499,17 +580,21 @@ public class DAO {
 
 
         // 4.- select total prendas
-        sel = "select sum(cantPrendas) " +
-                "from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                "fecha >= '"+fecIni+"' and " +
-                "fecha <"+(isRango?"=":"")+" '"+fecFin+"'";
+        query =
+            "SELECT " +
+                "SUM(cantPrendas) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.totalPrendas = cursor.getInt(0);
+                monthlyStatistic.setTotalItems(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -517,18 +602,22 @@ public class DAO {
 
 
 
-        // 5.- select cobro
-        sel = "select sum(monto) " +
-                "from estadistica " +
-                "where tipo = '"+K.ABONO+"' and " +
-                "fecha >= '"+fecIni+"' and " +
-                "fecha <"+(isRango?"=":"")+" '"+fecFin+"'";
+        // 5.- select cobro (payment)
+        query =
+            "SELECT " +
+                "sum(monto) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.PAYMENT +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.cobro = cursor.getInt(0);
+                monthlyStatistic.setPayment(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -538,70 +627,62 @@ public class DAO {
 
 
         // 6.- select ventas
-        sel = "select sum(monto) " +
-                "from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                "fecha >= '"+fecIni+"' and " +
-                "fecha <"+(isRango?"=":"")+" '"+fecFin+"'";
+        query =
+            "SELECT " +
+                "sum(monto) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.venta = cursor.getInt(0);
+                monthlyStatistic.setSale(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
+        sqLiteDatabase.close();
 
-
-        db.close();
-
-        return em;
+        return monthlyStatistic;
     }
 
+    // usado para el gráfico
+    public MonthlyStatistic getMonthlyStatistic(int month, int year){
+        MonthlyStatistic monthlyStatistic = new MonthlyStatistic();
 
+        int endYear = year;
+        int endMonth = month + 1;
 
-
-
-
-
-
-
-
-
-
-
-
-    // usado para el grafico
-    public EstadisticaMensual getEstadistica(int mes, int anio){
-        EstadisticaMensual em = new EstadisticaMensual();
-
-        int anioFin = anio, mesFin = mes+1;
-
-        if (mes == 12) {
-            anioFin = (anio + 1);
-            mesFin = 1;
+        if (month == 12) {
+            endYear = (year + 1);
+            endMonth = 1;
         }
 
-        String queryFecha = "fecha >= '"+anio+"-"+(mes < 10?"0":"")+mes+"-01' and " +
-            "fecha < '"+anioFin+"-"+(mesFin < 10?"0":"")+mesFin+"-01'";
-        String sel;
+        String dateQuery =
+                "fecha >= '"+year+"-"+(month < 10?"0":"")+month+"-01' AND " +
+                "fecha < '"+endYear+"-"+(endMonth < 10?"0":"")+endMonth+"-01'";
 
-        Log.v("Fecha SQL: ",queryFecha);
-
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         // 1.- select tarjetas terminadas
-        sel = "select count(0) from movimiento " +
-                "where saldo = 0 and " +
-                queryFecha;
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "movimiento " +
+            "WHERE " +
+                "saldo = 0 AND " + dateQuery;
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.tarTerminadas = cursor.getInt(0);
+                monthlyStatistic.setFinishedCards(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -610,16 +691,20 @@ public class DAO {
 
 
         // 2.- select tarjetas nuevas
-        sel = "select count(0) from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                "tipoVenta = '"+K.VENTA_NUEVA+"' and " +
-                queryFecha;
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " +
+                "tipoVenta = '"+K.NEW_SALE +"' AND " + dateQuery;
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.tarNuevas = cursor.getInt(0);
+                monthlyStatistic.setNewCards(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -628,16 +713,20 @@ public class DAO {
 
 
         // 3.- select Mantenciones
-        sel = "select count(0) from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                "tipoVenta = '"+K.MANTENCION+"' and " +
-                queryFecha;
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " +
+                "tipoVenta = '"+K.MAINTENANCE +"' AND " + dateQuery;
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.mantenciones = cursor.getInt(0);
+                monthlyStatistic.setMaintenance(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -645,16 +734,19 @@ public class DAO {
 
 
         // 4.- select total prendas
-        sel = "select sum(cantPrendas) " +
-                "from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                queryFecha;
+        query =
+            "SELECT " +
+                "sum(cantPrendas) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " + dateQuery;
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.totalPrendas = cursor.getInt(0);
+                monthlyStatistic.setTotalItems(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -663,16 +755,19 @@ public class DAO {
 
 
         // 5.- select cobro
-        sel = "select sum(monto) " +
-                "from estadistica " +
-                "where tipo = '"+K.ABONO+"' and " +
-                queryFecha;
+        query =
+            "SELECT " +
+                "sum(monto) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.PAYMENT +"' AND " + dateQuery;
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.cobro = cursor.getInt(0);
+                monthlyStatistic.setPayment(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -682,86 +777,101 @@ public class DAO {
 
 
         // 6.- select ventas
-        sel = "select sum(monto) " +
-                "from estadistica " +
-                "where tipo = '"+K.VENTA+"' and " +
-                queryFecha;
+        query =
+            "SELECT " +
+                "sum(monto) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+K.SALE +"' AND " + dateQuery;
 
-        cursor = db.rawQuery(sel, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
         if(cursor.moveToFirst()){
             do{
-                em.venta = cursor.getInt(0);
+                monthlyStatistic.setSale(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
+        sqLiteDatabase.close();
 
-
-        db.close();
-
-        return em;
+        return monthlyStatistic;
     }
 
-    public int getDeudaTotal(){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public int getTotalDebt(){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select sum(deuda) from cliente";
+        query =
+            "SELECT " +
+                "SUM(deuda) " +
+            "FROM " +
+                "cliente";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
-        int suma = 0;
+        int totalDebt = 0;
 
         if(cursor.moveToFirst()){
             do{
-                suma = cursor.getInt(0);
+                totalDebt = cursor.getInt(0);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return suma;
+        return totalDebt;
     }
 
-    public int getPromedioDeuda(){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public int getAverageDebt(){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select avg(deuda) from cliente";
+        query =
+            "SELECT " +
+                "AVG(deuda) " +
+            "FROM " +
+                "cliente";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
-        int prom = 0;
+        int averageDebt = 0;
 
         if(cursor.moveToFirst()){
             do{
-                prom = cursor.getInt(0);
+                averageDebt = cursor.getInt(0);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return prom;
+        return averageDebt;
     }
 
-    public int getCantClientes(String sector){
-        conexion = new BD(contexto, RUTA_BD, null, 1);
-        db = conexion.getWritableDatabase();
+    public int getCustomersCount(String sector){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
-        String select = "select count(0) from cliente where sector = '"+sector+"'";
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "cliente " +
+            "WHERE " +
+                "sector = '"+sector+"'";
 
-        cursor = db.rawQuery(select, null);
+        cursor = sqLiteDatabase.rawQuery(query, null);
 
-        int cont = 0;
+        int customersCount = 0;
 
         if(cursor.moveToFirst()){
             do{
-                cont = cursor.getInt(0);
+                customersCount = cursor.getInt(0);
             }while(cursor.moveToNext());
         }
 
-        db.close();
+        sqLiteDatabase.close();
 
-        return cont;
+        return customersCount;
     }
 }

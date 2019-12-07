@@ -3,12 +3,12 @@ package cl.casero;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 
-public class MovimientoItem extends ActionBarActivity {
+public class TransactionItem extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movimiento_item);
+        setContentView(R.layout.activity_transaction_item);
     }
 
 }

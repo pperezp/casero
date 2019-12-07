@@ -7,14 +7,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cl.casero.ClienteItem">
+    tools:context="cl.casero.CustomerItem">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/txtNomCli"
+        android:id="@+id/nameTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true" />
@@ -24,8 +24,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:id="@+id/txtSalCli"
-        android:layout_below="@+id/txtSector"
+        android:id="@+id/customerBalanceTextView"
+        android:layout_below="@+id/sectorTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:textColor="#1400c5" />
@@ -35,8 +35,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:id="@+id/txtSector"
-        android:layout_below="@+id/txtNomCli"
+        android:id="@+id/sectorTextView"
+        android:layout_below="@+id/nameTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 

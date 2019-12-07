@@ -22,25 +22,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CrearClienteActivity"
+            android:name=".CreateCustomerActivity"
             android:label="@string/title_activity_crear_cliente" />
         <activity
-            android:name=".ClienteItem"
+            android:name=".CustomerItem"
             android:label="@string/title_activity_cliente_item" />
         <activity
-            android:name=".VisualizarClienteActivity"
+            android:name=".CustomerViewActivity"
             android:label="@string/title_activity_visualizar_cliente" />
         <activity
-            android:name=".MovimientoItem"
+            android:name=".TransactionItem"
             android:label="@string/title_activity_movimiento_item" />
         <activity
-            android:name=".VentaActivity"
+            android:name=".SaleActivity"
             android:label="Mantención" />
         <activity
-            android:name=".EstadisticaActivity"
+            android:name=".StatisticsActivity"
             android:label="@string/title_activity_estadistica" />
         <activity
-            android:name=".GraficoActivity"
+            android:name=".ChartActivity"
             android:label="@string/title_activity_grafico"/>
     </application>
 
