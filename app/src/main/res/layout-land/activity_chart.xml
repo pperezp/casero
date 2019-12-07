@@ -8,21 +8,21 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cl.casero.GraficoActivity">
+    tools:context="cl.casero.ChartActivity">
 
 
     <Spinner
         android:layout_width="150dp"
         android:layout_height="30dp"
-        android:id="@+id/spiMes1"
+        android:id="@+id/startMonthSpinner"
         android:entries="@array/meses_array" />
 
     <Spinner
         android:layout_height="30dp"
-        android:id="@+id/spiMes2"
+        android:id="@+id/endMonthSpinner"
         android:entries="@array/meses_array"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/spiMes1"
+        android:layout_below="@+id/startMonthSpinner"
         android:layout_alignParentStart="true"
         android:layout_width="150dp" />
 
@@ -30,37 +30,37 @@
         android:text="Procesar"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:id="@+id/btnGraVentas"
+        android:id="@+id/salesChartButton"
         android:background="#4caf50"
         android:textColor="#ffffff"
         android:layout_alignParentTop="true"
-        android:layout_alignBottom="@+id/spiAnio2"
+        android:layout_alignBottom="@+id/endYearSpinner"
         android:layout_alignParentEnd="true" />
 
     <Spinner
         android:layout_height="30dp"
-        android:id="@+id/spiAnio1"
+        android:id="@+id/startYearSpinner"
         android:entries="@array/meses_array"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/spiMes2"
+        android:layout_toEndOf="@+id/endMonthSpinner"
         android:layout_width="150dp" />
 
     <Spinner
 
-        android:id="@+id/spiAnio2"
+        android:id="@+id/endYearSpinner"
         android:entries="@array/meses_array"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/spiMes2"
-        android:layout_toEndOf="@+id/spiMes2"
-        android:layout_alignBottom="@+id/spiMes2"
+        android:layout_alignTop="@+id/endMonthSpinner"
+        android:layout_toEndOf="@+id/endMonthSpinner"
+        android:layout_alignBottom="@+id/endMonthSpinner"
         android:layout_width="150dp" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:id="@+id/graficoBarras"
+        android:id="@+id/barChart"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_below="@+id/spiMes2" />
+        android:layout_below="@+id/endMonthSpinner" />
 
 </RelativeLayout>

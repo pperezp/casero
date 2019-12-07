@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cl.casero.EstadisticaActivity">
+    tools:context="cl.casero.StatisticsActivity">
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Fecha Inicio"
-                android:id="@+id/btnFecIni"
+                android:id="@+id/startDateButton"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:background="#4caf50"
@@ -33,32 +33,32 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="[Fecha]"
-                android:id="@+id/lblFecIni"
+                android:id="@+id/startDateTextView"
                 android:paddingTop="10dp"
-                android:layout_below="@+id/btnFecIni"
+                android:layout_below="@+id/startDateButton"
                 android:layout_alignParentStart="true"
-                android:layout_alignEnd="@+id/btnFecIni"
+                android:layout_alignEnd="@+id/startDateButton"
                 android:textAlignment="center"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ver estadística por rango de fechas"
-                android:id="@+id/btnVerEstRango"
+                android:id="@+id/statisticsRangeButton"
                 android:background="#4caf50"
                 android:textColor="#ffffff"
-                android:layout_below="@+id/lblFecIni"
-                android:layout_alignStart="@+id/lblTituloEst"
+                android:layout_below="@+id/startDateTextView"
+                android:layout_alignStart="@+id/titleTextView"
                 android:layout_alignParentEnd="true" />
 
             <Button
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Fecha fin"
-                android:id="@+id/btnFecFin"
+                android:id="@+id/endDateButton"
                 android:background="#4caf50"
                 android:textColor="#ffffff"
-                android:layout_above="@+id/lblFecIni"
+                android:layout_above="@+id/startDateTextView"
                 android:layout_alignParentEnd="true" />
 
             <TextView
@@ -66,37 +66,37 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="[Fecha]"
-                android:id="@+id/lblFecFin"
+                android:id="@+id/endDateTextView"
                 android:paddingTop="10dp"
-                android:layout_below="@+id/btnFecFin"
+                android:layout_below="@+id/endDateButton"
                 android:layout_alignParentEnd="true"
-                android:layout_alignStart="@+id/btnFecFin"
+                android:layout_alignStart="@+id/endDateButton"
                 android:textAlignment="center"/>
 
             <Spinner
                 android:layout_width="150dp"
                 android:layout_height="60dp"
-                android:id="@+id/spiMes"
+                android:id="@+id/monthSpinner"
                 android:entries="@array/meses_array"
-                android:layout_below="@+id/btnVerEstRango"
-                android:layout_alignStart="@+id/btnVerEstRango" />
+                android:layout_below="@+id/statisticsRangeButton"
+                android:layout_alignStart="@+id/statisticsRangeButton" />
 
             <Spinner
                 android:layout_width="150dp"
                 android:layout_height="60dp"
-                android:id="@+id/spiAnio"
+                android:id="@+id/yearSpinner"
                 android:entries="@array/meses_array"
-                android:layout_alignTop="@+id/spiMes"
-                android:layout_alignStart="@+id/lblFecFin" />
+                android:layout_alignTop="@+id/monthSpinner"
+                android:layout_alignStart="@+id/endDateTextView" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ver estadística por MES"
-                android:id="@+id/btnVerEstPorMes"
-                android:layout_below="@+id/spiMes"
+                android:id="@+id/monthlyStatisticsButton"
+                android:layout_below="@+id/monthSpinner"
                 android:layout_alignParentStart="true"
-                android:layout_alignEnd="@+id/spiAnio"
+                android:layout_alignEnd="@+id/yearSpinner"
                 android:background="#3f51b5"
                 android:textColor="#ffffff" />
 
@@ -106,7 +106,7 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="TT:"
                 android:id="@+id/textView5"
-                android:layout_below="@+id/lblTituloEst"
+                android:layout_below="@+id/titleTextView"
                 android:layout_alignEnd="@+id/textView6" />
 
             <TextView
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="0"
-                android:id="@+id/lblTT"
+                android:id="@+id/finishedCardsTextView"
                 android:layout_alignTop="@+id/textView5"
                 android:layout_centerHorizontal="true" />
 
@@ -172,36 +172,36 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="0"
-                android:id="@+id/lblTN"
+                android:id="@+id/newCardsTextView"
                 android:layout_alignTop="@+id/textView6"
-                android:layout_alignStart="@+id/lblTT" />
+                android:layout_alignStart="@+id/finishedCardsTextView" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="0"
-                android:id="@+id/lblMant"
+                android:id="@+id/maintenanceTextView"
                 android:layout_alignTop="@+id/textView7"
-                android:layout_alignStart="@+id/lblTN" />
+                android:layout_alignStart="@+id/newCardsTextView" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="0"
-                android:id="@+id/lblTP"
+                android:id="@+id/itemCountsTextView"
                 android:layout_alignTop="@+id/textView8"
-                android:layout_alignStart="@+id/lblMant" />
+                android:layout_alignStart="@+id/maintenanceTextView" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="0"
-                android:id="@+id/lblCobros"
+                android:id="@+id/paymentsTextView"
                 android:layout_alignTop="@+id/textView9"
-                android:layout_alignStart="@+id/lblTP"
+                android:layout_alignStart="@+id/itemCountsTextView"
                 android:textColor="#f44336"
                 android:textStyle="bold" />
 
@@ -210,9 +210,9 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="0"
-                android:id="@+id/lblVentas"
+                android:id="@+id/salesTextView"
                 android:layout_alignTop="@+id/textView10"
-                android:layout_alignStart="@+id/lblCobros"
+                android:layout_alignStart="@+id/paymentsTextView"
                 android:textColor="#4caf50"
                 android:textStyle="bold" />
 
@@ -221,14 +221,14 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="Estadística"
-                android:id="@+id/lblTituloEst"
+                android:id="@+id/titleTextView"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:textAlignment="center"
                 android:textStyle="bold"
                 android:capitalize="words"
-                android:layout_below="@+id/btnVerEstPorMes"
-                android:layout_alignEnd="@+id/spiAnio"
+                android:layout_below="@+id/monthlyStatisticsButton"
+                android:layout_alignEnd="@+id/yearSpinner"
                 android:layout_alignStart="@+id/textView5" />
         </RelativeLayout>
     </ScrollView>

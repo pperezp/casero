@@ -7,17 +7,17 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="cl.casero.MovimientoItem">
+    tools:context="cl.casero.TransactionItem">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:id="@+id/lblFecha"
+        android:id="@+id/dateTextView"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/lblDetalle"
+        android:layout_alignEnd="@+id/detailTextView"
         android:textStyle="bold" />
 
     <TextView
@@ -25,8 +25,8 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:id="@+id/lblDetalle"
-        android:layout_below="@+id/lblFecha"
+        android:id="@+id/detailTextView"
+        android:layout_below="@+id/dateTextView"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
 
@@ -35,10 +35,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Medium Text"
-        android:id="@+id/lblSaldoDetalle"
-        android:layout_below="@+id/lblDetalle"
+        android:id="@+id/transactionBalanceTextView"
+        android:layout_below="@+id/detailTextView"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/lblDetalle"
+        android:layout_alignEnd="@+id/detailTextView"
         android:textStyle="bold"
         android:textAlignment="textEnd" />
 </RelativeLayout>

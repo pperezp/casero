@@ -23,8 +23,8 @@ fecha > '' and fecha < ''
 
 
 
-Mant: Mantención (Venta nueva a alguien que debe)
-Tmant: Total mantención (MES)
+Mant: Mantenciï¿½n (Venta nueva a alguien que debe)
+Tmant: Total mantenciï¿½n (MES)
 
 ----------------------------------
 select count(0) from estadistica
@@ -47,7 +47,7 @@ fecha > '' and fecha < ''
 
 
 CD: Cobro diario
-tcd: total cobro diario
+tcd: total payment diario
 
 ----------------------------------
 select sum(monto)
@@ -59,7 +59,7 @@ fecha > '' and fecha < ''
 
 
 Venta diaria: en pesos
-total venta diaria
+total sale diaria
 ----------------------------------
 select sum(monto)
 from estadistica
@@ -67,5 +67,5 @@ where tipo = K.VENTA and
 fecha > '' and fecha < ''
 ----------------------------------
 
-Comparación de meses (IDeal)
+Comparaciï¿½n de meses (IDeal)
 
