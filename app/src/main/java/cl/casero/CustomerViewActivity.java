@@ -13,6 +13,7 @@ import cl.casero.bd.DAO;
 import cl.casero.bd.model.Customer;
 import cl.casero.bd.model.K;
 import cl.casero.bd.model.Transaction;
+import cl.casero.model.Resource;
 
 public class CustomerViewActivity extends ActionBarActivity {
 
@@ -65,10 +66,13 @@ public class CustomerViewActivity extends ActionBarActivity {
                 Customer customer = dao.getCustomer(K.customerId);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
-                // TODO: Hardcode
-                builder.setTitle("Dirección de " + customer.getName());
+
+                String addressOf = Resource.getString(R.string.address_of);
+                addressOf = addressOf.replace("{0}",customer.getName());
+                builder.setTitle(addressOf);
+
                 builder.setMessage(customer.getAddress() +", "+customer.getSector());
-                builder.setPositiveButton("Ok", null);
+                builder.setPositiveButton(Resource.getString(R.string.ok), null);
                 builder.create().show();
             }
         });

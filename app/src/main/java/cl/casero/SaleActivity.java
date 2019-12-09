@@ -23,6 +23,7 @@ import cl.casero.bd.DAO;
 import cl.casero.bd.model.Customer;
 import cl.casero.bd.model.K;
 import cl.casero.bd.model.Transaction;
+import cl.casero.model.Resource;
 
 public class SaleActivity extends ActionBarActivity {
     private TextView saleCustomerNameTextView;
@@ -43,8 +44,8 @@ public class SaleActivity extends ActionBarActivity {
         public void onDateSet(DatePicker arg0, int anio, int mes, int dia) {
             // el mes comienza de 0
 
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat f2 = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+            SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
+            SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.date_pattern));
             try {
                 K.date = f.parse(anio+"-"+(mes+1)+"-"+dia);
                 saleDateTextView.setText(f2.format(K.date));
@@ -97,10 +98,9 @@ public class SaleActivity extends ActionBarActivity {
                                 try {
                                     itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
                                 } catch (NumberFormatException ex) {
-                                    // TODO: Hardcode
                                     Toast.makeText(
                                         SaleActivity.this,
-                                        "Ingrese sólo números en prendas",
+                                        Resource.getString(R.string.only_numbers_in_items),
                                         Toast.LENGTH_SHORT
                                     ).show();
                                 }
@@ -109,27 +109,26 @@ public class SaleActivity extends ActionBarActivity {
                                     try {
                                         subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
                                     } catch (NumberFormatException ex) {
-                                        // TODO: Hardcode
                                         Toast.makeText(
                                             SaleActivity.this,
-                                            "Ingrese sólo números en precio TOTAL",
+                                            Resource.getString(R.string.only_numbers_in_total_price),
                                             Toast.LENGTH_SHORT
                                         ).show();
                                     }
 
                                     if (subtotal != -1) {
                                         Transaction transaction = new Transaction();
-                                        String detail;
 
                                         transaction.setCustomerId((int) K.customerId);
 
-                                        // TODO: Cambiar a append
-                                        // TODO: Hardcode
-                                        detail = "[Venta]: " + saleDetailEditText.getText().toString();
-                                        detail += "\n[Prendas]: " + itemsCount;
-                                        detail += "\n\n[Subtotal]: $" + subtotal;
+                                        String sailDetail = saleDetailEditText.getText().toString();
+                                        String transactionDetail = Resource.getString(R.string.transaction_detail);
 
-                                        transaction.setDetail(detail);
+                                        transactionDetail = transactionDetail.replace("{0}",sailDetail);
+                                        transactionDetail = transactionDetail.replace("{1}",String.valueOf(itemsCount));
+                                        transactionDetail = transactionDetail.replace("{2}",String.valueOf(subtotal));
+
+                                        transaction.setDetail(transactionDetail);
                                         transaction.setDate(K.date);
 
                                         int currentBalance = dao.getDebt((int) K.customerId);
@@ -142,10 +141,13 @@ public class SaleActivity extends ActionBarActivity {
 
                                         dao.createSale(transaction, subtotal, itemsCount, saleType);
 
-                                        // TODO: Hardcode
+                                        String maintenanceCreated = Resource.getString(R.string.maintenance_created);
+
+                                        maintenanceCreated = maintenanceCreated.replace("{0}", String.valueOf(currentBalance));
+
                                         Toast.makeText(
                                             SaleActivity.this,
-                                            "Mantención realizada. NUEVO SALDO: $"+currentBalance,
+                                            maintenanceCreated,
                                             Toast.LENGTH_LONG
                                         ).show();
 
@@ -162,29 +164,28 @@ public class SaleActivity extends ActionBarActivity {
                     }
                 };
 
-                // TODO: Hardcode todo para abajo
                 if (saleDetailEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(
                         SaleActivity.this,
-                        "Ingrese detail de mantención",
+                        Resource.getString(R.string.enter_maintenance_detail),
                         Toast.LENGTH_SHORT
                     ).show();
                 } else if (saleItemsCountEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(
                         SaleActivity.this,
-                        "Ingrese cantidad de prendas",
+                        Resource.getString(R.string.enter_items_count),
                         Toast.LENGTH_SHORT
                     ).show();
                 } else if (saleAmountEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(
                         SaleActivity.this,
-                        "Ingrese precio total",
+                            Resource.getString(R.string.enter_total_price),
                         Toast.LENGTH_SHORT
                     ).show();
-                } else if (saleDateTextView.getText().toString().equals("[CustomDate]")) {
+                } else if (saleDateTextView.getText().toString().equals(Resource.getString(R.string.saleDate))) {
                     Toast.makeText(
                         SaleActivity.this,
-                        "Seleccione alguna date de venta",
+                        Resource.getString(R.string.enter_sale_date),
                         Toast.LENGTH_SHORT
                     ).show();
                 } else {
@@ -196,51 +197,49 @@ public class SaleActivity extends ActionBarActivity {
                                 int subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
 
                                 if (subtotal > 0) {
-                                    String saleSummary;
+                                    String saleSummary = Resource.getString(R.string.sale_summary);
 
-                                    // TODO: Hardcode
-                                    saleSummary = "Cliente: " + customer.getName() + "\n";
-                                    saleSummary += "Detalle: " + saleDetailEditText.getText().toString() + "\n";
-                                    saleSummary += "Prendas: " + saleItemsCountEditText.getText().toString() + "\n";
-                                    saleSummary += "Precio: $" + saleAmountEditText.getText().toString() + "\n";
-                                    saleSummary += "Fecha venta: " + saleDateTextView.getText().toString();
+                                    saleSummary = saleSummary.replace("{0}", customer.getName());
+                                    saleSummary = saleSummary.replace("{1}", saleDetailEditText.getText().toString());
+                                    saleSummary = saleSummary.replace("{2}", saleItemsCountEditText.getText().toString());
+                                    saleSummary = saleSummary.replace("{3}", saleAmountEditText.getText().toString());
+                                    saleSummary = saleSummary.replace("{4}", saleDateTextView.getText().toString());
 
-                                    // TODO: Hardcode
+                                    String saleConfirm = Resource.getString(R.string.sale_confirm);
+
+                                    saleConfirm = saleConfirm.replace("{0}", saleSummary);
+
                                     new AlertDialog
                                         .Builder(SaleActivity.this)
-                                        .setMessage("¿Confirmar venta? \n\n" + saleSummary)
-                                        .setPositiveButton("SI", dialogClickListener)
-                                        .setNegativeButton("NO", dialogClickListener)
+                                        .setMessage(saleConfirm)
+                                        .setPositiveButton(Resource.getString(R.string.yes), dialogClickListener)
+                                        .setNegativeButton(Resource.getString(R.string.no), dialogClickListener)
                                         .show();
                                 } else {
-                                    // TODO: Hardcode
                                     Toast.makeText(
                                         SaleActivity.this,
-                                        "El precio de venta no puede ser negativo",
+                                        Resource.getString(R.string.negative_sale_price),
                                         Toast.LENGTH_SHORT
                                     ).show();
                                 }
                             } catch (NumberFormatException ex) {
-                                // TODO: Hardcode
                                 Toast.makeText(
                                     SaleActivity.this,
-                                    "Ingrese sólo números en precio TOTAL",
+                                    Resource.getString(R.string.only_numbers_in_total_price),
                                     Toast.LENGTH_SHORT
                                 ).show();
                             }
                         } else {
-                            // TODO: Hardcode
                             Toast.makeText(
                                 SaleActivity.this,
-                                "La cantidad de prendas no puede ser negativa",
+                                Resource.getString(R.string.negative_items_count),
                                 Toast.LENGTH_SHORT
                             ).show();
                         }
                     } catch (NumberFormatException ex) {
-                        // TODO: Hardcode
                         Toast.makeText(
                             SaleActivity.this,
-                            "Ingrese sólo números en prendas",
+                            Resource.getString(R.string.only_numbers_in_items),
                             Toast.LENGTH_SHORT
                         ).show();
                     }

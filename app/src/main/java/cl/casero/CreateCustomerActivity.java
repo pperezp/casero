@@ -10,6 +10,7 @@ import android.widget.*;
 import cl.casero.bd.DAO;
 import cl.casero.bd.model.Customer;
 import cl.casero.bd.model.K;
+import cl.casero.model.Resource;
 
 public class CreateCustomerActivity extends ActionBarActivity {
     private Button backButton;
@@ -55,17 +56,16 @@ public class CreateCustomerActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     /*Validaciones*/
-                    // TODO: Hardcode
                     if(nameEditText.getText().toString().trim().equals("")){
                         Toast.makeText(
                             CreateCustomerActivity.this.getApplicationContext(),
-                            "Ingrese el nombre del cliente",
+                            Resource.getString(R.string.customer_name_required),
                             Toast.LENGTH_SHORT
                         ).show();
                     }else if(addressEditText.getText().toString().trim().equals("")){
                         Toast.makeText(
                             CreateCustomerActivity.this.getApplicationContext(),
-                            "Ingrese la dirección del cliente",
+                            Resource.getString(R.string.address_required),
                             Toast.LENGTH_SHORT
                         ).show();
                     }else{
@@ -85,12 +85,17 @@ public class CreateCustomerActivity extends ActionBarActivity {
                             addressEditText.setText("");
                             sectorSpinner.setSelection(0);
                             nameEditText.requestFocus();
-                            countTextView.setText("Clientes: " + dao.getCustomersCount());
 
-                            // TODO: Hardcode
+                            String customers = Resource.getString(R.string.customers);
+                            customers = customers.replace("{0}", String.valueOf(dao.getCustomersCount()));
+                            countTextView.setText(customers);
+
+                            String createdCustomerMessage = Resource.getString(R.string.created_customer);
+                            createdCustomerMessage = createdCustomerMessage.replace("{0}", customer.getName());
+
                             Toast.makeText(
                                 CreateCustomerActivity.this.getApplicationContext(),
-                                "Cliente ["+customer.getName() +"] creado!",
+                                createdCustomerMessage,
                                 Toast.LENGTH_SHORT
                             ).show();
 
@@ -100,7 +105,7 @@ public class CreateCustomerActivity extends ActionBarActivity {
                         }catch (NumberFormatException ex){
                             Toast.makeText(
                                 CreateCustomerActivity.this.getApplicationContext(),
-                                "Ingrese sólo números en el saldo",
+                                Resource.getString(R.string.only_numbers_in_balance),
                                 Toast.LENGTH_SHORT
                             ).show();
                         }

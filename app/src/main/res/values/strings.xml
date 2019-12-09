@@ -10,6 +10,85 @@
     <string name="title_activity_estadistica">Estadísticas</string>
     <string name="title_activity_grafico">Gráfico</string>
 
+    <string name="date_pattern">dd \'de\' MMMM \'de\' yyyy</string>
+    <string name="statistics_date_pattern">dd \'de\' MMM \'de\' yyyy</string>
+    <string name="database_date_pattern">HH:MM:SS</string>
+    <string name="payment">Abono</string>
+    <string name="payments">Cobros</string>
+    <string name="sale">Venta</string>
+    <string name="sales">Ventas</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="yes">SI</string>
+    <string name="no">NO</string>
+    <string name="refund_detail">[Devolución]: ${0}\n[Detalle]: {1}</string>
+    <string name="refund_detail_hint">Detalle de devolución:</string>
+    <string name="refund_current_balance">Devolución [Saldo Actual: ${0}]</string>
+    <string name="refund_amount">Monto de devolución:</string>
+    <string name="condonation_current_balance">Condonar deuda [Saldo Actual: ${0}]</string>
+    <string name="condonation_detail">[CONDONACIÓN DEUDA]\n[MOTIVO]: {0}</string>
+    <string name="condonation_reason">Motivo condonación:</string>
+    <string name="total_debt">Deuda total</string>
+    <string name="transaction_detail">[Venta]: {0}\n[Prendas]: {1}\n\n[SubTotal]: ${2}</string>
+    <string name="maintenance_created">Mantención realizada. NUEVO SALDO: ${0}</string>
+    <string name="sale_summary">
+        Cliente: {0}\nDetalle: {1}\nPrendas: {2}\nPrecio: ${3}\nFecha venta: {4}
+    </string>
+    <string name="sale_confirm">¿Confirmar venta?\n\n{0}</string>
+    <string name="saleDate">[Fecha venta]</string>
+
+    <!-- Chart -->
+    <string name="bar_width">0.7</string>
+    <string name="bar_data_text_size">10</string>
+    <!-- Chart -->
+
+    <!-- Validations messages -->
+    <string name="customer_name_required">Ingrese el nombre del cliente</string>
+    <string name="address_required">Ingrese la dirección del cliente</string>
+    <string name="only_numbers_in_balance">Ingrese sólo números en el saldo</string>
+    <string name="only_numbers_in_items">Ingrese sólo números en prendas</string>
+    <string name="only_numbers_in_total_price">Ingrese sólo números en precio TOTAL</string>
+    <string name="only_numbers">Ingrese sólo números</string>
+    <string name="enter_maintenance_detail">Ingrese detalle de mantención</string>
+    <string name="enter_items_count">Ingrese cantidad de prendas</string>
+    <string name="enter_total_price">Ingrese precio total</string>
+    <string name="enter_sale_date">Seleccione alguna fecha de venta</string>
+    <string name="negative_sale_price">El precio de venta no puede ser negativo</string>
+    <string name="negative_items_count">La cantidad de prendas no puede ser negativa</string>
+    <string name="enter_both_dates">Seleccione ambas fechas</string>
+    <!-- Validations messages -->
+
+    <string name="customers">Clientes: {0}</string>
+    <string name="created_customer">Cliente [{0}] creado!</string>
+    <string name="address_of">Dirección de {0}</string>
+
+    <string name="choose_an_option">Escoje una opción:</string>
+    <string name="pay">Abonar</string>
+    <string name="pay_amount">Monto a abonar:</string>
+    <string name="address_change">Cambiar dirección</string>
+    <string name="new_address">Dirección nueva:</string>
+    <string name="address_updated">Dirección actualizada con éxito</string>
+    <string name="no_result">0 resultados</string>
+    <string name="help">Ayuda</string>
+    <string name="result">{0} resultado</string>
+    <string name="results">{0} resultados</string>
+    <string name="top_debtors">Top {0} morosos</string>
+    <string name="top_best_customers">Top {0} mejores clientes</string>
+    <string name="debt_average">Promedio deudas</string>
+    <string name="customers_by_sector">Clientes por sector</string>
+    <string name="statistics_by_year_month">Estadísticas de {0} {1}</string>
+    <string name="statistics_between_dates">Estadísticas entre fechas</string>
+
+    <string-array name="customer_options">
+        <item>Abonar</item>
+        <item>Mantención</item>
+        <item>Devolución</item>
+        <item>CONDONAR DEUDA</item>
+        <item>Ver dirección</item>
+        <item>Cambiar dirección</item>
+        <item>Ver detalles</item>
+    </string-array>
+
     <string-array name="meses_array">
         <item>Enero</item>
         <item>Febrero</item>
@@ -33,5 +112,4 @@
         <item>Quinahue</item>
         <item>Chépica</item>
     </string-array>
-
 </resources>

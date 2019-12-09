@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sales_data_set">#f44336</color>
+    <color name="payments_data_set">#3f51b5</color>
+</resources>

@@ -4,71 +4,70 @@ package cl.casero.bd.model;
  * Created by Patricio Pérez Pinto on 06/01/2016.
  */
 public class MonthlyStatistic {
-    // TODO: Añadir la palabra count a estos contadores
-    private int finishedCards;
-    private int newCards;
-    private int maintenance;
-    private int totalItems;
-    private int payment;
-    private int sale;
+    private int finishedCardsCount;
+    private int newCardsCount;
+    private int maintenanceCount;
+    private int totalItemsCount;
+    private int paymentsCount;
+    private int salesCount;
 
-    public int getFinishedCards() {
-        return finishedCards;
+    public int getFinishedCardsCount() {
+        return finishedCardsCount;
     }
 
-    public void setFinishedCards(int finishedCards) {
-        this.finishedCards = finishedCards;
+    public void setFinishedCardsCount(int finishedCardsCount) {
+        this.finishedCardsCount = finishedCardsCount;
     }
 
-    public int getNewCards() {
-        return newCards;
+    public int getNewCardsCount() {
+        return newCardsCount;
     }
 
-    public void setNewCards(int newCards) {
-        this.newCards = newCards;
+    public void setNewCardsCount(int newCardsCount) {
+        this.newCardsCount = newCardsCount;
     }
 
-    public int getMaintenance() {
-        return maintenance;
+    public int getMaintenanceCount() {
+        return maintenanceCount;
     }
 
-    public void setMaintenance(int maintenance) {
-        this.maintenance = maintenance;
+    public void setMaintenanceCount(int maintenanceCount) {
+        this.maintenanceCount = maintenanceCount;
     }
 
-    public int getTotalItems() {
-        return totalItems;
+    public int getTotalItemsCount() {
+        return totalItemsCount;
     }
 
-    public void setTotalItems(int totalItems) {
-        this.totalItems = totalItems;
+    public void setTotalItemsCount(int totalItemsCount) {
+        this.totalItemsCount = totalItemsCount;
     }
 
-    public int getPayment() {
-        return payment;
+    public int getPaymentsCount() {
+        return paymentsCount;
     }
 
-    public void setPayment(int payment) {
-        this.payment = payment;
+    public void setPaymentsCount(int paymentsCount) {
+        this.paymentsCount = paymentsCount;
     }
 
-    public int getSale() {
-        return sale;
+    public int getSalesCount() {
+        return salesCount;
     }
 
-    public void setSale(int sale) {
-        this.sale = sale;
+    public void setSalesCount(int salesCount) {
+        this.salesCount = salesCount;
     }
 
     @Override
     public String toString() {
         return "MonthlyStatistic{" +
-                "finishedCards=" + finishedCards +
-                ", newCards=" + newCards +
-                ", maintenance=" + maintenance +
-                ", totalItems=" + totalItems +
-                ", payment=" + payment +
-                ", sale=" + sale +
+                "finishedCards=" + finishedCardsCount +
+                ", newCards=" + newCardsCount +
+                ", maintenance=" + maintenanceCount +
+                ", totalItems=" + totalItemsCount +
+                ", payment=" + paymentsCount +
+                ", sale=" + salesCount +
                 '}';
     }
 }

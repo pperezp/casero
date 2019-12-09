@@ -10,11 +10,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.casero.R;
 import cl.casero.bd.model.Customer;
 import cl.casero.bd.model.K;
 import cl.casero.bd.model.MonthlyStatistic;
 import cl.casero.bd.model.Statistic;
 import cl.casero.bd.model.Transaction;
+import cl.casero.model.Resource;
 
 /**
  * Created by Patricio Pérez Pinto on 04/01/2016.
@@ -35,7 +37,7 @@ public class DAO {
 
     public DAO(Context context) {
         this.context = context;
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
     }
 
     public int createCustomer(Customer customer){
@@ -524,7 +526,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setFinishedCards(cursor.getInt(0));
+                monthlyStatistic.setFinishedCardsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -548,7 +550,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setNewCards(cursor.getInt(0));
+                monthlyStatistic.setNewCardsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -572,7 +574,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setMaintenance(cursor.getInt(0));
+                monthlyStatistic.setMaintenanceCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -594,7 +596,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setTotalItems(cursor.getInt(0));
+                monthlyStatistic.setTotalItemsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -617,7 +619,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setPayment(cursor.getInt(0));
+                monthlyStatistic.setPaymentsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -641,7 +643,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setSale(cursor.getInt(0));
+                monthlyStatistic.setSalesCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -682,7 +684,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setFinishedCards(cursor.getInt(0));
+                monthlyStatistic.setFinishedCardsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -704,7 +706,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setNewCards(cursor.getInt(0));
+                monthlyStatistic.setNewCardsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -726,7 +728,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setMaintenance(cursor.getInt(0));
+                monthlyStatistic.setMaintenanceCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -746,7 +748,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setTotalItems(cursor.getInt(0));
+                monthlyStatistic.setTotalItemsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -767,7 +769,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setPayment(cursor.getInt(0));
+                monthlyStatistic.setPaymentsCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 
@@ -789,7 +791,7 @@ public class DAO {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setSale(cursor.getInt(0));
+                monthlyStatistic.setSalesCount(cursor.getInt(0));
             }while(cursor.moveToNext());
         }
 

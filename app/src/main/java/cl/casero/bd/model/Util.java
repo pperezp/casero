@@ -11,10 +11,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import cl.casero.R;
+import cl.casero.model.Resource;
+
 /**
  * Created by Patricio Pérez Pinto on 09/01/2016.
  */
 public class Util {
+    // TODO: Eliminar este método para formatear correctamente los precios
     public static String formatPrice(int price){
         String priceStr = String.valueOf(price);
         String aux = "";
@@ -52,8 +56,7 @@ public class Util {
         builder.setTitle(title);
         builder.setMessage(message);
 
-        // TODO: Hardcode
-        builder.setPositiveButton("Ok", null);
+        builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
         builder.create().show();
     }
