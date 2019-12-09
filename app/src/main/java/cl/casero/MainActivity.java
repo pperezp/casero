@@ -116,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
             transaction.setCustomerId((int) K.customerId);
 
             String refundDetail = Resource.getString(R.string.refund_detail);
-            refundDetail = refundDetail.replace("{0}", String.valueOf(refundAmount));
+            refundDetail = refundDetail.replace("{0}", Util.formatPrice(refundAmount));
             refundDetail = refundDetail.replace("{1}", refundDetailInput);
 
             transaction.setDetail(refundDetail);
@@ -202,6 +202,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        instance = this;
+
         loadComponents();
         loadListeners();
         loadOnClickCustomerList();
@@ -212,8 +214,6 @@ public class MainActivity extends ActionBarActivity {
             searchNameEditText.setText(K.searchName);
             searchNameEditText.setSelection(K.searchName.length(), K.searchName.length());
         }
-
-        instance = this;
     }
 
     private void loadOnClickCustomerList() {
@@ -287,7 +287,7 @@ public class MainActivity extends ActionBarActivity {
                                 AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
 
                                 String title = Resource.getString(R.string.refund_current_balance);
-                                title = title.replace("{0}", String.valueOf(currentBalance));
+                                title = title.replace("{0}", Util.formatPrice(currentBalance));
 
                                 bui.setTitle(title);
 
@@ -359,7 +359,7 @@ public class MainActivity extends ActionBarActivity {
                                 bui = new AlertDialog.Builder(MainActivity.this);
 
                                 String condonationTitle = Resource.getString(R.string.condonation_current_balance);
-                                condonationTitle = condonationTitle.replace("{0}", String.valueOf(currentBalance));
+                                condonationTitle = condonationTitle.replace("{0}", Util.formatPrice(currentBalance));
 
                                 bui.setTitle(condonationTitle);
 
@@ -572,7 +572,7 @@ public class MainActivity extends ActionBarActivity {
                                     Util.message(
                                         MainActivity.this,
                                         Resource.getString(R.string.debt_average),
-                                        "$ "+Util.formatPrice(dao.getAverageDebt()) // TODO: Formatear como debe ser
+                                        Util.formatPrice(dao.getAverageDebt())
                                     );
 
                                     break;
@@ -741,7 +741,7 @@ public class MainActivity extends ActionBarActivity {
 
             int totalDebt = dao.getTotalDebt();
 
-            builder.setMessage("$ "+ Util.formatPrice(totalDebt)); // TODO: Formatear como corresponde
+            builder.setMessage(Util.formatPrice(totalDebt));
 
             builder.setPositiveButton(Resource.getString(R.string.ok), null);
 

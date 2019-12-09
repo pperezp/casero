@@ -23,6 +23,7 @@ import cl.casero.bd.DAO;
 import cl.casero.bd.model.Customer;
 import cl.casero.bd.model.K;
 import cl.casero.bd.model.Transaction;
+import cl.casero.bd.model.Util;
 import cl.casero.model.Resource;
 
 public class SaleActivity extends ActionBarActivity {
@@ -47,10 +48,10 @@ public class SaleActivity extends ActionBarActivity {
             SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
             SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.date_pattern));
             try {
-                K.date = f.parse(anio+"-"+(mes+1)+"-"+dia);
+                String selectedDate = anio+"-"+(mes+1)+"-"+dia;
+                K.date = f.parse(selectedDate);
                 saleDateTextView.setText(f2.format(K.date));
-            }catch (ParseException ex){
-            }
+            }catch (ParseException ex){}
         }
     };
     /*FECHA!*/
@@ -126,7 +127,7 @@ public class SaleActivity extends ActionBarActivity {
 
                                         transactionDetail = transactionDetail.replace("{0}",sailDetail);
                                         transactionDetail = transactionDetail.replace("{1}",String.valueOf(itemsCount));
-                                        transactionDetail = transactionDetail.replace("{2}",String.valueOf(subtotal));
+                                        transactionDetail = transactionDetail.replace("{2}", Util.formatPrice(subtotal));
 
                                         transaction.setDetail(transactionDetail);
                                         transaction.setDate(K.date);
@@ -143,7 +144,7 @@ public class SaleActivity extends ActionBarActivity {
 
                                         String maintenanceCreated = Resource.getString(R.string.maintenance_created);
 
-                                        maintenanceCreated = maintenanceCreated.replace("{0}", String.valueOf(currentBalance));
+                                        maintenanceCreated = maintenanceCreated.replace("{0}", Util.formatPrice(currentBalance));
 
                                         Toast.makeText(
                                             SaleActivity.this,
@@ -199,10 +200,13 @@ public class SaleActivity extends ActionBarActivity {
                                 if (subtotal > 0) {
                                     String saleSummary = Resource.getString(R.string.sale_summary);
 
+                                    String saleAmountString = saleAmountEditText.getText().toString();
+                                    Integer saleAmount = Integer.parseInt(saleAmountString);
+
                                     saleSummary = saleSummary.replace("{0}", customer.getName());
                                     saleSummary = saleSummary.replace("{1}", saleDetailEditText.getText().toString());
                                     saleSummary = saleSummary.replace("{2}", saleItemsCountEditText.getText().toString());
-                                    saleSummary = saleSummary.replace("{3}", saleAmountEditText.getText().toString());
+                                    saleSummary = saleSummary.replace("{3}", Util.formatPrice(saleAmount));
                                     saleSummary = saleSummary.replace("{4}", saleDateTextView.getText().toString());
 
                                     String saleConfirm = Resource.getString(R.string.sale_confirm);

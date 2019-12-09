@@ -186,8 +186,8 @@ public class StatisticsActivity extends ActionBarActivity {
         newCardsTextView.setText(String.valueOf(monthlyStatistic.getNewCardsCount()));
         maintenanceTextView.setText(String.valueOf(monthlyStatistic.getMaintenanceCount()));
         itemCountsTextView.setText(String.valueOf(monthlyStatistic.getTotalItemsCount()));
-        paymentsTextView.setText("$ "+ Util.formatPrice(monthlyStatistic.getPaymentsCount()));
-        salesTextView.setText("$ "+ Util.formatPrice(monthlyStatistic.getSalesCount()));
+        paymentsTextView.setText(Util.formatPrice(monthlyStatistic.getPaymentsCount()));
+        salesTextView.setText(Util.formatPrice(monthlyStatistic.getSalesCount()));
     }
 
     private void loadComponents() {

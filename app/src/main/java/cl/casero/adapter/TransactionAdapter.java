@@ -83,7 +83,7 @@ public class TransactionAdapter extends BaseAdapter {
             balanceTextView.setTextColor(transactionColor);
         }
 
-        balanceTextView.setText("$"+ Util.formatPrice(transaction.getBalance()));
+        balanceTextView.setText(Util.formatPrice(transaction.getBalance()));
 
         return view;
     }

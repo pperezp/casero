@@ -72,7 +72,7 @@ public class CustomerAdapter extends BaseAdapter {
         int balance = dao.getDebt(customer.getId());
 
         TextView balanceTextView = (TextView) view.findViewById(R.id.customerBalanceTextView);
-        balanceTextView.setText("$ "+ Util.formatPrice(balance));
+        balanceTextView.setText(Util.formatPrice(balance));
 
         return view;
     }

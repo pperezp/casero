@@ -10,9 +10,11 @@
     <string name="title_activity_estadistica">Estadísticas</string>
     <string name="title_activity_grafico">Gráfico</string>
 
+    <string name="language_tag">es-CL</string>
+    <string name="language_price_symbol">Ch</string>
     <string name="date_pattern">dd \'de\' MMMM \'de\' yyyy</string>
     <string name="statistics_date_pattern">dd \'de\' MMM \'de\' yyyy</string>
-    <string name="database_date_pattern">HH:MM:SS</string>
+    <string name="database_date_pattern">yyyy-MM-dd</string>
     <string name="payment">Abono</string>
     <string name="payments">Cobros</string>
     <string name="sale">Venta</string>
@@ -21,18 +23,18 @@
     <string name="cancel">Cancelar</string>
     <string name="yes">SI</string>
     <string name="no">NO</string>
-    <string name="refund_detail">[Devolución]: ${0}\n[Detalle]: {1}</string>
+    <string name="refund_detail">[Devolución]: {0}\n[Detalle]: {1}</string>
     <string name="refund_detail_hint">Detalle de devolución:</string>
-    <string name="refund_current_balance">Devolución [Saldo Actual: ${0}]</string>
+    <string name="refund_current_balance">Devolución [Saldo Actual: {0}]</string>
     <string name="refund_amount">Monto de devolución:</string>
-    <string name="condonation_current_balance">Condonar deuda [Saldo Actual: ${0}]</string>
+    <string name="condonation_current_balance">Condonar deuda [Saldo Actual: {0}]</string>
     <string name="condonation_detail">[CONDONACIÓN DEUDA]\n[MOTIVO]: {0}</string>
     <string name="condonation_reason">Motivo condonación:</string>
     <string name="total_debt">Deuda total</string>
-    <string name="transaction_detail">[Venta]: {0}\n[Prendas]: {1}\n\n[SubTotal]: ${2}</string>
-    <string name="maintenance_created">Mantención realizada. NUEVO SALDO: ${0}</string>
+    <string name="transaction_detail">[Venta]: {0}\n[Prendas]: {1}\n\n[SubTotal]: {2}</string>
+    <string name="maintenance_created">Mantención realizada. NUEVO SALDO: {0}</string>
     <string name="sale_summary">
-        Cliente: {0}\nDetalle: {1}\nPrendas: {2}\nPrecio: ${3}\nFecha venta: {4}
+        Cliente: {0}\nDetalle: {1}\nPrendas: {2}\nPrecio: {3}\nFecha venta: {4}
     </string>
     <string name="sale_confirm">¿Confirmar venta?\n\n{0}</string>
     <string name="saleDate">[Fecha venta]</string>
