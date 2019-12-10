@@ -2,7 +2,6 @@ package cl.casero.adapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import cl.casero.R;
-import cl.casero.bd.model.Transaction;
-import cl.casero.bd.model.Util;
+import cl.casero.model.Transaction;
+import cl.casero.model.util.Util;
+import cl.casero.model.Resource;
 
 /**
  * Created by Patricio Pérez Pinto on 04/01/2016.
@@ -45,8 +45,9 @@ public class TransactionAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View contentView, ViewGroup parent) {
         View view = contentView;
-        // TODO: Arreglar este hardcode
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd 'de' MMMM 'de' yyyy");
+
+        String format = Resource.getString(R.string.date_pattern);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format);
 
         if (contentView == null) {
             LayoutInflater inflater =
@@ -64,19 +65,30 @@ public class TransactionAdapter extends BaseAdapter {
         TextView detailTextView = (TextView) view.findViewById(R.id.detailTextView);
         TextView balanceTextView = (TextView) view.findViewById(R.id.transactionBalanceTextView);
 
-        dateTextView.setText("["+dateFormat.format(transaction.getDate())+"]");
+
+        String transactionDate = Resource.getString(R.string.transaction_date);
+
+        transactionDate = transactionDate.replace("{0}", dateFormat.format(transaction.getDate()));
+
+        dateTextView.setText(transactionDate);
         detailTextView.setText(transaction.getDetail());
 
-        // TODO: Arreglar este hardcode
-        if(transaction.getDetail().contains("Abono")){
-            balanceTextView.setTextColor(Color.parseColor("#f44336"));
-        }else if(transaction.getDetail().contains("Venta")){
-            balanceTextView.setTextColor(Color.parseColor("#4caf50"));
+        String payment = Resource.getString(R.string.payment);
+        String sale = Resource.getString(R.string.sale);
+
+        int paymentColor = Resource.getColor(R.color.payment);
+        int saleColor = Resource.getColor(R.color.sale);
+        int transactionColor = Resource.getColor(R.color.transaction);
+
+        if(transaction.getDetail().contains(payment)){
+            balanceTextView.setTextColor(paymentColor);
+        }else if(transaction.getDetail().contains(sale)){
+            balanceTextView.setTextColor(saleColor);
         }else{
-            balanceTextView.setTextColor(Color.parseColor("#3f51b5"));
+            balanceTextView.setTextColor(transactionColor);
         }
 
-        balanceTextView.setText("$"+ Util.formatPrice(transaction.getBalance()));
+        balanceTextView.setText(Util.formatPrice(transaction.getBalance()));
 
         return view;
     }

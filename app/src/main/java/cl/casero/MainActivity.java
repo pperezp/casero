@@ -27,25 +27,35 @@ import java.util.Calendar;
 import java.util.List;
 
 import cl.casero.adapter.CustomerAdapter;
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.Customer;
-import cl.casero.bd.model.K;
-import cl.casero.bd.model.Transaction;
-import cl.casero.bd.model.Util;
+import cl.casero.model.Customer;
+import cl.casero.model.util.K;
+import cl.casero.model.Transaction;
+import cl.casero.model.util.Util;
+import cl.casero.model.Resource;
 import cl.casero.model.TestMail;
+import cl.casero.service.CustomerService;
+import cl.casero.service.StatisticsService;
+import cl.casero.service.TransactionService;
+import cl.casero.service.impl.CustomerServiceImpl;
+import cl.casero.service.impl.StatisticsServiceImpl;
+import cl.casero.service.impl.TransactionServiceImpl;
 
 public class MainActivity extends ActionBarActivity {
-    private DAO dao;
-
     private EditText searchNameEditText;
     private ListView customersListView;
     private TextView resultTextView;
 
-    private String refundDetail;
-    private String condonationDetail;
+    private String refundDetailInput;
+    private String condonationDetailInput;
 
     private int payment;
     private int refundAmount;
+
+    private static MainActivity instance;
+
+    private CustomerService customerService;
+    private TransactionService transactionService;
+    private StatisticsService statisticsService;
 
     // TODO: Separar
     /*FECHA!*/
@@ -54,9 +64,6 @@ public class MainActivity extends ActionBarActivity {
         public void onDateSet(DatePicker arg0, int year, int month, int day) {
             // el mes comienza de 0
             // esto se llama cuando el usuario presiona OK en la date del payment
-
-            DAO dao = new DAO(MainActivity.this);
-
             Transaction transaction = new Transaction();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -66,19 +73,19 @@ public class MainActivity extends ActionBarActivity {
             transaction.setCustomerId((int) K.customerId);
             transaction.setDetail("[Abono]: $"+ payment);
 
-            int balance = dao.getDebt(transaction.getCustomerId());
+            int balance = customerService.getDebt(transaction.getCustomerId());
 
             balance = balance - payment;
             transaction.setBalance(balance);
 
-            dao.pay(transaction, payment);
+            transactionService.pay(transaction, payment);
 
 
             /*cargo la lista de customers de nuevo*/
             String searchName = searchNameEditText.getText().toString();
             K.searchName = searchNameEditText.getText().toString();
 
-            List<Customer> customers = dao.getCustomers(searchName);
+            List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
             if(!customers.isEmpty()){
@@ -100,30 +107,34 @@ public class MainActivity extends ActionBarActivity {
             // el mes comienza de 0
             // esto se llama cuando el usuario presiona OK en la date del payment
 
-            DAO dao = new DAO(MainActivity.this);
-
             Transaction transaction = new Transaction();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            String datePattern = Resource.getString(R.string.database_date_pattern);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
             try {
                 transaction.setDate(dateFormat.parse(year+"-"+(month+1)+"-"+day));
             }catch (ParseException ex){}
 
             transaction.setCustomerId((int) K.customerId);
-            // TODO: Hardcode
-            transaction.setDetail("[Devolución]: $"+ refundAmount +"\n[Detalle]: "+ refundDetail);
-            int balance = dao.getDebt(transaction.getCustomerId());
+
+            String refundDetail = Resource.getString(R.string.refund_detail);
+            refundDetail = refundDetail.replace("{0}", Util.formatPrice(refundAmount));
+            refundDetail = refundDetail.replace("{1}", refundDetailInput);
+
+            transaction.setDetail(refundDetail);
+            int balance = customerService.getDebt(transaction.getCustomerId());
 
             balance = balance - refundAmount;
             transaction.setBalance(balance);
 
-            dao.refund(transaction, refundAmount);
+            transactionService.refund(transaction, refundAmount);
 
 
             /*cargo la lista de customers de nuevo*/
             String searchName = searchNameEditText.getText().toString();
             K.searchName = searchNameEditText.getText().toString();
 
-            List<Customer> customers = dao.getCustomers(searchName);
+            List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
             if(!customers.isEmpty()){
@@ -146,31 +157,31 @@ public class MainActivity extends ActionBarActivity {
             //Toast.makeText(MainActivity.this.getApplicationContext(),"["+payment+"]["+anio+" - "+(mes+1)+" - "+dia+"]", Toast.LENGTH_SHORT).show();
             // esto se llama cuando el usuario presiona OK en la date del payment
 
-            DAO dao = new DAO(MainActivity.this);
-
             Transaction transaction = new Transaction();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             try {
                 transaction.setDate(dateFormat.parse(anio+"-"+(mes+1)+"-"+dia));
-            }catch (ParseException ex){
-            }
+            }catch (ParseException ex){}
 
             transaction.setCustomerId((int)K.customerId);
-            // TODO: Hardcode
-            transaction.setDetail("[CONDONACIÓN DEUDA]\n[MOTIVO]: "+ condonationDetail);
-            int balance = dao.getDebt(transaction.getCustomerId());
+
+            String condonationDetail = Resource.getString(R.string.condonation_detail);
+            condonationDetail = condonationDetail.replace("{0}", condonationDetailInput);
+
+            transaction.setDetail(condonationDetail);
+            int balance = customerService.getDebt(transaction.getCustomerId());
 
             // TODO: Crear un método que deje el saldo en 0
             transaction.setBalance(0);
 
-            dao.debtCondonation(transaction, balance);
+            transactionService.debtCondonation(transaction, balance);
 
             /*cargo la lista de customers de nuevo*/
             String searchName = searchNameEditText.getText().toString();
             K.searchName = searchNameEditText.getText().toString();
 
-            List<Customer> customers = dao.getCustomers(searchName);
+            List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
             if(!customers.isEmpty()){
@@ -190,11 +201,15 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        instance = this;
+
+        customerService = new CustomerServiceImpl();
+        transactionService = new TransactionServiceImpl();
+        statisticsService = new StatisticsServiceImpl();
+
         loadComponents();
         loadListeners();
         loadOnClickCustomerList();
-
-        dao = new DAO(this);
 
         if(K.searchName != null){
             searchNameEditText.setText(K.searchName);
@@ -208,17 +223,11 @@ public class MainActivity extends ActionBarActivity {
             public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
                 K.customerId = id;
 
-                // TODO Hardcode
-                CharSequence options[] = new CharSequence[] {
-                    "Abonar", "Mantención","Devolución",
-                    "CONDONAR DEUDA","Ver dirección",
-                    "Cambiar dirección","Ver detalles"
-                };
+                CharSequence options[] = Resource.getStringArray(R.array.customer_options);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
-                // TODO Hardcode
-                builder.setTitle("Escoje una opción:");
+                builder.setTitle(Resource.getString(R.string.choose_an_option));
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -226,18 +235,15 @@ public class MainActivity extends ActionBarActivity {
                             // TODO: Cambiar numeros por constantes enum
                             case 0: // pay
                                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                // TODO Hardcode
-                                builder.setTitle("Abonar");
+                                builder.setTitle(Resource.getString(R.string.pay));
                                 final EditText paymentEditText = new EditText(MainActivity.this);
 
                                 paymentEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-                                // TODO Hardcode
-                                paymentEditText.setHint("Monto a abonar:");
+                                paymentEditText.setHint(Resource.getString(R.string.pay_amount));
                                 paymentEditText.requestFocus();
                                 builder.setView(paymentEditText);
 
-                                // TODO Hardcode
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                builder.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         String paymentString = paymentEditText.getText().toString();
@@ -249,18 +255,16 @@ public class MainActivity extends ActionBarActivity {
                                             showDialog(999);
                                             /*FECHA!*/
                                         }catch (NumberFormatException ex){
-                                            // TODO Hardcode
                                             Toast.makeText(
                                                 MainActivity.this.getApplicationContext(),
-                                                "Ingrese sólo números",
+                                                Resource.getString(R.string.only_numbers),
                                                 Toast.LENGTH_SHORT
                                             ).show();
                                         }
                                     }
                                 });
 
-                                // TODO Hardcode
-                                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                builder.setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
@@ -279,13 +283,17 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 2: // Devolución
-                                int currentBalance = dao.getDebt((int)K.customerId);
+                                int currentBalance = customerService.getDebt((int)K.customerId);
 
                                 AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
-                                bui.setTitle("Devolución [Saldo Actual: $"+currentBalance+"]");// TODO Hardcode
+
+                                String title = Resource.getString(R.string.refund_current_balance);
+                                title = title.replace("{0}", Util.formatPrice(currentBalance));
+
+                                bui.setTitle(title);
 
                                 final AlertDialog.Builder bui2 = new AlertDialog.Builder(MainActivity.this);
-                                bui2.setTitle("Devolución [Saldo Actual: $"+currentBalance+"]");// TODO Hardcode
+                                bui2.setTitle(title);
 
                                 // Set up the input
                                 final EditText detailEditText = new EditText(MainActivity.this);
@@ -293,34 +301,32 @@ public class MainActivity extends ActionBarActivity {
 
                                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                                 amountEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-                                amountEditText.setHint("Monto de devolución:");// TODO Hardcode
+                                amountEditText.setHint(Resource.getString(R.string.refund_amount));
                                 amountEditText.requestFocus();
                                 bui.setView(amountEditText);
 
                                 detailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                detailEditText.setHint("Detalle de devolución:");// TODO Hardcode
+                                detailEditText.setHint(Resource.getString(R.string.refund_detail_hint));
                                 detailEditText.requestFocus();
                                 bui2.setView(detailEditText);
 
-                                // TODO Hardcode
-                                bui.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                bui.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         bui2.show();
                                     }
-                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {// TODO Hardcode
+                                    public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
                                     }
                                 });
 
-                                // TODO Hardcode
-                                bui2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                bui2.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         String amountString = amountEditText.getText().toString();
-                                        refundDetail = detailEditText.getText().toString();
+                                        refundDetailInput = detailEditText.getText().toString();
 
                                         try {
                                             refundAmount = Integer.parseInt(amountString);
@@ -330,15 +336,14 @@ public class MainActivity extends ActionBarActivity {
                                             showDialog(1);
                                             /*FECHA!*/
                                         }catch (NumberFormatException ex){
-                                            // TODO Hardcode
                                             Toast.makeText(
                                                 MainActivity.this.getApplicationContext(),
-                                                "Ingrese sólo números",
+                                                    Resource.getString(R.string.only_numbers),
                                                 Toast.LENGTH_SHORT
                                             ).show();
                                         }
                                     }
-                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {// TODO Hardcode
+                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
@@ -350,33 +355,37 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 3: // CONDONAR DEUDA
-                                currentBalance = dao.getDebt((int)K.customerId);
+                                currentBalance = customerService.getDebt((int)K.customerId);
 
                                 bui = new AlertDialog.Builder(MainActivity.this);
-                                bui.setTitle("Condonar debt [Saldo Actual: $"+currentBalance+"]");// TODO Hardcode
+
+                                String condonationTitle = Resource.getString(R.string.condonation_current_balance);
+                                condonationTitle = condonationTitle.replace("{0}", Util.formatPrice(currentBalance));
+
+                                bui.setTitle(condonationTitle);
 
                                 final EditText condonationDetailEditText = new EditText(MainActivity.this);
 
                                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                                 condonationDetailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                condonationDetailEditText.setHint("Motivo condonación:");// TODO Hardcode
+                                condonationDetailEditText.setHint(Resource.getString(R.string.condonation_reason));
                                 condonationDetailEditText.requestFocus();
 
                                 bui.setView(condonationDetailEditText);
 
 
-                                bui.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                bui.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {// TODO Hardcode
-                                        condonationDetail = condonationDetailEditText.getText().toString();
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        condonationDetailInput = condonationDetailEditText.getText().toString();
                                         /*FECHA!*/
                                         // TODO Deprecated
                                         showDialog(2);
                                         /*FECHA!*/
                                     }
-                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {// TODO Hardcode
+                                    public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
                                     }
                                 });
@@ -385,48 +394,51 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 4:// ver dirección
-                                Customer customer = dao.getCustomer(K.customerId);
+                                Customer customer = customerService.readById(K.customerId);
 
                                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
-                                
-                                b.setTitle("Dirección de " + customer.getName());// TODO Hardcode
+
+                                String addressOf = Resource.getString(R.string.address_of);
+                                addressOf = addressOf.replace("{0}",customer.getName());
+
+                                b.setTitle(addressOf);
                                 b.setMessage(customer.getAddress() +", "+customer.getSector());
-                                b.setPositiveButton("Ok", null);// TODO Hardcode
+                                b.setPositiveButton(Resource.getString(R.string.ok), null);
                                 b.create().show();
                                 break;
 
                             case 5:// cambiar dirección
                                 // TODO: Ojo con los nombres, no se puede poner customer
-                                Customer customer2 = dao.getCustomer(id);
+                                Customer customer2 = customerService.readById(id);
 
                                 builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle("Cambiar dirección");// TODO Hardcode
+                                builder.setTitle(Resource.getString(R.string.address_change));
 
                                 final EditText addressEditText = new EditText(MainActivity.this);
 
                                 addressEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                addressEditText.setHint("Dirección nueva:");// TODO Hardcode
+                                addressEditText.setHint(Resource.getString(R.string.new_address));
                                 addressEditText.setText(customer2.getAddress());
                                 addressEditText.requestFocus();
 
                                 builder.setView(addressEditText);
 
-                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                builder.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {// TODO Hardcode
+                                    public void onClick(DialogInterface dialog, int which) {
                                         String newAddress = addressEditText.getText().toString();
 
-                                        dao.updateAddress(K.customerId, newAddress);
+                                        customerService.updateAddress(K.customerId, newAddress);
 
                                         Toast.makeText(
                                             MainActivity.this.getApplicationContext(),
-                                            "Dirección cambiada con éxito", // TODO Hardcode
+                                            Resource.getString(R.string.address_updated),
                                             Toast.LENGTH_SHORT
                                         ).show();
                                     }
-                                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {// TODO Hardcode
+                                    public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
                                     }
                                 });
@@ -493,7 +505,7 @@ public class MainActivity extends ActionBarActivity {
             public void afterTextChanged(Editable s) {
                 try {
                     if (searchNameEditText.getText().toString().equals("")) {
-                        resultTextView.setText("0 resultados"); // TODO: Hardcode
+                        resultTextView.setText(Resource.getString(R.string.no_result));
                         customersListView.setAdapter(
                             new CustomerAdapter(
                                 MainActivity.this,
@@ -514,22 +526,21 @@ public class MainActivity extends ActionBarActivity {
                             helpText += "\tpd: Promedio total de deudas\n";
                             helpText += "\tcps: Cantidad de customers por sector\n";
 
-                            // TODO: Hardcode
-                            Util.message(MainActivity.this, "Ayuda", helpText);
+                            Util.message(MainActivity.this, Resource.getString(R.string.help), helpText);
                         }else if (command.charAt(1) == 'm') {// Comando morosos
                             String limitStr = command.split(" ")[1];
 
                             try {
                                 int limit = Integer.parseInt(limitStr);
 
-                                DAO dao = new DAO(MainActivity.this);
-                                List<Customer> debtors = dao.getDebtors(limit);
+                                List<Customer> debtors = statisticsService.getDebtors(limit);
 
-                                // TODO: Hardcode
+                                int debtorsSize = debtors.size();
+
                                 resultTextView.setText(
-                                    debtors.size()+(debtors.size() == 1 ?
-                                    " resultado" :
-                                    " resultados")
+                                    (debtorsSize == 1 ?
+                                    Resource.getString(R.string.result).replace("{0}", String.valueOf(debtorsSize)) :
+                                    Resource.getString(R.string.results).replace("{0}", String.valueOf(debtorsSize)))
                                 );
 
                                 customersListView.setAdapter(
@@ -539,43 +550,48 @@ public class MainActivity extends ActionBarActivity {
                                     )
                                 );
 
+                                String topDebtors = Resource.getString(R.string.top_debtors);
+
+                                topDebtors = topDebtors.replace("{0}", String.valueOf(limit));
+
                                 Toast.makeText(
                                     MainActivity.this.getApplicationContext(),
-                                    "Top " + limit + " morosos", // TODO: Hardcode
+                                    topDebtors,
                                     Toast.LENGTH_SHORT
                                 ).show();
                             } catch (NumberFormatException ex) {}
                         }else if(command.charAt(1) == 'c'){ // comando generico
                             String parameter = command.split(" ")[1];
 
-                            DAO dao = new DAO(MainActivity.this);
-
                             switch (parameter){
-                                case "pd":// TODO: Hardcode
+                                case "pd":// TODO: Arreglar
                                     // promedio deuda
 
-                                    // TODO: Hardcode
                                     Util.message(
                                         MainActivity.this,
-                                        "Promedio deudas", "$ "+Util.formatPrice(dao.getAverageDebt())
+                                        Resource.getString(R.string.debt_average),
+                                        Util.formatPrice(statisticsService.getAverageDebt())
                                     );
 
                                     break;
 
-                                case "cps":// TODO: Hardcode
+                                case "cps":
                                     // Cantidad de customers por sector
                                     String summary = "";
 
-                                    // TODO: Hardcode
-                                    summary += "Santa Cruz: "+dao.getCustomersCount("Santa Cruz")+"\n";
-                                    summary += "Los Boldos: "+dao.getCustomersCount("Los Boldos")+"\n";
-                                    summary += "Barreales: "+dao.getCustomersCount("Barreales")+"\n";
-                                    summary += "Palmilla: "+dao.getCustomersCount("Palmilla")+"\n";
-                                    summary += "Quinahue: "+dao.getCustomersCount("Quinahue")+"\n";
-                                    summary += "Chépica: "+dao.getCustomersCount("Chépica");
+                                    // TODO: Arreglar
+                                    summary += "Santa Cruz: "+statisticsService.getCustomersCount("Santa Cruz")+"\n";
+                                    summary += "Los Boldos: "+statisticsService.getCustomersCount("Los Boldos")+"\n";
+                                    summary += "Barreales: "+statisticsService.getCustomersCount("Barreales")+"\n";
+                                    summary += "Palmilla: "+statisticsService.getCustomersCount("Palmilla")+"\n";
+                                    summary += "Quinahue: "+statisticsService.getCustomersCount("Quinahue")+"\n";
+                                    summary += "Chépica: "+statisticsService.getCustomersCount("Chépica");
 
-                                    // TODO: Hardcode
-                                    Util.message(MainActivity.this, "Clientes por sector", summary);
+                                    Util.message(
+                                        MainActivity.this,
+                                        Resource.getString(R.string.customers_by_sector),
+                                        summary
+                                    );
 
                                     break;
                             }
@@ -587,16 +603,14 @@ public class MainActivity extends ActionBarActivity {
                         try {
                             int limit = Integer.parseInt(limitStr);
 
-                            DAO dao = new DAO(MainActivity.this);
-                            List<Customer> bestCustomers = dao.getBestCustomers(limit);
+                            List<Customer> bestCustomers = statisticsService.getBestCustomers(limit);
 
-                            // TODO: Hardcode
+                            int bestCustomersSize = bestCustomers.size();
+
                             resultTextView.setText(
-                                bestCustomers.size() + (
-                                    bestCustomers.size() == 1 ?
-                                    " resultado" :
-                                    " resultados"
-                                )
+                                (bestCustomersSize == 1 ?
+                                Resource.getString(R.string.result).replace("{0}", String.valueOf(bestCustomersSize)) :
+                                Resource.getString(R.string.results).replace("{0}", String.valueOf(bestCustomersSize)))
                             );
 
                             customersListView.setAdapter(
@@ -606,10 +620,13 @@ public class MainActivity extends ActionBarActivity {
                                 )
                             );
 
-                            // TODO: Hardcode
+                            String topBestCustomers = Resource.getString(R.string.top_best_customers);
+
+                            topBestCustomers = topBestCustomers.replace("{0}", String.valueOf(limit));
+
                             Toast.makeText(
                                 MainActivity.this.getApplicationContext(),
-                                "Top " + limit + " customers buenos",
+                                topBestCustomers,
                                 Toast.LENGTH_SHORT
                             ).show();
                         } catch (NumberFormatException ex) {}
@@ -621,16 +638,14 @@ public class MainActivity extends ActionBarActivity {
                         try {
                             int limit = Integer.parseInt(limitStr);
 
-                            DAO dao = new DAO(MainActivity.this);
-                            List<Customer> debtors = dao.getDebtors(limit);
+                            List<Customer> debtors = statisticsService.getDebtors(limit);
 
-                            // TODO: Hardcode
+                            int debtorsSize = debtors.size();
+
                             resultTextView.setText(
-                                debtors.size() + (
-                                    debtors.size() == 1 ?
-                                    " resultado" :
-                                    " resultados"
-                                )
+                                (debtorsSize == 1 ?
+                                Resource.getString(R.string.result).replace("{0}", String.valueOf(debtorsSize)) :
+                                Resource.getString(R.string.results).replace("{0}", String.valueOf(debtorsSize)))
                             );
 
                             customersListView.setAdapter(
@@ -640,17 +655,20 @@ public class MainActivity extends ActionBarActivity {
                                 )
                             );
 
+                            String topDebtors = Resource.getString(R.string.top_debtors);
+
+                            topDebtors = topDebtors.replace("{0}", String.valueOf(limit));
+
                             Toast.makeText(
                                 MainActivity.this.getApplicationContext(),
-                                "Top " + limit + " customers morosos", // TODO: Hardcode
+                                topDebtors,
                                 Toast.LENGTH_SHORT
                             ).show();
                         } catch (NumberFormatException ex) {}
                     }else{
                         String searchName = searchNameEditText.getText().toString();
 
-                        DAO dao = new DAO(MainActivity.this);
-                        List<Customer> customers = dao.getCustomers(searchName);
+                        List<Customer> customers = customerService.readBy(searchName);
 
                         resultTextView.setText(
                             customers.size() + (
@@ -714,15 +732,13 @@ public class MainActivity extends ActionBarActivity {
             MainActivity.this.startActivity(intent);
         }else if(id == R.id.action_verDeudaTotal){
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            // TODO: Hardcode
-            builder.setTitle("Deuda total");
+            builder.setTitle(Resource.getString(R.string.total_debt));
 
-            int totalDebt = dao.getTotalDebt();
+            int totalDebt = statisticsService.getTotalDebt();
 
-            builder.setMessage("$ "+ Util.formatPrice(totalDebt));
+            builder.setMessage(Util.formatPrice(totalDebt));
 
-            // TODO: Hardcode
-            builder.setPositiveButton("Ok", null);
+            builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
             builder.create().show();
         }else if(id == R.id.action_verGrafico){
@@ -742,5 +758,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static MainActivity getInstance(){
+        return instance;
     }
 }

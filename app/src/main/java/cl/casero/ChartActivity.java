@@ -1,6 +1,5 @@
 package cl.casero;
 
-import android.graphics.Color;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -17,10 +16,12 @@ import com.github.mikephil.charting.data.BarEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.MonthlyStatistic;
-import cl.casero.bd.model.CustomDate;
-import cl.casero.bd.model.Util;
+import cl.casero.model.MonthlyStatistic;
+import cl.casero.model.CustomDate;
+import cl.casero.model.util.Util;
+import cl.casero.model.Resource;
+import cl.casero.service.StatisticsService;
+import cl.casero.service.impl.StatisticsServiceImpl;
 
 /*
 * https://github.com/PhilJay/MPAndroidChart
@@ -34,10 +35,14 @@ public class ChartActivity extends ActionBarActivity {
     private Spinner endYearSpinner;
     private Button salesChartButton;
 
+    private StatisticsService statisticsService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
+
+        statisticsService = new StatisticsServiceImpl();
 
         loadComponents();
         loadListeners();
@@ -76,8 +81,8 @@ public class ChartActivity extends ActionBarActivity {
                             // TODO: Revisar si el método getMonthlyStatistic va aquí o no
                             monthlyStatistic = getMonthlyStatistic(month, year);
 
-                            sales.add(new BarEntry(xCount, monthlyStatistic.getSale()));
-                            payments.add(new BarEntry(xCount, monthlyStatistic.getPayment()));
+                            sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
+                            payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                             xCount++;
                         }
                     }else{
@@ -90,8 +95,8 @@ public class ChartActivity extends ActionBarActivity {
                         if(year == startDate.getYear()){
                             for(int mes = startDate.getMonth(); mes <= 12; mes++) {
                                 monthlyStatistic = getMonthlyStatistic(mes, year);
-                                sales.add(new BarEntry(xCount, monthlyStatistic.getSale()));
-                                payments.add(new BarEntry(xCount, monthlyStatistic.getPayment()));
+                                sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
+                                payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                                 xCount++;
                             }
                         }else if(year < endDate.getYear()){
@@ -99,8 +104,8 @@ public class ChartActivity extends ActionBarActivity {
                             // recorro el año (o sea del 1 al 12)
                             for(int mes = 1; mes <= 12; mes++) {
                                 monthlyStatistic = getMonthlyStatistic(mes, year);
-                                sales.add(new BarEntry(xCount, monthlyStatistic.getSale()));
-                                payments.add(new BarEntry(xCount, monthlyStatistic.getPayment()));
+                                sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
+                                payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                                 xCount++;
                             }
 
@@ -109,8 +114,8 @@ public class ChartActivity extends ActionBarActivity {
                             // ende tengo que llegar al f2.getMonth();
                             for(int mes = 1; mes <= endDate.getMonth(); mes++) {
                                 monthlyStatistic = getMonthlyStatistic(mes, year);
-                                sales.add(new BarEntry(xCount, monthlyStatistic.getSale()));
-                                payments.add(new BarEntry(xCount, monthlyStatistic.getPayment()));
+                                sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
+                                payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                                 xCount++;
                             }
                         }
@@ -118,19 +123,18 @@ public class ChartActivity extends ActionBarActivity {
 
                 }
 
-                // TODO: Hardcode
-                BarDataSet salesDataSet = new BarDataSet(sales, "Ventas");
-                BarDataSet paymentsDataSet = new BarDataSet(payments, "Cobros");
+                BarDataSet salesDataSet = new BarDataSet(sales, Resource.getString(R.string.sales));
+                BarDataSet paymentsDataSet = new BarDataSet(payments, Resource.getString(R.string.payments));
 
-                salesDataSet.setColor(Color.parseColor("#f44336"));
-                paymentsDataSet.setColor(Color.parseColor("#3f51b5"));
+                salesDataSet.setColor(Resource.getColor(R.color.sales_data_set));
+                paymentsDataSet.setColor(Resource.getColor(R.color.payments_data_set));
 
                 BarData barData = new BarData(salesDataSet, paymentsDataSet);
 
-                float barWidth = 0.7f; // x2 dataset
+                float barWidth = Resource.getFloat(R.string.bar_width);
 
                 barData.setBarWidth(barWidth);
-                barData.setValueTextSize(10);
+                barData.setValueTextSize(Resource.getInt(R.string.bar_data_text_size));
 
                 barChart.setData(barData);
 
@@ -139,13 +143,13 @@ public class ChartActivity extends ActionBarActivity {
                 Description description = new Description();
                 description.setText("");
                 barChart.setDescription(description);
-                barChart.invalidate(); // refresh
+                barChart.invalidate();
             }
         });
     }
 
     private MonthlyStatistic getMonthlyStatistic(int mes, int anio) {
-        return new DAO(ChartActivity.this).getMonthlyStatistic(mes, anio);
+        return statisticsService.getMonthlyStatistic(mes, anio);
     }
 
     private void loadComponents() {

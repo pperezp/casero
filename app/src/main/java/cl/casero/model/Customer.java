@@ -1,4 +1,4 @@
-package cl.casero.bd.model;
+package cl.casero.model;
 
 /**
  * Created by Patricio Pérez Pinto on 04/01/2016.

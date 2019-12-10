@@ -11,20 +11,20 @@ import android.widget.TextView;
 import java.util.List;
 
 import cl.casero.R;
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.Customer;
-import cl.casero.bd.model.Util;
+import cl.casero.model.Customer;
+import cl.casero.model.util.Util;
+import cl.casero.service.CustomerService;
+import cl.casero.service.impl.CustomerServiceImpl;
 
-/**
- * Created by Patricio Pérez Pinto on 04/01/2016.
- */
 public class CustomerAdapter extends BaseAdapter {
     private Activity activity;
     private List<Customer> customers;
+    private CustomerService customerService;
 
     public CustomerAdapter(Activity activity, List<Customer> customers) {
         this.activity = activity;
         this.customers = customers;
+        this.customerService = new CustomerServiceImpl();
     }
 
     @Override
@@ -67,12 +67,10 @@ public class CustomerAdapter extends BaseAdapter {
         TextView sectorTextView = (TextView) view.findViewById(R.id.sectorTextView);
         sectorTextView.setText(customer.getSector());
 
-        DAO dao = new DAO(this.activity.getApplicationContext());
-
-        int balance = dao.getDebt(customer.getId());
+        int balance = customerService.getDebt(customer.getId());
 
         TextView balanceTextView = (TextView) view.findViewById(R.id.customerBalanceTextView);
-        balanceTextView.setText("$ "+ Util.formatPrice(balance));
+        balanceTextView.setText(Util.formatPrice(balance));
 
         return view;
     }

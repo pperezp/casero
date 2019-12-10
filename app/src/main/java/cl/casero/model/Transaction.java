@@ -1,4 +1,4 @@
-package cl.casero.bd.model;
+package cl.casero.model;
 
 import java.util.Date;
 

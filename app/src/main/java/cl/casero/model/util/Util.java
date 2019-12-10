@@ -1,4 +1,4 @@
-package cl.casero.bd.model;
+package cl.casero.model.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -6,42 +6,29 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import cl.casero.R;
+import cl.casero.model.CustomDate;
+import cl.casero.model.Resource;
 
 /**
  * Created by Patricio Pérez Pinto on 09/01/2016.
  */
 public class Util {
     public static String formatPrice(int price){
-        String priceStr = String.valueOf(price);
-        String aux = "";
-        String formatPrice = "";
+        String languageTag = Resource.getString(R.string.language_tag);
+        String languagePriceSymbol = Resource.getString(R.string.language_price_symbol);
+        Locale locale = Locale.forLanguageTag(languageTag);
 
-        int count = 0;
-
-        /*Con este ciclo pongo los puntos, pero queda el número al revés*/
-        for(int i = (priceStr.length() - 1); i >= 0; i--){
-            count++;
-            aux += priceStr.charAt(i);
-
-            if(count == 3){
-                count = 0;
-                aux += ".";
-            }
-        }
-        /*Con este ciclo pongo los puntos, pero queda el número al revés*/
-
-        /*Con este ciclo doy vuelta el número al revés, poniéndolo bien*/
-        for(int i=(aux.length()-1); i>=0; i--){
-            formatPrice += aux.charAt(i);
-        }
-
-        if(formatPrice.charAt(0) == '.'){
-            formatPrice = formatPrice.substring(1);
-        }
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+        String formatPrice = numberFormat.format(price);
+        formatPrice = formatPrice.replace(languagePriceSymbol, "");
 
         return formatPrice;
     }
@@ -52,8 +39,7 @@ public class Util {
         builder.setTitle(title);
         builder.setMessage(message);
 
-        // TODO: Hardcode
-        builder.setPositiveButton("Ok", null);
+        builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
         builder.create().show();
     }

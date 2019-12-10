@@ -16,10 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.MonthlyStatistic;
-import cl.casero.bd.model.K;
-import cl.casero.bd.model.Util;
+import cl.casero.model.MonthlyStatistic;
+import cl.casero.model.util.K;
+import cl.casero.model.util.Util;
+import cl.casero.model.Resource;
+import cl.casero.service.StatisticsService;
+import cl.casero.service.impl.StatisticsServiceImpl;
 
 public class StatisticsActivity extends ActionBarActivity {
     private Spinner yearSpinner;
@@ -37,7 +39,8 @@ public class StatisticsActivity extends ActionBarActivity {
     private TextView paymentsTextView;
     private TextView salesTextView;
     private TextView titleTextView;
-    private DAO dao;
+
+    private StatisticsService statisticsService;
 
     // TODO: Separar si o si esto
     // TODO: Arreglar algoritmo
@@ -47,8 +50,8 @@ public class StatisticsActivity extends ActionBarActivity {
         public void onDateSet(DatePicker arg0, int year, int month, int day) {
             // el mes comienza de 0
 
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat f2 = new SimpleDateFormat("dd 'de' MMM 'de' yyyy");
+            SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
+            SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.statistics_date_pattern));
             try {
                 Date fIni = f.parse(year+"-"+(month+1)+"-"+day);
                 K.startDate = year+"-"+((month+1)<10?"0"+(month+1):(month+1))+"-"+(day<10?"0"+day:day);
@@ -63,8 +66,8 @@ public class StatisticsActivity extends ActionBarActivity {
         public void onDateSet(DatePicker arg0, int year, int month, int day) {
             // el mes comienza de 0
 
-            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat f2 = new SimpleDateFormat("dd 'de' MMM 'de' yyyy");
+            SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
+            SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.statistics_date_pattern));
             try {
                 Date fFin = f.parse(year+"-"+(month+1)+"-"+day);
                 K.endDate = year+"-"+((month+1)<10?"0"+(month+1):(month+1))+"-"+(day<10?"0"+day:day);
@@ -99,7 +102,7 @@ public class StatisticsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        dao = new DAO(StatisticsActivity.this);
+        statisticsService = new StatisticsServiceImpl();
 
         loadComponents();
         loadListeners();
@@ -133,8 +136,12 @@ public class StatisticsActivity extends ActionBarActivity {
                         endDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-01";
                     }
 
-                    // TODO: Hardcode
-                    loadStatistics(startDate, endDate, false, "Estadísticas de "+monthString +" "+year);
+                    String statisticsTitle = Resource.getString(R.string.statistics_by_year_month);
+
+                    statisticsTitle = statisticsTitle.replace("{0}", monthString);
+                    statisticsTitle = statisticsTitle.replace("{1}", String.valueOf(year));
+
+                    loadStatistics(startDate, endDate, false, statisticsTitle);
                 }
             }
         );
@@ -160,11 +167,13 @@ public class StatisticsActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     if(K.startDate != null && K.endDate != null){
-                        // TODO: Hardcode
-                        loadStatistics(K.startDate, K.endDate, true, "Estadísticas entre fechas");
+                        loadStatistics(K.startDate, K.endDate, true, Resource.getString(R.string.statistics_between_dates));
                     }else{
-                        // TODO: Hardcode
-                        Toast.makeText(StatisticsActivity.this, "Seleccione ambas fechas", Toast.LENGTH_LONG).show();
+                        Toast.makeText(
+                            StatisticsActivity.this,
+                            Resource.getString(R.string.enter_both_dates),
+                            Toast.LENGTH_LONG
+                        ).show();
                     }
                 }
             }
@@ -172,15 +181,15 @@ public class StatisticsActivity extends ActionBarActivity {
     }
 
     private void loadStatistics(String fecIni, String fecFin, boolean isRango, String titulo) {
-        MonthlyStatistic monthlyStatistic = dao.getMonthlyStatistic(fecIni, fecFin, isRango);
+        MonthlyStatistic monthlyStatistic = statisticsService.getMonthlyStatistic(fecIni, fecFin, isRango);
 
         titleTextView.setText(titulo);
-        finishedCardsTextView.setText(String.valueOf(monthlyStatistic.getFinishedCards()));
-        newCardsTextView.setText(String.valueOf(monthlyStatistic.getNewCards()));
-        maintenanceTextView.setText(String.valueOf(monthlyStatistic.getMaintenance()));
-        itemCountsTextView.setText(String.valueOf(monthlyStatistic.getTotalItems()));
-        paymentsTextView.setText("$ "+ Util.formatPrice(monthlyStatistic.getPayment()));
-        salesTextView.setText("$ "+ Util.formatPrice(monthlyStatistic.getSale()));
+        finishedCardsTextView.setText(String.valueOf(monthlyStatistic.getFinishedCardsCount()));
+        newCardsTextView.setText(String.valueOf(monthlyStatistic.getNewCardsCount()));
+        maintenanceTextView.setText(String.valueOf(monthlyStatistic.getMaintenanceCount()));
+        itemCountsTextView.setText(String.valueOf(monthlyStatistic.getTotalItemsCount()));
+        paymentsTextView.setText(Util.formatPrice(monthlyStatistic.getPaymentsCount()));
+        salesTextView.setText(Util.formatPrice(monthlyStatistic.getSalesCount()));
     }
 
     private void loadComponents() {
