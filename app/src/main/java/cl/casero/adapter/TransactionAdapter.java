@@ -12,8 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import cl.casero.R;
-import cl.casero.bd.model.Transaction;
-import cl.casero.bd.model.Util;
+import cl.casero.model.Transaction;
+import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
 
 /**

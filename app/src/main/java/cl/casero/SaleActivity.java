@@ -19,12 +19,16 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.Customer;
-import cl.casero.bd.model.K;
-import cl.casero.bd.model.Transaction;
-import cl.casero.bd.model.Util;
+import cl.casero.model.Customer;
 import cl.casero.model.Resource;
+import cl.casero.model.enums.SaleType;
+import cl.casero.model.Transaction;
+import cl.casero.model.util.K;
+import cl.casero.model.util.Util;
+import cl.casero.service.CustomerService;
+import cl.casero.service.TransactionService;
+import cl.casero.service.impl.CustomerServiceImpl;
+import cl.casero.service.impl.TransactionServiceImpl;
 
 public class SaleActivity extends ActionBarActivity {
     private TextView saleCustomerNameTextView;
@@ -36,7 +40,8 @@ public class SaleActivity extends ActionBarActivity {
     private Button saleCreateButton;
 
     private Customer customer;
-    private DAO dao;
+
+    private CustomerService customerService;
 
     // TODO: Separar si o si esto
     /*FECHA!*/
@@ -61,16 +66,15 @@ public class SaleActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale);
 
-        dao = new DAO(SaleActivity.this);
+        customerService = new CustomerServiceImpl();
 
         loadComponents();
         loadCustomerName();
         loadListeners();
-
     }
 
     private void loadCustomerName() {
-        customer = dao.getCustomer(K.customerId);
+        customer = customerService.readById(K.customerId);
         saleCustomerNameTextView.setText(customer.getName());
     }
 
@@ -92,7 +96,9 @@ public class SaleActivity extends ActionBarActivity {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
-                                DAO dao = new DAO(SaleActivity.this);
+                                CustomerService customerService = new CustomerServiceImpl();
+                                TransactionService transactionService = new TransactionServiceImpl();
+
                                 int subtotal = -1;
                                 int itemsCount = -1;
 
@@ -132,15 +138,15 @@ public class SaleActivity extends ActionBarActivity {
                                         transaction.setDetail(transactionDetail);
                                         transaction.setDate(K.date);
 
-                                        int currentBalance = dao.getDebt((int) K.customerId);
+                                        int currentBalance = customerService.getDebt((int) K.customerId);
 
-                                        int saleType = (currentBalance == 0 ? K.NEW_SALE: K.MAINTENANCE);
+                                        SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE: SaleType.MAINTENANCE);
 
                                         currentBalance = currentBalance + subtotal;
 
                                         transaction.setBalance(currentBalance);
 
-                                        dao.createSale(transaction, subtotal, itemsCount, saleType);
+                                        transactionService.createSale(transaction, subtotal, itemsCount, saleType);
 
                                         String maintenanceCreated = Resource.getString(R.string.maintenance_created);
 

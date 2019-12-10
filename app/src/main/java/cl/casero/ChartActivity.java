@@ -16,11 +16,12 @@ import com.github.mikephil.charting.data.BarEntry;
 import java.util.ArrayList;
 import java.util.List;
 
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.MonthlyStatistic;
-import cl.casero.bd.model.CustomDate;
-import cl.casero.bd.model.Util;
+import cl.casero.model.MonthlyStatistic;
+import cl.casero.model.CustomDate;
+import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
+import cl.casero.service.StatisticsService;
+import cl.casero.service.impl.StatisticsServiceImpl;
 
 /*
 * https://github.com/PhilJay/MPAndroidChart
@@ -34,10 +35,14 @@ public class ChartActivity extends ActionBarActivity {
     private Spinner endYearSpinner;
     private Button salesChartButton;
 
+    private StatisticsService statisticsService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chart);
+
+        statisticsService = new StatisticsServiceImpl();
 
         loadComponents();
         loadListeners();
@@ -144,7 +149,7 @@ public class ChartActivity extends ActionBarActivity {
     }
 
     private MonthlyStatistic getMonthlyStatistic(int mes, int anio) {
-        return new DAO(ChartActivity.this).getMonthlyStatistic(mes, anio);
+        return statisticsService.getMonthlyStatistic(mes, anio);
     }
 
     private void loadComponents() {

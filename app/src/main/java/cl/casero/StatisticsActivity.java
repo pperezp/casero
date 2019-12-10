@@ -16,11 +16,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.MonthlyStatistic;
-import cl.casero.bd.model.K;
-import cl.casero.bd.model.Util;
+import cl.casero.model.MonthlyStatistic;
+import cl.casero.model.util.K;
+import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
+import cl.casero.service.StatisticsService;
+import cl.casero.service.impl.StatisticsServiceImpl;
 
 public class StatisticsActivity extends ActionBarActivity {
     private Spinner yearSpinner;
@@ -38,7 +39,8 @@ public class StatisticsActivity extends ActionBarActivity {
     private TextView paymentsTextView;
     private TextView salesTextView;
     private TextView titleTextView;
-    private DAO dao;
+
+    private StatisticsService statisticsService;
 
     // TODO: Separar si o si esto
     // TODO: Arreglar algoritmo
@@ -100,7 +102,7 @@ public class StatisticsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        dao = new DAO(StatisticsActivity.this);
+        statisticsService = new StatisticsServiceImpl();
 
         loadComponents();
         loadListeners();
@@ -179,7 +181,7 @@ public class StatisticsActivity extends ActionBarActivity {
     }
 
     private void loadStatistics(String fecIni, String fecFin, boolean isRango, String titulo) {
-        MonthlyStatistic monthlyStatistic = dao.getMonthlyStatistic(fecIni, fecFin, isRango);
+        MonthlyStatistic monthlyStatistic = statisticsService.getMonthlyStatistic(fecIni, fecFin, isRango);
 
         titleTextView.setText(titulo);
         finishedCardsTextView.setText(String.valueOf(monthlyStatistic.getFinishedCardsCount()));

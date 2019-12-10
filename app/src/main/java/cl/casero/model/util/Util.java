@@ -1,4 +1,4 @@
-package cl.casero.bd.model;
+package cl.casero.model.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import cl.casero.R;
+import cl.casero.model.CustomDate;
 import cl.casero.model.Resource;
 
 /**

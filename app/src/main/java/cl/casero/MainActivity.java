@@ -27,17 +27,20 @@ import java.util.Calendar;
 import java.util.List;
 
 import cl.casero.adapter.CustomerAdapter;
-import cl.casero.bd.DAO;
-import cl.casero.bd.model.Customer;
-import cl.casero.bd.model.K;
-import cl.casero.bd.model.Transaction;
-import cl.casero.bd.model.Util;
+import cl.casero.model.Customer;
+import cl.casero.model.util.K;
+import cl.casero.model.Transaction;
+import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
 import cl.casero.model.TestMail;
+import cl.casero.service.CustomerService;
+import cl.casero.service.StatisticsService;
+import cl.casero.service.TransactionService;
+import cl.casero.service.impl.CustomerServiceImpl;
+import cl.casero.service.impl.StatisticsServiceImpl;
+import cl.casero.service.impl.TransactionServiceImpl;
 
 public class MainActivity extends ActionBarActivity {
-    private DAO dao;
-
     private EditText searchNameEditText;
     private ListView customersListView;
     private TextView resultTextView;
@@ -50,6 +53,10 @@ public class MainActivity extends ActionBarActivity {
 
     private static MainActivity instance;
 
+    private CustomerService customerService;
+    private TransactionService transactionService;
+    private StatisticsService statisticsService;
+
     // TODO: Separar
     /*FECHA!*/
     private DatePickerDialog.OnDateSetListener fechaAbonoListener = new DatePickerDialog.OnDateSetListener() {
@@ -57,9 +64,6 @@ public class MainActivity extends ActionBarActivity {
         public void onDateSet(DatePicker arg0, int year, int month, int day) {
             // el mes comienza de 0
             // esto se llama cuando el usuario presiona OK en la date del payment
-
-            DAO dao = new DAO(MainActivity.this);
-
             Transaction transaction = new Transaction();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -69,19 +73,19 @@ public class MainActivity extends ActionBarActivity {
             transaction.setCustomerId((int) K.customerId);
             transaction.setDetail("[Abono]: $"+ payment);
 
-            int balance = dao.getDebt(transaction.getCustomerId());
+            int balance = customerService.getDebt(transaction.getCustomerId());
 
             balance = balance - payment;
             transaction.setBalance(balance);
 
-            dao.pay(transaction, payment);
+            transactionService.pay(transaction, payment);
 
 
             /*cargo la lista de customers de nuevo*/
             String searchName = searchNameEditText.getText().toString();
             K.searchName = searchNameEditText.getText().toString();
 
-            List<Customer> customers = dao.getCustomers(searchName);
+            List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
             if(!customers.isEmpty()){
@@ -103,8 +107,6 @@ public class MainActivity extends ActionBarActivity {
             // el mes comienza de 0
             // esto se llama cuando el usuario presiona OK en la date del payment
 
-            DAO dao = new DAO(MainActivity.this);
-
             Transaction transaction = new Transaction();
 
             String datePattern = Resource.getString(R.string.database_date_pattern);
@@ -120,19 +122,19 @@ public class MainActivity extends ActionBarActivity {
             refundDetail = refundDetail.replace("{1}", refundDetailInput);
 
             transaction.setDetail(refundDetail);
-            int balance = dao.getDebt(transaction.getCustomerId());
+            int balance = customerService.getDebt(transaction.getCustomerId());
 
             balance = balance - refundAmount;
             transaction.setBalance(balance);
 
-            dao.refund(transaction, refundAmount);
+            transactionService.refund(transaction, refundAmount);
 
 
             /*cargo la lista de customers de nuevo*/
             String searchName = searchNameEditText.getText().toString();
             K.searchName = searchNameEditText.getText().toString();
 
-            List<Customer> customers = dao.getCustomers(searchName);
+            List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
             if(!customers.isEmpty()){
@@ -155,15 +157,12 @@ public class MainActivity extends ActionBarActivity {
             //Toast.makeText(MainActivity.this.getApplicationContext(),"["+payment+"]["+anio+" - "+(mes+1)+" - "+dia+"]", Toast.LENGTH_SHORT).show();
             // esto se llama cuando el usuario presiona OK en la date del payment
 
-            DAO dao = new DAO(MainActivity.this);
-
             Transaction transaction = new Transaction();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             try {
                 transaction.setDate(dateFormat.parse(anio+"-"+(mes+1)+"-"+dia));
-            }catch (ParseException ex){
-            }
+            }catch (ParseException ex){}
 
             transaction.setCustomerId((int)K.customerId);
 
@@ -171,18 +170,18 @@ public class MainActivity extends ActionBarActivity {
             condonationDetail = condonationDetail.replace("{0}", condonationDetailInput);
 
             transaction.setDetail(condonationDetail);
-            int balance = dao.getDebt(transaction.getCustomerId());
+            int balance = customerService.getDebt(transaction.getCustomerId());
 
             // TODO: Crear un método que deje el saldo en 0
             transaction.setBalance(0);
 
-            dao.debtCondonation(transaction, balance);
+            transactionService.debtCondonation(transaction, balance);
 
             /*cargo la lista de customers de nuevo*/
             String searchName = searchNameEditText.getText().toString();
             K.searchName = searchNameEditText.getText().toString();
 
-            List<Customer> customers = dao.getCustomers(searchName);
+            List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
             if(!customers.isEmpty()){
@@ -204,11 +203,13 @@ public class MainActivity extends ActionBarActivity {
 
         instance = this;
 
+        customerService = new CustomerServiceImpl();
+        transactionService = new TransactionServiceImpl();
+        statisticsService = new StatisticsServiceImpl();
+
         loadComponents();
         loadListeners();
         loadOnClickCustomerList();
-
-        dao = new DAO(this);
 
         if(K.searchName != null){
             searchNameEditText.setText(K.searchName);
@@ -282,7 +283,7 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 2: // Devolución
-                                int currentBalance = dao.getDebt((int)K.customerId);
+                                int currentBalance = customerService.getDebt((int)K.customerId);
 
                                 AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
 
@@ -354,7 +355,7 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 3: // CONDONAR DEUDA
-                                currentBalance = dao.getDebt((int)K.customerId);
+                                currentBalance = customerService.getDebt((int)K.customerId);
 
                                 bui = new AlertDialog.Builder(MainActivity.this);
 
@@ -393,7 +394,7 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 4:// ver dirección
-                                Customer customer = dao.getCustomer(K.customerId);
+                                Customer customer = customerService.readById(K.customerId);
 
                                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
 
@@ -408,7 +409,7 @@ public class MainActivity extends ActionBarActivity {
 
                             case 5:// cambiar dirección
                                 // TODO: Ojo con los nombres, no se puede poner customer
-                                Customer customer2 = dao.getCustomer(id);
+                                Customer customer2 = customerService.readById(id);
 
                                 builder = new AlertDialog.Builder(MainActivity.this);
                                 builder.setTitle(Resource.getString(R.string.address_change));
@@ -427,7 +428,7 @@ public class MainActivity extends ActionBarActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         String newAddress = addressEditText.getText().toString();
 
-                                        dao.updateAddress(K.customerId, newAddress);
+                                        customerService.updateAddress(K.customerId, newAddress);
 
                                         Toast.makeText(
                                             MainActivity.this.getApplicationContext(),
@@ -532,8 +533,7 @@ public class MainActivity extends ActionBarActivity {
                             try {
                                 int limit = Integer.parseInt(limitStr);
 
-                                DAO dao = new DAO(MainActivity.this);
-                                List<Customer> debtors = dao.getDebtors(limit);
+                                List<Customer> debtors = statisticsService.getDebtors(limit);
 
                                 int debtorsSize = debtors.size();
 
@@ -563,8 +563,6 @@ public class MainActivity extends ActionBarActivity {
                         }else if(command.charAt(1) == 'c'){ // comando generico
                             String parameter = command.split(" ")[1];
 
-                            DAO dao = new DAO(MainActivity.this);
-
                             switch (parameter){
                                 case "pd":// TODO: Arreglar
                                     // promedio deuda
@@ -572,7 +570,7 @@ public class MainActivity extends ActionBarActivity {
                                     Util.message(
                                         MainActivity.this,
                                         Resource.getString(R.string.debt_average),
-                                        Util.formatPrice(dao.getAverageDebt())
+                                        Util.formatPrice(statisticsService.getAverageDebt())
                                     );
 
                                     break;
@@ -582,12 +580,12 @@ public class MainActivity extends ActionBarActivity {
                                     String summary = "";
 
                                     // TODO: Arreglar
-                                    summary += "Santa Cruz: "+dao.getCustomersCount("Santa Cruz")+"\n";
-                                    summary += "Los Boldos: "+dao.getCustomersCount("Los Boldos")+"\n";
-                                    summary += "Barreales: "+dao.getCustomersCount("Barreales")+"\n";
-                                    summary += "Palmilla: "+dao.getCustomersCount("Palmilla")+"\n";
-                                    summary += "Quinahue: "+dao.getCustomersCount("Quinahue")+"\n";
-                                    summary += "Chépica: "+dao.getCustomersCount("Chépica");
+                                    summary += "Santa Cruz: "+statisticsService.getCustomersCount("Santa Cruz")+"\n";
+                                    summary += "Los Boldos: "+statisticsService.getCustomersCount("Los Boldos")+"\n";
+                                    summary += "Barreales: "+statisticsService.getCustomersCount("Barreales")+"\n";
+                                    summary += "Palmilla: "+statisticsService.getCustomersCount("Palmilla")+"\n";
+                                    summary += "Quinahue: "+statisticsService.getCustomersCount("Quinahue")+"\n";
+                                    summary += "Chépica: "+statisticsService.getCustomersCount("Chépica");
 
                                     Util.message(
                                         MainActivity.this,
@@ -605,8 +603,7 @@ public class MainActivity extends ActionBarActivity {
                         try {
                             int limit = Integer.parseInt(limitStr);
 
-                            DAO dao = new DAO(MainActivity.this);
-                            List<Customer> bestCustomers = dao.getBestCustomers(limit);
+                            List<Customer> bestCustomers = statisticsService.getBestCustomers(limit);
 
                             int bestCustomersSize = bestCustomers.size();
 
@@ -641,8 +638,7 @@ public class MainActivity extends ActionBarActivity {
                         try {
                             int limit = Integer.parseInt(limitStr);
 
-                            DAO dao = new DAO(MainActivity.this);
-                            List<Customer> debtors = dao.getDebtors(limit);
+                            List<Customer> debtors = statisticsService.getDebtors(limit);
 
                             int debtorsSize = debtors.size();
 
@@ -672,8 +668,7 @@ public class MainActivity extends ActionBarActivity {
                     }else{
                         String searchName = searchNameEditText.getText().toString();
 
-                        DAO dao = new DAO(MainActivity.this);
-                        List<Customer> customers = dao.getCustomers(searchName);
+                        List<Customer> customers = customerService.readBy(searchName);
 
                         resultTextView.setText(
                             customers.size() + (
@@ -739,7 +734,7 @@ public class MainActivity extends ActionBarActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(Resource.getString(R.string.total_debt));
 
-            int totalDebt = dao.getTotalDebt();
+            int totalDebt = statisticsService.getTotalDebt();
 
             builder.setMessage(Util.formatPrice(totalDebt));
 

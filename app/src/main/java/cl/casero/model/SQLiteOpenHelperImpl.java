@@ -1,4 +1,4 @@
-package cl.casero.bd;
+package cl.casero.model;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
