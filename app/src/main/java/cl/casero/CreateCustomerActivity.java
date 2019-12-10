@@ -37,8 +37,11 @@ public class CreateCustomerActivity extends ActionBarActivity {
         loadComponents();
         loadListeners();
 
-        countTextView.setText("Clientes: " + statisticsService.getCustomersCount());
+        String customers = Resource.getString(R.string.customers);
 
+        customers = customers.replace("{0}", String.valueOf(statisticsService.getCustomersCount()));
+
+        countTextView.setText(customers);
     }
 
     private void loadListeners() {

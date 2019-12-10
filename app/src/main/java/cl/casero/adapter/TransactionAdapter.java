@@ -65,7 +65,12 @@ public class TransactionAdapter extends BaseAdapter {
         TextView detailTextView = (TextView) view.findViewById(R.id.detailTextView);
         TextView balanceTextView = (TextView) view.findViewById(R.id.transactionBalanceTextView);
 
-        dateTextView.setText("["+dateFormat.format(transaction.getDate())+"]");
+
+        String transactionDate = Resource.getString(R.string.transaction_date);
+
+        transactionDate = transactionDate.replace("{0}", dateFormat.format(transaction.getDate()));
+
+        dateTextView.setText(transactionDate);
         detailTextView.setText(transaction.getDetail());
 
         String payment = Resource.getString(R.string.payment);

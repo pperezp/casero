@@ -80,6 +80,7 @@
     <string name="customers_by_sector">Clientes por sector</string>
     <string name="statistics_by_year_month">Estadísticas de {0} {1}</string>
     <string name="statistics_between_dates">Estadísticas entre fechas</string>
+    <string name="transaction_date">[{0}]</string>
 
     <string-array name="customer_options">
         <item>Abonar</item>
