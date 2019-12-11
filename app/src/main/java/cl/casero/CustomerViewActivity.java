@@ -1,18 +1,20 @@
 package cl.casero;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.View;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import java.util.List;
 
 import cl.casero.adapter.TransactionAdapter;
+import cl.casero.listener.customerView.AddressButtonOnClickListener;
+import cl.casero.listener.customerView.OrderSwitchOnCheckedChangeListener;
 import cl.casero.model.Customer;
-import cl.casero.model.util.K;
 import cl.casero.model.Transaction;
-import cl.casero.model.Resource;
+import cl.casero.model.util.K;
 import cl.casero.service.CustomerService;
 import cl.casero.service.TransactionService;
 import cl.casero.service.impl.CustomerServiceImpl;
@@ -28,10 +30,14 @@ public class CustomerViewActivity extends ActionBarActivity {
     private CustomerService customerService;
     private TransactionService transactionService;
 
+    private static CustomerViewActivity customerViewActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_view);
+
+        customerViewActivity = this;
 
         customerService = new CustomerServiceImpl();
         transactionService = new TransactionServiceImpl();
@@ -52,36 +58,8 @@ public class CustomerViewActivity extends ActionBarActivity {
     }
 
     private void loadListeners() {
-        // TODO: Separar listeners
-        orderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Customer customer = customerService.readById(K.customerId);
-
-                nameTextView.setText(customer.getName());
-
-                List<Transaction> transactions = transactionService.readByCustomer(customer.getId(), isChecked);
-
-                detailListView.setAdapter(new TransactionAdapter(CustomerViewActivity.this, transactions));
-            }
-        });
-
-        addressButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Customer customer = customerService.readById(K.customerId);
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
-
-                String addressOf = Resource.getString(R.string.address_of);
-                addressOf = addressOf.replace("{0}",customer.getName());
-                builder.setTitle(addressOf);
-
-                builder.setMessage(customer.getAddress() +", "+customer.getSector());
-                builder.setPositiveButton(Resource.getString(R.string.ok), null);
-                builder.create().show();
-            }
-        });
+        orderSwitch.setOnCheckedChangeListener(new OrderSwitchOnCheckedChangeListener());
+        addressButton.setOnClickListener(new AddressButtonOnClickListener());
     }
 
     private void loadComponents() {
@@ -89,5 +67,9 @@ public class CustomerViewActivity extends ActionBarActivity {
         detailListView = (ListView) findViewById(R.id.detailListView);
         orderSwitch = (Switch) findViewById(R.id.orderSwitch);
         addressButton = (Button) findViewById(R.id.addressButton);
+    }
+
+    public static CustomerViewActivity getActivity(){
+        return customerViewActivity;
     }
 }
