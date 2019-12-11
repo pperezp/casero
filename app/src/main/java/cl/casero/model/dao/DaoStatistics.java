@@ -59,24 +59,16 @@ public class DaoStatistics extends AbstractDao<Statistic> {
         return null;
     }
 
-    public MonthlyStatistic getMonthlyStatistic(String startDate, String endDate, boolean isDateRange){
-        // si isDateRange es verdadero, debo incluir ambos DAYS (>= <=) si no no
-        // si isDateRange es falso, es porque quiere ver un mes completo
-        // y en ese caso no debo incluir el último día del rango (que es el 1ero del próx. mes)
-
-        MonthlyStatistic monthlyStatistic = new MonthlyStatistic();
-
+    public int getFinishCardsCount(String startDate, String endDate, boolean isDateRange){
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
-        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+        sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
+        int finishCardsCount = -1;
 
-        // TODO: separar estas consultas (son 6)
-
-        // 1.- select tarjetas terminadas
         query =
             "SELECT " +
                 "COUNT(0) " +
             "FROM " +
-                "movimiento " +
+            "   movimiento " +
             "WHERE " +
                 "saldo = 0 AND " +
                 "fecha >= '"+startDate+"' AND " +
@@ -86,128 +78,182 @@ public class DaoStatistics extends AbstractDao<Statistic> {
 
         if(cursor.moveToFirst()){
             do{
-                monthlyStatistic.setFinishedCardsCount(cursor.getInt(0));
-            }while(cursor.moveToNext());
-        }
-
-
-
-
-
-        // 2.- select tarjetas nuevas
-        query =
-                "SELECT " +
-                    "COUNT(0) " +
-                "FROM " +
-                    "estadistica " +
-                "WHERE " +
-                    "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
-                    "tipoVenta = '"+ SaleType.NEW_SALE.getId() +"' AND " +
-                    "fecha >= '"+startDate+"' AND " +
-                    "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
-
-        cursor = sqLiteDatabase.rawQuery(query, null);
-
-        if(cursor.moveToFirst()){
-            do{
-                monthlyStatistic.setNewCardsCount(cursor.getInt(0));
-            }while(cursor.moveToNext());
-        }
-
-
-
-
-
-        // 3.- select Mantenciones
-        query =
-                "SELECT " +
-                    "COUNT(0) " +
-                "FROM " +
-                    "estadistica " +
-                "WHERE " +
-                    "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
-                    "tipoVenta = '"+SaleType.MAINTENANCE.getId() +"' AND " +
-                    "fecha >= '"+startDate+"' AND " +
-                    "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
-
-        cursor = sqLiteDatabase.rawQuery(query, null);
-
-        if(cursor.moveToFirst()){
-            do{
-                monthlyStatistic.setMaintenanceCount(cursor.getInt(0));
-            }while(cursor.moveToNext());
-        }
-
-
-
-
-        // 4.- select total prendas
-        query =
-                "SELECT " +
-                    "SUM(cantPrendas) " +
-                "FROM " +
-                    "estadistica " +
-                "WHERE " +
-                    "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
-                    "fecha >= '"+startDate+"' AND " +
-                    "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
-
-        cursor = sqLiteDatabase.rawQuery(query, null);
-
-        if(cursor.moveToFirst()){
-            do{
-                monthlyStatistic.setTotalItemsCount(cursor.getInt(0));
-            }while(cursor.moveToNext());
-        }
-
-
-
-
-
-        // 5.- select cobro (payment)
-        query =
-                "SELECT " +
-                    "sum(monto) " +
-                "FROM " +
-                    "estadistica " +
-                "WHERE " +
-                    "tipo = '"+ TransactionType.PAYMENT.getId() +"' AND " +
-                    "fecha >= '"+startDate+"' AND " +
-                    "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
-
-        cursor = sqLiteDatabase.rawQuery(query, null);
-
-        if(cursor.moveToFirst()){
-            do{
-                monthlyStatistic.setPaymentsCount(cursor.getInt(0));
-            }while(cursor.moveToNext());
-        }
-
-
-
-
-
-
-        // 6.- select ventas
-        query =
-                "SELECT " +
-                    "sum(monto) " +
-                "FROM " +
-                    "estadistica " +
-                "WHERE " +
-                    "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
-                    "fecha >= '"+startDate+"' AND " +
-                    "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
-
-        cursor = sqLiteDatabase.rawQuery(query, null);
-
-        if(cursor.moveToFirst()){
-            do{
-                monthlyStatistic.setSalesCount(cursor.getInt(0));
+                finishCardsCount = cursor.getInt(0);
             }while(cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
+
+        return finishCardsCount;
+    }
+
+    public int getNewCardsCount(String startDate, String endDate, boolean isDateRange){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
+        int newCardsCount = -1;
+
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
+                "tipoVenta = '"+ SaleType.NEW_SALE.getId() +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
+
+
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                newCardsCount = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+        sqLiteDatabase.close();
+
+        return newCardsCount;
+    }
+
+    public int getMaintenanceCount(String startDate, String endDate, boolean isDateRange){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
+        int maintenanceCount = -1;
+
+        query =
+            "SELECT " +
+                "COUNT(0) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
+                "tipoVenta = '"+SaleType.MAINTENANCE.getId() +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
+
+
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                maintenanceCount = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+        sqLiteDatabase.close();
+
+        return maintenanceCount;
+    }
+
+    public int getTotalItemsCount(String startDate, String endDate, boolean isDateRange){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
+        int totalItemsCount = -1;
+
+        query =
+            "SELECT " +
+                "SUM(cantPrendas) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
+
+
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                totalItemsCount = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+        sqLiteDatabase.close();
+
+        return totalItemsCount;
+    }
+
+    public int getPaymentsCount(String startDate, String endDate, boolean isDateRange){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
+        int paymentsCount = -1;
+
+        query =
+            "SELECT " +
+                "sum(monto) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+ TransactionType.PAYMENT.getId() +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
+
+
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                paymentsCount = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+        sqLiteDatabase.close();
+
+        return paymentsCount;
+    }
+
+    public int getSalesCount(String startDate, String endDate, boolean isDateRange){
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
+        int salesCount = -1;
+
+        query =
+            "SELECT " +
+                "sum(monto) " +
+            "FROM " +
+                "estadistica " +
+            "WHERE " +
+                "tipo = '"+ TransactionType.SALE.getId() +"' AND " +
+                "fecha >= '"+startDate+"' AND " +
+                "fecha <"+(isDateRange?"=":"")+" '"+endDate+"'";
+
+
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        if(cursor.moveToFirst()){
+            do{
+                salesCount = cursor.getInt(0);
+            }while(cursor.moveToNext());
+        }
+
+        sqLiteDatabase.close();
+
+        return salesCount;
+    }
+
+    public MonthlyStatistic getMonthlyStatistic(String startDate, String endDate, boolean isDateRange){
+        // si isDateRange es verdadero, debo incluir ambos DAYS (>= <=) si no no
+        // si isDateRange es falso, es porque quiere ver un mes completo
+        // y en ese caso no debo incluir el último día del rango (que es el 1ero del próx. mes)
+
+        int finishCardsCount = getFinishCardsCount(startDate, endDate, isDateRange);
+        int newCardsCount = getNewCardsCount(startDate, endDate, isDateRange);
+        int maintenanceCount = getMaintenanceCount(startDate, endDate, isDateRange);
+        int totalItemsCount = getTotalItemsCount(startDate, endDate, isDateRange);
+        int paymentsCount = getPaymentsCount(startDate, endDate, isDateRange);
+        int salesCount = getSalesCount(startDate, endDate, isDateRange);
+
+        MonthlyStatistic monthlyStatistic = new MonthlyStatistic();
+
+        monthlyStatistic.setFinishedCardsCount(finishCardsCount);
+        monthlyStatistic.setNewCardsCount(newCardsCount);
+        monthlyStatistic.setMaintenanceCount(maintenanceCount);
+        monthlyStatistic.setTotalItemsCount(totalItemsCount);
+        monthlyStatistic.setPaymentsCount(paymentsCount);
+        monthlyStatistic.setSalesCount(salesCount);
 
         return monthlyStatistic;
     }
