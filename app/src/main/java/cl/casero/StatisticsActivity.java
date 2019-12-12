@@ -9,38 +9,34 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import cl.casero.model.MonthlyStatistic;
+import cl.casero.listener.statistics.MonthlyButtonOnClickListener;
+import cl.casero.listener.statistics.RangeButtonOnClickListener;
+import cl.casero.model.Resource;
 import cl.casero.model.util.K;
 import cl.casero.model.util.Util;
-import cl.casero.model.Resource;
 import cl.casero.service.StatisticsService;
 import cl.casero.service.impl.StatisticsServiceImpl;
 
 public class StatisticsActivity extends ActionBarActivity {
     private Spinner yearSpinner;
-    private Spinner monthSpinner;
+
     private Button startDateButton;
     private Button statisticsRangeButton;
     private Button endDateButton;
     private Button monthlyStatisticsButton;
     private TextView startDateTextView;
     private TextView endDateTextView;
-    private TextView finishedCardsTextView;
-    private TextView newCardsTextView;
-    private TextView maintenanceTextView;
-    private TextView itemCountsTextView;
-    private TextView paymentsTextView;
-    private TextView salesTextView;
-    private TextView titleTextView;
+
 
     private StatisticsService statisticsService;
+
+    private static StatisticsActivity statisticsActivity;
 
     // TODO: Separar si o si esto
     // TODO: Arreglar algoritmo
@@ -102,6 +98,8 @@ public class StatisticsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
+        statisticsActivity = this;
+
         statisticsService = new StatisticsServiceImpl();
 
         loadComponents();
@@ -114,38 +112,7 @@ public class StatisticsActivity extends ActionBarActivity {
     private void loadListeners() {
         Util.loadYears(StatisticsActivity.this, yearSpinner);
 
-        monthlyStatisticsButton.setOnClickListener(
-            new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    String monthString = monthSpinner.getSelectedItem().toString();
-
-                    int month = monthSpinner.getSelectedItemPosition();
-                    int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
-
-                    month++;
-
-                    String startDate, endDate;
-
-                    startDate = year + "-" + (month < 10 ? "0" + month : month) + "-01";
-
-                    if (month == 12) {
-                        endDate = (year + 1) + "-01-01";
-                    } else {
-                        endDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-01";
-                    }
-
-                    String statisticsTitle = Resource.getString(R.string.statistics_by_year_month);
-
-                    statisticsTitle = statisticsTitle.replace("{0}", monthString);
-                    statisticsTitle = statisticsTitle.replace("{1}", String.valueOf(year));
-
-                    loadStatistics(startDate, endDate, false, statisticsTitle);
-                }
-            }
-        );
-
+        // TODO: Arreglar este listener
         startDateButton.setOnClickListener(
             new View.OnClickListener() {
                 @Override
@@ -155,6 +122,7 @@ public class StatisticsActivity extends ActionBarActivity {
             }
         );
 
+        // TODO: Arreglar este listener
         endDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -162,52 +130,24 @@ public class StatisticsActivity extends ActionBarActivity {
             }
         });
 
-        statisticsRangeButton.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(K.startDate != null && K.endDate != null){
-                        loadStatistics(K.startDate, K.endDate, true, Resource.getString(R.string.statistics_between_dates));
-                    }else{
-                        Toast.makeText(
-                            StatisticsActivity.this,
-                            Resource.getString(R.string.enter_both_dates),
-                            Toast.LENGTH_LONG
-                        ).show();
-                    }
-                }
-            }
-        );
+        monthlyStatisticsButton.setOnClickListener(new MonthlyButtonOnClickListener());
+        statisticsRangeButton.setOnClickListener(new RangeButtonOnClickListener());
     }
 
-    private void loadStatistics(String fecIni, String fecFin, boolean isRango, String titulo) {
-        MonthlyStatistic monthlyStatistic = statisticsService.getMonthlyStatistic(fecIni, fecFin, isRango);
 
-        titleTextView.setText(titulo);
-        finishedCardsTextView.setText(String.valueOf(monthlyStatistic.getFinishedCardsCount()));
-        newCardsTextView.setText(String.valueOf(monthlyStatistic.getNewCardsCount()));
-        maintenanceTextView.setText(String.valueOf(monthlyStatistic.getMaintenanceCount()));
-        itemCountsTextView.setText(String.valueOf(monthlyStatistic.getTotalItemsCount()));
-        paymentsTextView.setText(Util.formatPrice(monthlyStatistic.getPaymentsCount()));
-        salesTextView.setText(Util.formatPrice(monthlyStatistic.getSalesCount()));
-    }
 
     private void loadComponents() {
         yearSpinner = (Spinner) findViewById(R.id.yearSpinner);
-        monthSpinner = (Spinner) findViewById(R.id.monthSpinner);
         startDateButton = (Button) findViewById(R.id.startDateButton);
         statisticsRangeButton = (Button) findViewById(R.id.statisticsRangeButton);
         endDateButton = (Button) findViewById(R.id.endDateButton);
         monthlyStatisticsButton = (Button) findViewById(R.id.monthlyStatisticsButton);
         startDateTextView = (TextView) findViewById(R.id.startDateTextView);
         endDateTextView = (TextView) findViewById(R.id.endDateTextView);
-        finishedCardsTextView = (TextView) findViewById(R.id.finishedCardsTextView);
-        newCardsTextView = (TextView) findViewById(R.id.newCardsTextView);
-        maintenanceTextView = (TextView) findViewById(R.id.maintenanceTextView);
-        itemCountsTextView = (TextView) findViewById(R.id.itemCountsTextView);
-        paymentsTextView = (TextView) findViewById(R.id.paymentsTextView);
-        salesTextView = (TextView) findViewById(R.id.salesTextView);
-        titleTextView = (TextView) findViewById(R.id.titleTextView);
+
     }
 
+    public static StatisticsActivity getActivity() {
+        return statisticsActivity;
+    }
 }
