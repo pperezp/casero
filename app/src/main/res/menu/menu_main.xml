@@ -3,32 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cl.casero.MainActivity">
     <item
-        android:id="@+id/action_crearCliente"
+        android:id="@+id/create_customer_action"
         android:orderInCategory="1"
         android:title="Crear cliente"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_verEstadisticas"
+        android:id="@+id/view_statistics_action"
         android:orderInCategory="2"
         android:title="Estadísticas"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_verGrafico"
+        android:id="@+id/see_chart_action"
         android:orderInCategory="3"
         android:title="Gráfico"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_verDeudaTotal"
+        android:id="@+id/see_total_debt_action"
         android:orderInCategory="4"
         android:title="Deuda TOTAL"
         app:showAsAction="never" />
-
-    <item
-        android:id="@+id/action_enviarCorreo"
-        android:orderInCategory="5"
-        android:title="Enviar correo"
-        app:showAsAction="never"/>
 </menu>

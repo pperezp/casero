@@ -32,7 +32,6 @@ import cl.casero.model.util.K;
 import cl.casero.model.Transaction;
 import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
-import cl.casero.model.TestMail;
 import cl.casero.service.CustomerService;
 import cl.casero.service.StatisticsService;
 import cl.casero.service.TransactionService;
@@ -730,15 +729,15 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_crearCliente) {
+        if (id == R.id.create_customer_action) {
             Intent intent = new Intent(MainActivity.this, CreateCustomerActivity.class);
             MainActivity.this.startActivity(intent);
-        } else if (id == R.id.action_verEstadisticas) {
+        } else if (id == R.id.view_statistics_action) {
             //MonthlyStatistic em = dao.getMonthlyStatistic("2016-01-01","2016-02-01");
             //Toast.makeText(MainActivity.this.getApplicationContext(), em.toString(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
             MainActivity.this.startActivity(intent);
-        } else if (id == R.id.action_verDeudaTotal) {
+        } else if (id == R.id.see_total_debt_action) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(Resource.getString(R.string.total_debt));
 
@@ -749,20 +748,9 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
             builder.create().show();
-        } else if (id == R.id.action_verGrafico) {
+        } else if (id == R.id.see_chart_action) {
             Intent intent = new Intent(MainActivity.this, ChartActivity.class);
             MainActivity.this.startActivity(intent);
-        } else if (id == R.id.action_enviarCorreo) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        TestMail.testSmtp();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
         }
 
         return super.onOptionsItemSelected(item);
