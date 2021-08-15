@@ -17,6 +17,7 @@ import cl.casero.service.CustomerService;
 import cl.casero.service.impl.CustomerServiceImpl;
 
 public class CustomerAdapter extends BaseAdapter {
+
     private Activity activity;
     private List<Customer> customers;
     private CustomerService customerService;
@@ -46,18 +47,18 @@ public class CustomerAdapter extends BaseAdapter {
     public View getView(int position, View contentView, ViewGroup parent) {
         View view = contentView;
 
-		/*Acá cargo el layout del item customer*/
+        /*Acá cargo el layout del item customer*/
         if (contentView == null) {
             LayoutInflater inflater =
-                (LayoutInflater) activity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    (LayoutInflater) activity
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            if(inflater != null){
+            if (inflater != null) {
                 view = inflater.inflate(R.layout.activity_customer_item, null);
             }
         }
 
-		/*obtengo el customer en la posición determinada*/
+        /*obtengo el customer en la posición determinada*/
         Customer customer = customers.get(position);
 
         TextView customerNameTextView = (TextView) view.findViewById(R.id.nameTextView);

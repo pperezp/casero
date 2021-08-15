@@ -74,10 +74,10 @@ public class CustomerViewActivity extends ActionBarActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
 
                 String addressOf = Resource.getString(R.string.address_of);
-                addressOf = addressOf.replace("{0}",customer.getName());
+                addressOf = addressOf.replace("{0}", customer.getName());
                 builder.setTitle(addressOf);
 
-                builder.setMessage(customer.getAddress() +", "+customer.getSector());
+                builder.setMessage(customer.getAddress() + ", " + customer.getSector());
                 builder.setPositiveButton(Resource.getString(R.string.ok), null);
                 builder.create().show();
             }

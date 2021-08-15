@@ -3,50 +3,50 @@ package cl.casero.service.impl;
 import java.util.List;
 
 import cl.casero.model.Customer;
-import cl.casero.model.dao.DaoCustomer;
+import cl.casero.model.dao.impl.CustomerDao;
 import cl.casero.service.CustomerService;
 
 public class CustomerServiceImpl implements CustomerService {
 
-    private DaoCustomer daoCustomer;
+    private CustomerDao customerDao;
 
-    public CustomerServiceImpl(){
-        this.daoCustomer = new DaoCustomer();
+    public CustomerServiceImpl() {
+        this.customerDao = new CustomerDao();
     }
 
     @Override
     public void create(Customer customer) {
-        this.daoCustomer.create(customer);
+        this.customerDao.create(customer);
     }
 
     @Override
     public List<Customer> read() {
-        return this.daoCustomer.read();
+        return this.customerDao.read();
     }
 
     @Override
     public Customer readById(Number id) {
-        return this.daoCustomer.readById(id);
+        return this.customerDao.readById(id);
     }
 
     @Override
     public List<Customer> readBy(String filter) {
-        return this.daoCustomer.readBy(filter);
+        return this.customerDao.readBy(filter);
     }
 
     @Override
     public int getLastCustomerId() {
-        return this.daoCustomer.getLastCustomerId();
+        return this.customerDao.getLastCustomerId();
     }
 
 
     @Override
     public int getDebt(int customerId) {
-        return this.daoCustomer.getDebt(customerId);
+        return this.customerDao.getDebt(customerId);
     }
 
     @Override
     public void updateAddress(long customerId, String newAddress) {
-        this.daoCustomer.updateAddress(customerId, newAddress);
+        this.customerDao.updateAddress(customerId, newAddress);
     }
 }

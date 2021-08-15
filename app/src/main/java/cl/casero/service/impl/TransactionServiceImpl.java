@@ -4,59 +4,59 @@ import java.util.List;
 
 import cl.casero.model.enums.SaleType;
 import cl.casero.model.Transaction;
-import cl.casero.model.dao.DaoTransaction;
+import cl.casero.model.dao.impl.TransactionDao;
 import cl.casero.service.TransactionService;
 
 public class TransactionServiceImpl implements TransactionService {
 
-    private DaoTransaction daoTransaction;
+    private TransactionDao transactionDao;
 
-    public TransactionServiceImpl(){
-        this.daoTransaction = new DaoTransaction();
+    public TransactionServiceImpl() {
+        this.transactionDao = new TransactionDao();
     }
 
     @Override
     public void create(Transaction transaction) {
-        this.daoTransaction.create(transaction);
+        this.transactionDao.create(transaction);
     }
 
     @Override
     public Transaction readById(Number id) {
-        return this.daoTransaction.readById(id);
+        return this.transactionDao.readById(id);
     }
 
     @Override
     public List<Transaction> readBy(String filter) {
-        return this.daoTransaction.readBy(filter);
+        return this.transactionDao.readBy(filter);
     }
 
     @Override
     public List<Transaction> readByCustomer(int customerId, boolean ascending) {
-        return this.daoTransaction.readByCustomer(customerId, ascending);
+        return this.transactionDao.readByCustomer(customerId, ascending);
     }
 
     @Override
     public void updateDebt(int customerId, int newDebt) {
-        this.daoTransaction.updateDebt(customerId, newDebt);
+        this.transactionDao.updateDebt(customerId, newDebt);
     }
 
     @Override
     public void pay(Transaction transaction, int amount) {
-        this.daoTransaction.pay(transaction, amount);
+        this.transactionDao.pay(transaction, amount);
     }
 
     @Override
     public void refund(Transaction transaction, int amount) {
-        this.daoTransaction.refund(transaction, amount);
+        this.transactionDao.refund(transaction, amount);
     }
 
     @Override
     public void debtCondonation(Transaction transaction, int amount) {
-        this.daoTransaction.debtCondonation(transaction, amount);
+        this.transactionDao.debtForgiveness(transaction, amount);
     }
 
     @Override
     public void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType) {
-        this.daoTransaction.createSale(transaction, amount, itemCounts, saleType);
+        this.transactionDao.createSale(transaction, amount, itemCounts, saleType);
     }
 }

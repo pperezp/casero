@@ -13,6 +13,7 @@ import cl.casero.model.SQLiteOpenHelperImpl;
 import cl.casero.model.Resource;
 
 public abstract class AbstractDao<T> implements Dao<T> {
+
     protected Context context;
     protected SQLiteOpenHelperImpl sqLiteOpenHelper;
     protected SQLiteDatabase sqLiteDatabase;
@@ -21,9 +22,9 @@ public abstract class AbstractDao<T> implements Dao<T> {
     protected SimpleDateFormat dateFormat;
 
     protected final String DATABASE_PATH =
-        Environment
-        .getExternalStorageDirectory()
-        .getPath()+"/caseroBD/casero.sqlite";
+            Environment
+                    .getExternalStorageDirectory()
+                    .getPath() + "/caseroBD/casero.sqlite";
 
     public AbstractDao() {
         this.context = MainActivity.getInstance().getApplicationContext();

@@ -2,10 +2,8 @@ package cl.casero.model;
 
 import java.util.Date;
 
-/**
- * Created by Patricio Pérez Pinto on 05/01/2016.
- */
 public class Statistic {
+
     private int id;
     private int type;
     private int amount;

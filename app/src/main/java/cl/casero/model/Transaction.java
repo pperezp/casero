@@ -2,10 +2,8 @@ package cl.casero.model;
 
 import java.util.Date;
 
-/**
- * Created by Patricio Pérez Pinto on 04/01/2016.
- */
 public class Transaction {
+
     private int id;
     private Date date;
     private String detail;

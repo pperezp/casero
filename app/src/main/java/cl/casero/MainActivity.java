@@ -41,6 +41,7 @@ import cl.casero.service.impl.StatisticsServiceImpl;
 import cl.casero.service.impl.TransactionServiceImpl;
 
 public class MainActivity extends ActionBarActivity {
+
     private EditText searchNameEditText;
     private ListView customersListView;
     private TextView resultTextView;
@@ -67,11 +68,12 @@ public class MainActivity extends ActionBarActivity {
             Transaction transaction = new Transaction();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             try {
-                transaction.setDate(dateFormat.parse(year+"-"+(month+1)+"-"+day));
-            }catch (ParseException ex){}
+                transaction.setDate(dateFormat.parse(year + "-" + (month + 1) + "-" + day));
+            } catch (ParseException ex) {
+            }
 
             transaction.setCustomerId((int) K.customerId);
-            transaction.setDetail("[Abono]: $"+ payment);
+            transaction.setDetail("[Abono]: $" + payment);
 
             int balance = customerService.getDebt(transaction.getCustomerId());
 
@@ -88,9 +90,9 @@ public class MainActivity extends ActionBarActivity {
             List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
-            if(!customers.isEmpty()){
+            if (!customers.isEmpty()) {
                 customersListView.setAdapter(new CustomerAdapter(MainActivity.this, customers));
-            }else{
+            } else {
                 customersListView.setAdapter(new CustomerAdapter(MainActivity.this, new ArrayList<Customer>()));
             }
             /*cargo la lista de customers de nuevo*/
@@ -112,8 +114,9 @@ public class MainActivity extends ActionBarActivity {
             String datePattern = Resource.getString(R.string.database_date_pattern);
             SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
             try {
-                transaction.setDate(dateFormat.parse(year+"-"+(month+1)+"-"+day));
-            }catch (ParseException ex){}
+                transaction.setDate(dateFormat.parse(year + "-" + (month + 1) + "-" + day));
+            } catch (ParseException ex) {
+            }
 
             transaction.setCustomerId((int) K.customerId);
 
@@ -137,9 +140,9 @@ public class MainActivity extends ActionBarActivity {
             List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
-            if(!customers.isEmpty()){
+            if (!customers.isEmpty()) {
                 customersListView.setAdapter(new CustomerAdapter(MainActivity.this, customers));
-            }else{
+            } else {
                 customersListView.setAdapter(new CustomerAdapter(MainActivity.this, new ArrayList<Customer>()));
             }
             /*cargo la lista de customers de nuevo*/
@@ -161,10 +164,11 @@ public class MainActivity extends ActionBarActivity {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             try {
-                transaction.setDate(dateFormat.parse(anio+"-"+(mes+1)+"-"+dia));
-            }catch (ParseException ex){}
+                transaction.setDate(dateFormat.parse(anio + "-" + (mes + 1) + "-" + dia));
+            } catch (ParseException ex) {
+            }
 
-            transaction.setCustomerId((int)K.customerId);
+            transaction.setCustomerId((int) K.customerId);
 
             String condonationDetail = Resource.getString(R.string.condonation_detail);
             condonationDetail = condonationDetail.replace("{0}", condonationDetailInput);
@@ -184,9 +188,9 @@ public class MainActivity extends ActionBarActivity {
             List<Customer> customers = customerService.readBy(searchName);
 
             // TODO: Ver si funciona solo con customers y no if else
-            if(!customers.isEmpty()){
+            if (!customers.isEmpty()) {
                 customersListView.setAdapter(new CustomerAdapter(MainActivity.this, customers));
-            }else{
+            } else {
                 customersListView.setAdapter(new CustomerAdapter(MainActivity.this, new ArrayList<Customer>()));
             }
             /*cargo la lista de customers de nuevo*/
@@ -211,7 +215,7 @@ public class MainActivity extends ActionBarActivity {
         loadListeners();
         loadOnClickCustomerList();
 
-        if(K.searchName != null){
+        if (K.searchName != null) {
             searchNameEditText.setText(K.searchName);
             searchNameEditText.setSelection(K.searchName.length(), K.searchName.length());
         }
@@ -231,7 +235,7 @@ public class MainActivity extends ActionBarActivity {
                 builder.setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
+                        switch (which) {
                             // TODO: Cambiar numeros por constantes enum
                             case 0: // pay
                                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -254,11 +258,11 @@ public class MainActivity extends ActionBarActivity {
                                             /*FECHA!*/
                                             showDialog(999);
                                             /*FECHA!*/
-                                        }catch (NumberFormatException ex){
+                                        } catch (NumberFormatException ex) {
                                             Toast.makeText(
-                                                MainActivity.this.getApplicationContext(),
-                                                Resource.getString(R.string.only_numbers),
-                                                Toast.LENGTH_SHORT
+                                                    MainActivity.this.getApplicationContext(),
+                                                    Resource.getString(R.string.only_numbers),
+                                                    Toast.LENGTH_SHORT
                                             ).show();
                                         }
                                     }
@@ -283,7 +287,7 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 2: // Devolución
-                                int currentBalance = customerService.getDebt((int)K.customerId);
+                                int currentBalance = customerService.getDebt((int) K.customerId);
 
                                 AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
 
@@ -335,11 +339,11 @@ public class MainActivity extends ActionBarActivity {
                                             /*FECHA!*/
                                             showDialog(1);
                                             /*FECHA!*/
-                                        }catch (NumberFormatException ex){
+                                        } catch (NumberFormatException ex) {
                                             Toast.makeText(
-                                                MainActivity.this.getApplicationContext(),
+                                                    MainActivity.this.getApplicationContext(),
                                                     Resource.getString(R.string.only_numbers),
-                                                Toast.LENGTH_SHORT
+                                                    Toast.LENGTH_SHORT
                                             ).show();
                                         }
                                     }
@@ -355,7 +359,7 @@ public class MainActivity extends ActionBarActivity {
                                 break;
 
                             case 3: // CONDONAR DEUDA
-                                currentBalance = customerService.getDebt((int)K.customerId);
+                                currentBalance = customerService.getDebt((int) K.customerId);
 
                                 bui = new AlertDialog.Builder(MainActivity.this);
 
@@ -399,10 +403,10 @@ public class MainActivity extends ActionBarActivity {
                                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
 
                                 String addressOf = Resource.getString(R.string.address_of);
-                                addressOf = addressOf.replace("{0}",customer.getName());
+                                addressOf = addressOf.replace("{0}", customer.getName());
 
                                 b.setTitle(addressOf);
-                                b.setMessage(customer.getAddress() +", "+customer.getSector());
+                                b.setMessage(customer.getAddress() + ", " + customer.getSector());
                                 b.setPositiveButton(Resource.getString(R.string.ok), null);
                                 b.create().show();
                                 break;
@@ -431,9 +435,9 @@ public class MainActivity extends ActionBarActivity {
                                         customerService.updateAddress(K.customerId, newAddress);
 
                                         Toast.makeText(
-                                            MainActivity.this.getApplicationContext(),
-                                            Resource.getString(R.string.address_updated),
-                                            Toast.LENGTH_SHORT
+                                                MainActivity.this.getApplicationContext(),
+                                                Resource.getString(R.string.address_updated),
+                                                Toast.LENGTH_SHORT
                                         ).show();
                                     }
                                 }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
@@ -477,10 +481,10 @@ public class MainActivity extends ActionBarActivity {
         if (id == 999) {
             // formulario de date de payment
             return new DatePickerDialog(this, fechaAbonoListener, year, month, day);
-        }else if(id == 1){
+        } else if (id == 1) {
             // formulario de date de devolución
             return new DatePickerDialog(this, fechaDevolucionListener, year, month, day);
-        }else if(id == 2){
+        } else if (id == 2) {
             // formulario de date de condonacion de debt
             return new DatePickerDialog(this, fechaCondonacion, year, month, day);
         }
@@ -507,16 +511,16 @@ public class MainActivity extends ActionBarActivity {
                     if (searchNameEditText.getText().toString().equals("")) {
                         resultTextView.setText(Resource.getString(R.string.no_result));
                         customersListView.setAdapter(
-                            new CustomerAdapter(
-                                MainActivity.this,
-                                new ArrayList<Customer>()
-                            )
+                                new CustomerAdapter(
+                                        MainActivity.this,
+                                        new ArrayList<Customer>()
+                                )
                         );
                     } else if (searchNameEditText.getText().toString().charAt(0) == '@') {
                         // Quiere ingresar un comando
                         String command = searchNameEditText.getText().toString();
 
-                        if(command.charAt(1) == 'h'){ //comando de ayuda
+                        if (command.charAt(1) == 'h') { //comando de ayuda
                             String helpText = "";
 
                             // TODO: Arreglar esto
@@ -527,7 +531,7 @@ public class MainActivity extends ActionBarActivity {
                             helpText += "\tcps: Cantidad de customers por sector\n";
 
                             Util.message(MainActivity.this, Resource.getString(R.string.help), helpText);
-                        }else if (command.charAt(1) == 'm') {// Comando morosos
+                        } else if (command.charAt(1) == 'm') {// Comando morosos
                             String limitStr = command.split(" ")[1];
 
                             try {
@@ -538,16 +542,16 @@ public class MainActivity extends ActionBarActivity {
                                 int debtorsSize = debtors.size();
 
                                 resultTextView.setText(
-                                    (debtorsSize == 1 ?
-                                    Resource.getString(R.string.result).replace("{0}", String.valueOf(debtorsSize)) :
-                                    Resource.getString(R.string.results).replace("{0}", String.valueOf(debtorsSize)))
+                                        (debtorsSize == 1 ?
+                                                Resource.getString(R.string.result).replace("{0}", String.valueOf(debtorsSize)) :
+                                                Resource.getString(R.string.results).replace("{0}", String.valueOf(debtorsSize)))
                                 );
 
                                 customersListView.setAdapter(
-                                    new CustomerAdapter(
-                                        MainActivity.this,
-                                        debtors
-                                    )
+                                        new CustomerAdapter(
+                                                MainActivity.this,
+                                                debtors
+                                        )
                                 );
 
                                 String topDebtors = Resource.getString(R.string.top_debtors);
@@ -555,22 +559,23 @@ public class MainActivity extends ActionBarActivity {
                                 topDebtors = topDebtors.replace("{0}", String.valueOf(limit));
 
                                 Toast.makeText(
-                                    MainActivity.this.getApplicationContext(),
-                                    topDebtors,
-                                    Toast.LENGTH_SHORT
+                                        MainActivity.this.getApplicationContext(),
+                                        topDebtors,
+                                        Toast.LENGTH_SHORT
                                 ).show();
-                            } catch (NumberFormatException ex) {}
-                        }else if(command.charAt(1) == 'c'){ // comando generico
+                            } catch (NumberFormatException ex) {
+                            }
+                        } else if (command.charAt(1) == 'c') { // comando generico
                             String parameter = command.split(" ")[1];
 
-                            switch (parameter){
+                            switch (parameter) {
                                 case "pd":// TODO: Arreglar
                                     // promedio deuda
 
                                     Util.message(
-                                        MainActivity.this,
-                                        Resource.getString(R.string.debt_average),
-                                        Util.formatPrice(statisticsService.getAverageDebt())
+                                            MainActivity.this,
+                                            Resource.getString(R.string.debt_average),
+                                            Util.formatPrice(statisticsService.getAverageDebt())
                                     );
 
                                     break;
@@ -580,23 +585,23 @@ public class MainActivity extends ActionBarActivity {
                                     String summary = "";
 
                                     // TODO: Arreglar
-                                    summary += "Santa Cruz: "+statisticsService.getCustomersCount("Santa Cruz")+"\n";
-                                    summary += "Los Boldos: "+statisticsService.getCustomersCount("Los Boldos")+"\n";
-                                    summary += "Barreales: "+statisticsService.getCustomersCount("Barreales")+"\n";
-                                    summary += "Palmilla: "+statisticsService.getCustomersCount("Palmilla")+"\n";
-                                    summary += "Quinahue: "+statisticsService.getCustomersCount("Quinahue")+"\n";
-                                    summary += "Chépica: "+statisticsService.getCustomersCount("Chépica");
+                                    summary += "Santa Cruz: " + statisticsService.getCustomersCount("Santa Cruz") + "\n";
+                                    summary += "Los Boldos: " + statisticsService.getCustomersCount("Los Boldos") + "\n";
+                                    summary += "Barreales: " + statisticsService.getCustomersCount("Barreales") + "\n";
+                                    summary += "Palmilla: " + statisticsService.getCustomersCount("Palmilla") + "\n";
+                                    summary += "Quinahue: " + statisticsService.getCustomersCount("Quinahue") + "\n";
+                                    summary += "Chépica: " + statisticsService.getCustomersCount("Chépica");
 
                                     Util.message(
-                                        MainActivity.this,
-                                        Resource.getString(R.string.customers_by_sector),
-                                        summary
+                                            MainActivity.this,
+                                            Resource.getString(R.string.customers_by_sector),
+                                            summary
                                     );
 
                                     break;
                             }
                         }
-                    } else if(searchNameEditText.getText().toString().toLowerCase().contains("#bue")){
+                    } else if (searchNameEditText.getText().toString().toLowerCase().contains("#bue")) {
                         String searchName = searchNameEditText.getText().toString().toLowerCase();
                         String limitStr = searchName.split(" ")[1];
 
@@ -608,16 +613,16 @@ public class MainActivity extends ActionBarActivity {
                             int bestCustomersSize = bestCustomers.size();
 
                             resultTextView.setText(
-                                (bestCustomersSize == 1 ?
-                                Resource.getString(R.string.result).replace("{0}", String.valueOf(bestCustomersSize)) :
-                                Resource.getString(R.string.results).replace("{0}", String.valueOf(bestCustomersSize)))
+                                    (bestCustomersSize == 1 ?
+                                            Resource.getString(R.string.result).replace("{0}", String.valueOf(bestCustomersSize)) :
+                                            Resource.getString(R.string.results).replace("{0}", String.valueOf(bestCustomersSize)))
                             );
 
                             customersListView.setAdapter(
-                                new CustomerAdapter(
-                                    MainActivity.this,
-                                    bestCustomers
-                                )
+                                    new CustomerAdapter(
+                                            MainActivity.this,
+                                            bestCustomers
+                                    )
                             );
 
                             String topBestCustomers = Resource.getString(R.string.top_best_customers);
@@ -625,12 +630,13 @@ public class MainActivity extends ActionBarActivity {
                             topBestCustomers = topBestCustomers.replace("{0}", String.valueOf(limit));
 
                             Toast.makeText(
-                                MainActivity.this.getApplicationContext(),
-                                topBestCustomers,
-                                Toast.LENGTH_SHORT
+                                    MainActivity.this.getApplicationContext(),
+                                    topBestCustomers,
+                                    Toast.LENGTH_SHORT
                             ).show();
-                        } catch (NumberFormatException ex) {}
-                    }else if(searchNameEditText.getText().toString().toLowerCase().contains("#mor")){
+                        } catch (NumberFormatException ex) {
+                        }
+                    } else if (searchNameEditText.getText().toString().toLowerCase().contains("#mor")) {
                         // TODO: esto se repite para arriba, revisar
                         String searchName = searchNameEditText.getText().toString().toLowerCase();
                         String limitStr = searchName.split(" ")[1];
@@ -643,16 +649,16 @@ public class MainActivity extends ActionBarActivity {
                             int debtorsSize = debtors.size();
 
                             resultTextView.setText(
-                                (debtorsSize == 1 ?
-                                Resource.getString(R.string.result).replace("{0}", String.valueOf(debtorsSize)) :
-                                Resource.getString(R.string.results).replace("{0}", String.valueOf(debtorsSize)))
+                                    (debtorsSize == 1 ?
+                                            Resource.getString(R.string.result).replace("{0}", String.valueOf(debtorsSize)) :
+                                            Resource.getString(R.string.results).replace("{0}", String.valueOf(debtorsSize)))
                             );
 
                             customersListView.setAdapter(
-                                new CustomerAdapter(
-                                    MainActivity.this,
-                                    debtors
-                                )
+                                    new CustomerAdapter(
+                                            MainActivity.this,
+                                            debtors
+                                    )
                             );
 
                             String topDebtors = Resource.getString(R.string.top_debtors);
@@ -660,42 +666,44 @@ public class MainActivity extends ActionBarActivity {
                             topDebtors = topDebtors.replace("{0}", String.valueOf(limit));
 
                             Toast.makeText(
-                                MainActivity.this.getApplicationContext(),
-                                topDebtors,
-                                Toast.LENGTH_SHORT
+                                    MainActivity.this.getApplicationContext(),
+                                    topDebtors,
+                                    Toast.LENGTH_SHORT
                             ).show();
-                        } catch (NumberFormatException ex) {}
-                    }else{
+                        } catch (NumberFormatException ex) {
+                        }
+                    } else {
                         String searchName = searchNameEditText.getText().toString();
 
                         List<Customer> customers = customerService.readBy(searchName);
 
                         resultTextView.setText(
-                            customers.size() + (
-                                customers.size() == 1 ?
-                                " resultado" :
-                                " resultados"
-                            )
+                                customers.size() + (
+                                        customers.size() == 1 ?
+                                                " resultado" :
+                                                " resultados"
+                                )
                         );
 
                         if (!customers.isEmpty()) {
                             customersListView.setAdapter(
-                                new CustomerAdapter(
-                                    MainActivity.this,
-                                    customers
-                                )
+                                    new CustomerAdapter(
+                                            MainActivity.this,
+                                            customers
+                                    )
                             );
                         } else {
                             customersListView.setAdapter(
-                                new CustomerAdapter(
-                                    MainActivity.this,
-                                    new ArrayList<Customer>()
-                                )
+                                    new CustomerAdapter(
+                                            MainActivity.this,
+                                            new ArrayList<Customer>()
+                                    )
                             );
                         }
                     }
-                }catch(StringIndexOutOfBoundsException ex){
-                }catch(ArrayIndexOutOfBoundsException ex){ }
+                } catch (StringIndexOutOfBoundsException ex) {
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                }
             }
         });
     }
@@ -725,12 +733,12 @@ public class MainActivity extends ActionBarActivity {
         if (id == R.id.action_crearCliente) {
             Intent intent = new Intent(MainActivity.this, CreateCustomerActivity.class);
             MainActivity.this.startActivity(intent);
-        }else if(id == R.id.action_verEstadisticas){
+        } else if (id == R.id.action_verEstadisticas) {
             //MonthlyStatistic em = dao.getMonthlyStatistic("2016-01-01","2016-02-01");
             //Toast.makeText(MainActivity.this.getApplicationContext(), em.toString(), Toast.LENGTH_LONG).show();
             Intent intent = new Intent(MainActivity.this, StatisticsActivity.class);
             MainActivity.this.startActivity(intent);
-        }else if(id == R.id.action_verDeudaTotal){
+        } else if (id == R.id.action_verDeudaTotal) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(Resource.getString(R.string.total_debt));
 
@@ -741,18 +749,18 @@ public class MainActivity extends ActionBarActivity {
             builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
             builder.create().show();
-        }else if(id == R.id.action_verGrafico){
+        } else if (id == R.id.action_verGrafico) {
             Intent intent = new Intent(MainActivity.this, ChartActivity.class);
             MainActivity.this.startActivity(intent);
-        }else if(id == R.id.action_enviarCorreo){
+        } else if (id == R.id.action_enviarCorreo) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                try {
-                    TestMail.testSmtp();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        TestMail.testSmtp();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -760,7 +768,7 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static MainActivity getInstance(){
+    public static MainActivity getInstance() {
         return instance;
     }
 }

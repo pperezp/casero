@@ -16,6 +16,7 @@ import cl.casero.service.impl.CustomerServiceImpl;
 import cl.casero.service.impl.StatisticsServiceImpl;
 
 public class CreateCustomerActivity extends ActionBarActivity {
+
     private Button backButton;
     private Button createButton;
     private EditText nameEditText;
@@ -47,78 +48,78 @@ public class CreateCustomerActivity extends ActionBarActivity {
     private void loadListeners() {
         // TODO: Separar los listeners
         backButton.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(
-                        CreateCustomerActivity.this,
-                        MainActivity.class
-                    );
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(
+                                CreateCustomerActivity.this,
+                                MainActivity.class
+                        );
 
-                    CreateCustomerActivity.this.startActivity(intent);
+                        CreateCustomerActivity.this.startActivity(intent);
+                    }
                 }
-            }
         );
 
         createButton.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /*Validaciones*/
-                    if(nameEditText.getText().toString().trim().equals("")){
-                        Toast.makeText(
-                            CreateCustomerActivity.this.getApplicationContext(),
-                            Resource.getString(R.string.customer_name_required),
-                            Toast.LENGTH_SHORT
-                        ).show();
-                    }else if(addressEditText.getText().toString().trim().equals("")){
-                        Toast.makeText(
-                            CreateCustomerActivity.this.getApplicationContext(),
-                            Resource.getString(R.string.address_required),
-                            Toast.LENGTH_SHORT
-                        ).show();
-                    }else{
-                        try {
-                            Customer customer = new Customer();
-
-                            customer.setName(nameEditText.getText().toString());
-                            customer.setAddress(addressEditText.getText().toString());
-                            customer.setSector(sectorSpinner.getSelectedItem().toString());
-                            customer.setDebt(0);
-
-                            customerService.create(customer);
-
-                            nameEditText.setText("");
-                            addressEditText.setText("");
-                            sectorSpinner.setSelection(0);
-                            nameEditText.requestFocus();
-
-                            String customers = Resource.getString(R.string.customers);
-                            customers = customers.replace("{0}", String.valueOf(statisticsService.getCustomersCount()));
-                            countTextView.setText(customers);
-
-                            String createdCustomerMessage = Resource.getString(R.string.created_customer);
-                            createdCustomerMessage = createdCustomerMessage.replace("{0}", customer.getName());
-
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        /*Validaciones*/
+                        if (nameEditText.getText().toString().trim().equals("")) {
                             Toast.makeText(
-                                CreateCustomerActivity.this.getApplicationContext(),
-                                createdCustomerMessage,
-                                Toast.LENGTH_SHORT
+                                    CreateCustomerActivity.this.getApplicationContext(),
+                                    Resource.getString(R.string.customer_name_required),
+                                    Toast.LENGTH_SHORT
                             ).show();
-
-                            K.searchName = customer.getName();
-                            Intent intent = new Intent(CreateCustomerActivity.this, MainActivity.class);
-                            CreateCustomerActivity.this.startActivity(intent);
-                        }catch (NumberFormatException ex){
+                        } else if (addressEditText.getText().toString().trim().equals("")) {
                             Toast.makeText(
-                                CreateCustomerActivity.this.getApplicationContext(),
-                                Resource.getString(R.string.only_numbers_in_balance),
-                                Toast.LENGTH_SHORT
+                                    CreateCustomerActivity.this.getApplicationContext(),
+                                    Resource.getString(R.string.address_required),
+                                    Toast.LENGTH_SHORT
                             ).show();
+                        } else {
+                            try {
+                                Customer customer = new Customer();
+
+                                customer.setName(nameEditText.getText().toString());
+                                customer.setAddress(addressEditText.getText().toString());
+                                customer.setSector(sectorSpinner.getSelectedItem().toString());
+                                customer.setDebt(0);
+
+                                customerService.create(customer);
+
+                                nameEditText.setText("");
+                                addressEditText.setText("");
+                                sectorSpinner.setSelection(0);
+                                nameEditText.requestFocus();
+
+                                String customers = Resource.getString(R.string.customers);
+                                customers = customers.replace("{0}", String.valueOf(statisticsService.getCustomersCount()));
+                                countTextView.setText(customers);
+
+                                String createdCustomerMessage = Resource.getString(R.string.created_customer);
+                                createdCustomerMessage = createdCustomerMessage.replace("{0}", customer.getName());
+
+                                Toast.makeText(
+                                        CreateCustomerActivity.this.getApplicationContext(),
+                                        createdCustomerMessage,
+                                        Toast.LENGTH_SHORT
+                                ).show();
+
+                                K.searchName = customer.getName();
+                                Intent intent = new Intent(CreateCustomerActivity.this, MainActivity.class);
+                                CreateCustomerActivity.this.startActivity(intent);
+                            } catch (NumberFormatException ex) {
+                                Toast.makeText(
+                                        CreateCustomerActivity.this.getApplicationContext(),
+                                        Resource.getString(R.string.only_numbers_in_balance),
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
                         }
                     }
                 }
-            }
         );
     }
 

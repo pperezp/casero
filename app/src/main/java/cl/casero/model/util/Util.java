@@ -17,11 +17,9 @@ import cl.casero.R;
 import cl.casero.model.CustomDate;
 import cl.casero.model.Resource;
 
-/**
- * Created by Patricio Pérez Pinto on 09/01/2016.
- */
 public class Util {
-    public static String formatPrice(int price){
+
+    public static String formatPrice(int price) {
         String languageTag = Resource.getString(R.string.language_tag);
         String languagePriceSymbol = Resource.getString(R.string.language_price_symbol);
         Locale locale = Locale.forLanguageTag(languageTag);
@@ -33,7 +31,7 @@ public class Util {
         return formatPrice;
     }
 
-    public static void message(Activity activity, String title, String message){
+    public static void message(Activity activity, String title, String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
 
         builder.setTitle(title);
@@ -44,17 +42,17 @@ public class Util {
         builder.create().show();
     }
 
-    public static void loadYears(Context context, Spinner spinner){
+    public static void loadYears(Context context, Spinner spinner) {
         List<String> list = new ArrayList<>();
 
-        for(int i = 2016; i <= 2100; i++){
+        for (int i = 2016; i <= 2100; i++) {
             list.add(String.valueOf(i));
         }
 
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(
-            context,
-            android.R.layout.simple_spinner_item,
-            list
+                context,
+                android.R.layout.simple_spinner_item,
+                list
         );
 
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

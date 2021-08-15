@@ -1,6 +1,7 @@
 package cl.casero.model;
 
 public class CustomDate {
+
     private int year;
     private int month;
     private int day;
@@ -39,7 +40,7 @@ public class CustomDate {
         this.day = day;
     }
 
-    public String toString(){
-        return day + " de "+ month + " de "+ year;
+    public String toString() {
+        return day + " de " + month + " de " + year;
     }
 }

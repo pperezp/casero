@@ -7,7 +7,7 @@ import cl.casero.model.MonthlyStatistic;
 import cl.casero.model.Statistic;
 
 public interface StatisticsService {
-    void create(Statistic statistic) ;
+    void create(Statistic statistic);
 
     List<Statistic> read();
 

@@ -1,27 +1,29 @@
-package cl.casero.model.dao;
+package cl.casero.model.dao.impl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import cl.casero.model.SQLiteOpenHelperImpl;
 import cl.casero.model.Customer;
+import cl.casero.model.dao.AbstractDao;
 
-public class DaoCustomer extends AbstractDao<Customer> {
+public class CustomerDao extends AbstractDao<Customer> {
+
     @Override
     public void create(Customer customer) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "INSERT INTO " +
-            "   cliente " +
-            "VALUES(" +
-            "null, " +
-            "'"+customer.getName() +"', " +
-            "'"+customer.getSector()+"', " +
-            "'"+customer.getAddress() +"', " +
-            "'"+customer.getDebt() +"'" +
-            ")";
+                "INSERT INTO " +
+                        "   cliente " +
+                        "VALUES(" +
+                        "null, " +
+                        "'" + customer.getName() + "', " +
+                        "'" + customer.getSector() + "', " +
+                        "'" + customer.getAddress() + "', " +
+                        "'" + customer.getDebt() + "'" +
+                        ")";
 
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.close();
@@ -36,15 +38,15 @@ public class DaoCustomer extends AbstractDao<Customer> {
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "SELECT " +
-                "* " +
-            "FROM " +
-                "cliente";
+                "SELECT " +
+                        "* " +
+                        "FROM " +
+                        "cliente";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 customer = new Customer();
 
                 customer.setId(cursor.getInt(0));
@@ -54,7 +56,7 @@ public class DaoCustomer extends AbstractDao<Customer> {
                 customer.setDebt(cursor.getInt(4));
 
                 customers.add(customer);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
@@ -63,10 +65,12 @@ public class DaoCustomer extends AbstractDao<Customer> {
     }
 
     @Override
-    public void update(Customer customer) {}
+    public void update(Customer customer) {
+    }
 
     @Override
-    public void delete(Number id) {}
+    public void delete(Number id) {
+    }
 
     @Override
     public Customer readById(Number id) {
@@ -76,17 +80,17 @@ public class DaoCustomer extends AbstractDao<Customer> {
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "SELECT " +
-                "* " +
-            "FROM " +
-                "cliente " +
-            "WHERE " +
-                "id = '"+id+"'";
+                "SELECT " +
+                        "* " +
+                        "FROM " +
+                        "cliente " +
+                        "WHERE " +
+                        "id = '" + id + "'";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 customer = new Customer();
 
                 customer.setId(cursor.getInt(0));
@@ -94,7 +98,7 @@ public class DaoCustomer extends AbstractDao<Customer> {
                 customer.setSector(cursor.getString(2));
                 customer.setAddress(cursor.getString(3));
                 customer.setDebt(cursor.getInt(4));
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
@@ -111,16 +115,16 @@ public class DaoCustomer extends AbstractDao<Customer> {
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "SELECT * FROM cliente WHERE " +
-            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%"+filter+"%' OR " +
-            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%"+filter+"%' OR " +
-            "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%"+filter+"%' " +
-            "ORDER BY nombre ASC";
+                "SELECT * FROM cliente WHERE " +
+                        "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
+                        "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
+                        "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' " +
+                        "ORDER BY nombre ASC";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 customer = new Customer();
 
                 customer.setId(cursor.getInt(0));
@@ -130,7 +134,7 @@ public class DaoCustomer extends AbstractDao<Customer> {
                 customer.setDebt(cursor.getInt(4));
 
                 customers.add(customer);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
@@ -138,23 +142,23 @@ public class DaoCustomer extends AbstractDao<Customer> {
         return customers;
     }
 
-    public int getLastCustomerId(){
+    public int getLastCustomerId() {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "SELECT " +
-                "MAX(id) " +
-            "FROM " +
-                "cliente";
+                "SELECT " +
+                        "MAX(id) " +
+                        "FROM " +
+                        "cliente";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
         int id = -1;
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 id = cursor.getInt(0);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
@@ -162,26 +166,26 @@ public class DaoCustomer extends AbstractDao<Customer> {
         return id;
     }
 
-    public int getDebt(int customerId){
+    public int getDebt(int customerId) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "SELECT " +
-                "deuda " +
-            "FROM " +
-                "cliente " +
-            "WHERE " +
-                "id = '"+customerId+"'";
+                "SELECT " +
+                        "deuda " +
+                        "FROM " +
+                        "cliente " +
+                        "WHERE " +
+                        "id = '" + customerId + "'";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
         int debt = 0;
 
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 debt = cursor.getInt(0);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
@@ -189,17 +193,17 @@ public class DaoCustomer extends AbstractDao<Customer> {
         return debt;
     }
 
-    public void updateAddress(long customerId, String newAddress){
+    public void updateAddress(long customerId, String newAddress) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "UPDATE " +
-                "cliente " +
-            "SET " +
-                "direccion = '"+newAddress+"' " +
-            "WHERE " +
-                "id = '"+customerId+"'";
+                "UPDATE " +
+                        "cliente " +
+                        "SET " +
+                        "direccion = '" + newAddress + "' " +
+                        "WHERE " +
+                        "id = '" + customerId + "'";
 
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.close();

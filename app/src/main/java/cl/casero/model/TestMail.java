@@ -26,26 +26,25 @@ public class TestMail {
 
         HttpResponse<JsonNode> request =
                 Unirest.post("https://api.mailgun.net/v3/" + DOMAIN + "/messages")
-                .basicAuth("api", API_KEY)
-                .field("from", "Casero <casero@casero.cl>")
-                .field("to", "patodeath@gmail.com")
-                .field("subject", "Hola!")
-                .field("text", "Hola desde android")
-                .asJson();
+                        .basicAuth("api", API_KEY)
+                        .field("from", "Casero <casero@casero.cl>")
+                        .field("to", "patodeath@gmail.com")
+                        .field("subject", "Hola!")
+                        .field("text", "Hola desde android")
+                        .asJson();
 
         return request.getBody();
     }
 
     public static void testSmtp() throws MessagingException {
         int SDK_INT = android.os.Build.VERSION.SDK_INT;
-        if (SDK_INT > 8)
-        {
+        if (SDK_INT > 8) {
             StrictMode.ThreadPolicy policy =
-                new StrictMode
-                .ThreadPolicy
-                .Builder()
-                .permitAll()
-                .build();
+                    new StrictMode
+                            .ThreadPolicy
+                            .Builder()
+                            .permitAll()
+                            .build();
 
             StrictMode.setThreadPolicy(policy);
 
@@ -66,9 +65,9 @@ public class TestMail {
 
             SMTPTransport t = (SMTPTransport) session.getTransport("smtps");
             t.connect(
-                "smtp.mailgun.org",
-                "postmaster@sandbox540758d57c6c431b882d9928f31e40f2.mailgun.org",
-                "a30da13c07ed50574cb48a2d2d06d5f0-7bce17e5-2169bd40"
+                    "smtp.mailgun.org",
+                    "postmaster@sandbox540758d57c6c431b882d9928f31e40f2.mailgun.org",
+                    "a30da13c07ed50574cb48a2d2d06d5f0-7bce17e5-2169bd40"
             );
             t.sendMessage(msg, msg.getAllRecipients());
 
@@ -76,8 +75,5 @@ public class TestMail {
 
             t.close();
         }
-
-
     }
-
 }

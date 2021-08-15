@@ -1,9 +1,7 @@
 package cl.casero.model;
 
-/**
- * Created by Patricio Pérez Pinto on 04/01/2016.
- */
 public class Customer {
+
     private int id;
     private String name;
     private String sector;

@@ -24,6 +24,7 @@ import cl.casero.service.StatisticsService;
 import cl.casero.service.impl.StatisticsServiceImpl;
 
 public class StatisticsActivity extends ActionBarActivity {
+
     private Spinner yearSpinner;
     private Spinner monthSpinner;
     private Button startDateButton;
@@ -53,10 +54,11 @@ public class StatisticsActivity extends ActionBarActivity {
             SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
             SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.statistics_date_pattern));
             try {
-                Date fIni = f.parse(year+"-"+(month+1)+"-"+day);
-                K.startDate = year+"-"+((month+1)<10?"0"+(month+1):(month+1))+"-"+(day<10?"0"+day:day);
+                Date fIni = f.parse(year + "-" + (month + 1) + "-" + day);
+                K.startDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-" + (day < 10 ? "0" + day : day);
                 startDateTextView.setText(f2.format(fIni));
-            }catch (ParseException ex){}
+            } catch (ParseException ex) {
+            }
         }
     };
 
@@ -69,10 +71,11 @@ public class StatisticsActivity extends ActionBarActivity {
             SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
             SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.statistics_date_pattern));
             try {
-                Date fFin = f.parse(year+"-"+(month+1)+"-"+day);
-                K.endDate = year+"-"+((month+1)<10?"0"+(month+1):(month+1))+"-"+(day<10?"0"+day:day);
+                Date fFin = f.parse(year + "-" + (month + 1) + "-" + day);
+                K.endDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-" + (day < 10 ? "0" + day : day);
                 endDateTextView.setText(f2.format(fFin));
-            }catch (ParseException ex){}
+            } catch (ParseException ex) {
+            }
         }
     };
     /*FECHA!*/
@@ -89,7 +92,7 @@ public class StatisticsActivity extends ActionBarActivity {
 
         if (id == 1) {
             return new DatePickerDialog(this, startDateListener, year, month, day);
-        }else if(id == 2){
+        } else if (id == 2) {
             return new DatePickerDialog(this, endDateListener, year, month, day);
         }
 
@@ -115,44 +118,44 @@ public class StatisticsActivity extends ActionBarActivity {
         Util.loadYears(StatisticsActivity.this, yearSpinner);
 
         monthlyStatisticsButton.setOnClickListener(
-            new View.OnClickListener() {
+                new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    String monthString = monthSpinner.getSelectedItem().toString();
+                    @Override
+                    public void onClick(View v) {
+                        String monthString = monthSpinner.getSelectedItem().toString();
 
-                    int month = monthSpinner.getSelectedItemPosition();
-                    int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
+                        int month = monthSpinner.getSelectedItemPosition();
+                        int year = Integer.parseInt(yearSpinner.getSelectedItem().toString());
 
-                    month++;
+                        month++;
 
-                    String startDate, endDate;
+                        String startDate, endDate;
 
-                    startDate = year + "-" + (month < 10 ? "0" + month : month) + "-01";
+                        startDate = year + "-" + (month < 10 ? "0" + month : month) + "-01";
 
-                    if (month == 12) {
-                        endDate = (year + 1) + "-01-01";
-                    } else {
-                        endDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-01";
+                        if (month == 12) {
+                            endDate = (year + 1) + "-01-01";
+                        } else {
+                            endDate = year + "-" + ((month + 1) < 10 ? "0" + (month + 1) : (month + 1)) + "-01";
+                        }
+
+                        String statisticsTitle = Resource.getString(R.string.statistics_by_year_month);
+
+                        statisticsTitle = statisticsTitle.replace("{0}", monthString);
+                        statisticsTitle = statisticsTitle.replace("{1}", String.valueOf(year));
+
+                        loadStatistics(startDate, endDate, false, statisticsTitle);
                     }
-
-                    String statisticsTitle = Resource.getString(R.string.statistics_by_year_month);
-
-                    statisticsTitle = statisticsTitle.replace("{0}", monthString);
-                    statisticsTitle = statisticsTitle.replace("{1}", String.valueOf(year));
-
-                    loadStatistics(startDate, endDate, false, statisticsTitle);
                 }
-            }
         );
 
         startDateButton.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showDialog(1);
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDialog(1);
+                    }
                 }
-            }
         );
 
         endDateButton.setOnClickListener(new View.OnClickListener() {
@@ -163,20 +166,20 @@ public class StatisticsActivity extends ActionBarActivity {
         });
 
         statisticsRangeButton.setOnClickListener(
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(K.startDate != null && K.endDate != null){
-                        loadStatistics(K.startDate, K.endDate, true, Resource.getString(R.string.statistics_between_dates));
-                    }else{
-                        Toast.makeText(
-                            StatisticsActivity.this,
-                            Resource.getString(R.string.enter_both_dates),
-                            Toast.LENGTH_LONG
-                        ).show();
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (K.startDate != null && K.endDate != null) {
+                            loadStatistics(K.startDate, K.endDate, true, Resource.getString(R.string.statistics_between_dates));
+                        } else {
+                            Toast.makeText(
+                                    StatisticsActivity.this,
+                                    Resource.getString(R.string.enter_both_dates),
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        }
                     }
                 }
-            }
         );
     }
 

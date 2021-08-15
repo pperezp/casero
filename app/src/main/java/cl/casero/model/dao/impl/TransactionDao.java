@@ -1,4 +1,4 @@
-package cl.casero.model.dao;
+package cl.casero.model.dao.impl;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -7,15 +7,16 @@ import java.util.List;
 import cl.casero.model.SQLiteOpenHelperImpl;
 import cl.casero.model.Statistic;
 import cl.casero.model.Transaction;
+import cl.casero.model.dao.AbstractDao;
 import cl.casero.model.enums.SaleType;
 import cl.casero.model.enums.TransactionType;
 
-public class DaoTransaction extends AbstractDao<Transaction> {
+public class TransactionDao extends AbstractDao<Transaction> {
 
-    private DaoStatistics daoStatistics;
+    private StatisticsDao statisticsDao;
 
-    public DaoTransaction(){
-        daoStatistics = new DaoStatistics();
+    public TransactionDao() {
+        statisticsDao = new StatisticsDao();
     }
 
     @Override
@@ -26,15 +27,15 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         String transactionDate = dateFormat.format(transaction.getDate());
 
         query =
-            "INSERT INTO " +
-                "movimiento " +
-            "VALUES(" +
-                "NULL, " +
-                "'"+transactionDate+"'," +
-                "'"+transaction.getDetail() +"'," +
-                "'"+transaction.getBalance() +"'," +
-                "'"+transaction.getCustomerId() +"'" +
-            ")";
+                "INSERT INTO " +
+                        "movimiento " +
+                        "VALUES(" +
+                        "NULL, " +
+                        "'" + transactionDate + "'," +
+                        "'" + transaction.getDetail() + "'," +
+                        "'" + transaction.getBalance() + "'," +
+                        "'" + transaction.getCustomerId() + "'" +
+                        ")";
 
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.close();
@@ -65,7 +66,7 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         return null;
     }
 
-    public List<Transaction> readByCustomer(int customerId, boolean ascending){
+    public List<Transaction> readByCustomer(int customerId, boolean ascending) {
         List<Transaction> transactions = new ArrayList<>();
         Transaction transaction;
 
@@ -74,30 +75,31 @@ public class DaoTransaction extends AbstractDao<Transaction> {
 
         query =
                 "SELECT " +
-                    "* " +
-                "FROM " +
-                    "movimiento " +
-                "WHERE " +
-                    "cliente = '"+customerId+"' " +
-                "ORDER BY fecha " + (ascending ? "ASC" : "DESC");
+                        "* " +
+                        "FROM " +
+                        "movimiento " +
+                        "WHERE " +
+                        "cliente = '" + customerId + "' " +
+                        "ORDER BY fecha " + (ascending ? "ASC" : "DESC");
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 transaction = new Transaction();
 
                 transaction.setId(cursor.getInt(0));
-                try{
+                try {
                     transaction.setDate(dateFormat.parse(cursor.getString(1)));
-                }catch(ParseException ex){}
+                } catch (ParseException ex) {
+                }
 
                 transaction.setDetail(cursor.getString(2));
                 transaction.setBalance(cursor.getInt(3));
                 transaction.setCustomerId(cursor.getInt(4));
 
                 transactions.add(transaction);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         sqLiteDatabase.close();
@@ -105,23 +107,23 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         return transactions;
     }
 
-    public void updateDebt(int customerId, int newDebt){
+    public void updateDebt(int customerId, int newDebt) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
-            "UPDATE " +
-                "cliente " +
-            "SET " +
-                "deuda = '"+newDebt+"' " +
-            "WHERE " +
-                "id = '"+customerId+"'";
+                "UPDATE " +
+                        "cliente " +
+                        "SET " +
+                        "deuda = '" + newDebt + "' " +
+                        "WHERE " +
+                        "id = '" + customerId + "'";
 
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.close();
     }
 
-    public void pay(Transaction transaction, int amount){
+    public void pay(Transaction transaction, int amount) {
         create(transaction);
         updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
@@ -134,10 +136,10 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         statistic.setSaleType(-1);
         statistic.setItemsCount(-1);
 
-        daoStatistics.create(statistic);
+        statisticsDao.create(statistic);
     }
 
-    public void refund(Transaction transaction, int amount){
+    public void refund(Transaction transaction, int amount) {
         create(transaction);
         updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
@@ -149,10 +151,10 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         statistic.setSaleType(-1);
         statistic.setItemsCount(-1);
 
-        daoStatistics.create(statistic);
+        statisticsDao.create(statistic);
     }
 
-    public void debtCondonation(Transaction transaction, int amount){
+    public void debtForgiveness(Transaction transaction, int amount) {
         create(transaction);
         updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
@@ -164,18 +166,18 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         statistic.setSaleType(-1);
         statistic.setItemsCount(-1);
 
-        daoStatistics.create(statistic);
+        statisticsDao.create(statistic);
     }
 
     // TODO: Pensar en hacer clase Sale.java
+
     /**
-     *
      * @param transaction
      * @param amount
      * @param itemCounts
-     * @param saleType puede ser mantencion o venta nueva
+     * @param saleType    puede ser mantencion o venta nueva
      */
-    public void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType){
+    public void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType) {
         Statistic statistic = new Statistic();
         updateDebt(transaction.getCustomerId(), transaction.getBalance());
 
@@ -186,6 +188,6 @@ public class DaoTransaction extends AbstractDao<Transaction> {
         statistic.setItemsCount(itemCounts);
 
         create(transaction);
-        daoStatistics.create(statistic);
+        statisticsDao.create(statistic);
     }
 }

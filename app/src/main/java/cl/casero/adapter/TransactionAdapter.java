@@ -16,10 +16,8 @@ import cl.casero.model.Transaction;
 import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
 
-/**
- * Created by Patricio Pérez Pinto on 04/01/2016.
- */
 public class TransactionAdapter extends BaseAdapter {
+
     private List<Transaction> transactions;
     private Activity activity;
 
@@ -27,6 +25,7 @@ public class TransactionAdapter extends BaseAdapter {
         this.activity = activity;
         this.transactions = transactions;
     }
+
     @Override
     public int getCount() {
         return transactions.size();
@@ -51,10 +50,10 @@ public class TransactionAdapter extends BaseAdapter {
 
         if (contentView == null) {
             LayoutInflater inflater =
-                (LayoutInflater) activity
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    (LayoutInflater) activity
+                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            if(inflater != null){
+            if (inflater != null) {
                 view = inflater.inflate(R.layout.activity_transaction_item, null);
             }
         }
@@ -80,11 +79,11 @@ public class TransactionAdapter extends BaseAdapter {
         int saleColor = Resource.getColor(R.color.sale);
         int transactionColor = Resource.getColor(R.color.transaction);
 
-        if(transaction.getDetail().contains(payment)){
+        if (transaction.getDetail().contains(payment)) {
             balanceTextView.setTextColor(paymentColor);
-        }else if(transaction.getDetail().contains(sale)){
+        } else if (transaction.getDetail().contains(sale)) {
             balanceTextView.setTextColor(saleColor);
-        }else{
+        } else {
             balanceTextView.setTextColor(transactionColor);
         }
 

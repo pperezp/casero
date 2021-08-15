@@ -23,9 +23,7 @@ import cl.casero.model.Resource;
 import cl.casero.service.StatisticsService;
 import cl.casero.service.impl.StatisticsServiceImpl;
 
-/*
-* https://github.com/PhilJay/MPAndroidChart
-* */
+// https://github.com/PhilJay/MPAndroidChart
 public class ChartActivity extends ActionBarActivity {
 
     private BarChart barChart;
@@ -75,9 +73,9 @@ public class ChartActivity extends ActionBarActivity {
 
                 int xCount = 0;
 
-                for(int year = startDate.getYear(); year <= endDate.getYear(); year++){
-                    if(startDate.getYear() == endDate.getYear()){// si es el mismo año, recorro normal
-                        for(int month = startDate.getMonth(); month <= endDate.getMonth(); month++){
+                for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
+                    if (startDate.getYear() == endDate.getYear()) {// si es el mismo año, recorro normal
+                        for (int month = startDate.getMonth(); month <= endDate.getMonth(); month++) {
                             // TODO: Revisar si el método getMonthlyStatistic va aquí o no
                             monthlyStatistic = getMonthlyStatistic(month, year);
 
@@ -85,34 +83,34 @@ public class ChartActivity extends ActionBarActivity {
                             payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                             xCount++;
                         }
-                    }else{
+                    } else {
                         // aca los años no son iguales
 
                         // si estoy en el primer año, debo ir desde
                         // el primer mes (f1.getMonth() hasta 12)
 
                         // TODO: Arreglar este if else con dos for (debiese ser un for, son similares)
-                        if(year == startDate.getYear()){
-                            for(int mes = startDate.getMonth(); mes <= 12; mes++) {
+                        if (year == startDate.getYear()) {
+                            for (int mes = startDate.getMonth(); mes <= 12; mes++) {
                                 monthlyStatistic = getMonthlyStatistic(mes, year);
                                 sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
                                 payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                                 xCount++;
                             }
-                        }else if(year < endDate.getYear()){
+                        } else if (year < endDate.getYear()) {
                             // si aún no llego al año límite
                             // recorro el año (o sea del 1 al 12)
-                            for(int mes = 1; mes <= 12; mes++) {
+                            for (int mes = 1; mes <= 12; mes++) {
                                 monthlyStatistic = getMonthlyStatistic(mes, year);
                                 sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
                                 payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
                                 xCount++;
                             }
 
-                        }else{
+                        } else {
                             // el año actual es el año limite, por
                             // ende tengo que llegar al f2.getMonth();
-                            for(int mes = 1; mes <= endDate.getMonth(); mes++) {
+                            for (int mes = 1; mes <= endDate.getMonth(); mes++) {
                                 monthlyStatistic = getMonthlyStatistic(mes, year);
                                 sales.add(new BarEntry(xCount, monthlyStatistic.getSalesCount()));
                                 payments.add(new BarEntry(xCount, monthlyStatistic.getPaymentsCount()));
@@ -158,7 +156,7 @@ public class ChartActivity extends ActionBarActivity {
         startYearSpinner = (Spinner) findViewById(R.id.startYearSpinner);
         endYearSpinner = (Spinner) findViewById(R.id.endYearSpinner);
         salesChartButton = (Button) findViewById(R.id.salesChartButton);
-        barChart = (BarChart)findViewById(R.id.barChart);
+        barChart = (BarChart) findViewById(R.id.barChart);
 
         Util.loadYears(ChartActivity.this, startYearSpinner);
         Util.loadYears(ChartActivity.this, endYearSpinner);

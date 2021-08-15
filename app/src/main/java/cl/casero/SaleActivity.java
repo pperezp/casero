@@ -31,6 +31,7 @@ import cl.casero.service.impl.CustomerServiceImpl;
 import cl.casero.service.impl.TransactionServiceImpl;
 
 public class SaleActivity extends ActionBarActivity {
+
     private TextView saleCustomerNameTextView;
     private TextView saleDateTextView;
     private EditText saleDetailEditText;
@@ -53,10 +54,11 @@ public class SaleActivity extends ActionBarActivity {
             SimpleDateFormat f = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
             SimpleDateFormat f2 = new SimpleDateFormat(Resource.getString(R.string.date_pattern));
             try {
-                String selectedDate = anio+"-"+(mes+1)+"-"+dia;
+                String selectedDate = anio + "-" + (mes + 1) + "-" + dia;
                 K.date = f.parse(selectedDate);
                 saleDateTextView.setText(f2.format(K.date));
-            }catch (ParseException ex){}
+            } catch (ParseException ex) {
+            }
         }
     };
     /*FECHA!*/
@@ -106,9 +108,9 @@ public class SaleActivity extends ActionBarActivity {
                                     itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
                                 } catch (NumberFormatException ex) {
                                     Toast.makeText(
-                                        SaleActivity.this,
-                                        Resource.getString(R.string.only_numbers_in_items),
-                                        Toast.LENGTH_SHORT
+                                            SaleActivity.this,
+                                            Resource.getString(R.string.only_numbers_in_items),
+                                            Toast.LENGTH_SHORT
                                     ).show();
                                 }
 
@@ -117,9 +119,9 @@ public class SaleActivity extends ActionBarActivity {
                                         subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
                                     } catch (NumberFormatException ex) {
                                         Toast.makeText(
-                                            SaleActivity.this,
-                                            Resource.getString(R.string.only_numbers_in_total_price),
-                                            Toast.LENGTH_SHORT
+                                                SaleActivity.this,
+                                                Resource.getString(R.string.only_numbers_in_total_price),
+                                                Toast.LENGTH_SHORT
                                         ).show();
                                     }
 
@@ -131,8 +133,8 @@ public class SaleActivity extends ActionBarActivity {
                                         String sailDetail = saleDetailEditText.getText().toString();
                                         String transactionDetail = Resource.getString(R.string.transaction_detail);
 
-                                        transactionDetail = transactionDetail.replace("{0}",sailDetail);
-                                        transactionDetail = transactionDetail.replace("{1}",String.valueOf(itemsCount));
+                                        transactionDetail = transactionDetail.replace("{0}", sailDetail);
+                                        transactionDetail = transactionDetail.replace("{1}", String.valueOf(itemsCount));
                                         transactionDetail = transactionDetail.replace("{2}", Util.formatPrice(subtotal));
 
                                         transaction.setDetail(transactionDetail);
@@ -140,7 +142,7 @@ public class SaleActivity extends ActionBarActivity {
 
                                         int currentBalance = customerService.getDebt((int) K.customerId);
 
-                                        SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE: SaleType.MAINTENANCE);
+                                        SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE : SaleType.MAINTENANCE);
 
                                         currentBalance = currentBalance + subtotal;
 
@@ -153,9 +155,9 @@ public class SaleActivity extends ActionBarActivity {
                                         maintenanceCreated = maintenanceCreated.replace("{0}", Util.formatPrice(currentBalance));
 
                                         Toast.makeText(
-                                            SaleActivity.this,
-                                            maintenanceCreated,
-                                            Toast.LENGTH_LONG
+                                                SaleActivity.this,
+                                                maintenanceCreated,
+                                                Toast.LENGTH_LONG
                                         ).show();
 
                                         Intent intent = new Intent(SaleActivity.this, MainActivity.class);
@@ -173,27 +175,27 @@ public class SaleActivity extends ActionBarActivity {
 
                 if (saleDetailEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(
-                        SaleActivity.this,
-                        Resource.getString(R.string.enter_maintenance_detail),
-                        Toast.LENGTH_SHORT
+                            SaleActivity.this,
+                            Resource.getString(R.string.enter_maintenance_detail),
+                            Toast.LENGTH_SHORT
                     ).show();
                 } else if (saleItemsCountEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(
-                        SaleActivity.this,
-                        Resource.getString(R.string.enter_items_count),
-                        Toast.LENGTH_SHORT
+                            SaleActivity.this,
+                            Resource.getString(R.string.enter_items_count),
+                            Toast.LENGTH_SHORT
                     ).show();
                 } else if (saleAmountEditText.getText().toString().trim().equals("")) {
                     Toast.makeText(
-                        SaleActivity.this,
+                            SaleActivity.this,
                             Resource.getString(R.string.enter_total_price),
-                        Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT
                     ).show();
                 } else if (saleDateTextView.getText().toString().equals(Resource.getString(R.string.saleDate))) {
                     Toast.makeText(
-                        SaleActivity.this,
-                        Resource.getString(R.string.enter_sale_date),
-                        Toast.LENGTH_SHORT
+                            SaleActivity.this,
+                            Resource.getString(R.string.enter_sale_date),
+                            Toast.LENGTH_SHORT
                     ).show();
                 } else {
                     try {
@@ -220,43 +222,44 @@ public class SaleActivity extends ActionBarActivity {
                                     saleConfirm = saleConfirm.replace("{0}", saleSummary);
 
                                     new AlertDialog
-                                        .Builder(SaleActivity.this)
-                                        .setMessage(saleConfirm)
-                                        .setPositiveButton(Resource.getString(R.string.yes), dialogClickListener)
-                                        .setNegativeButton(Resource.getString(R.string.no), dialogClickListener)
-                                        .show();
+                                            .Builder(SaleActivity.this)
+                                            .setMessage(saleConfirm)
+                                            .setPositiveButton(Resource.getString(R.string.yes), dialogClickListener)
+                                            .setNegativeButton(Resource.getString(R.string.no), dialogClickListener)
+                                            .show();
                                 } else {
                                     Toast.makeText(
-                                        SaleActivity.this,
-                                        Resource.getString(R.string.negative_sale_price),
-                                        Toast.LENGTH_SHORT
+                                            SaleActivity.this,
+                                            Resource.getString(R.string.negative_sale_price),
+                                            Toast.LENGTH_SHORT
                                     ).show();
                                 }
                             } catch (NumberFormatException ex) {
                                 Toast.makeText(
-                                    SaleActivity.this,
-                                    Resource.getString(R.string.only_numbers_in_total_price),
-                                    Toast.LENGTH_SHORT
+                                        SaleActivity.this,
+                                        Resource.getString(R.string.only_numbers_in_total_price),
+                                        Toast.LENGTH_SHORT
                                 ).show();
                             }
                         } else {
                             Toast.makeText(
-                                SaleActivity.this,
-                                Resource.getString(R.string.negative_items_count),
-                                Toast.LENGTH_SHORT
+                                    SaleActivity.this,
+                                    Resource.getString(R.string.negative_items_count),
+                                    Toast.LENGTH_SHORT
                             ).show();
                         }
                     } catch (NumberFormatException ex) {
                         Toast.makeText(
-                            SaleActivity.this,
-                            Resource.getString(R.string.only_numbers_in_items),
-                            Toast.LENGTH_SHORT
+                                SaleActivity.this,
+                                Resource.getString(R.string.only_numbers_in_items),
+                                Toast.LENGTH_SHORT
                         ).show();
                     }
                 }
             }
         });
     }
+
     /*FECHA!*/
     // TODO: deprecated
     @Override

@@ -1,6 +1,7 @@
 package cl.casero.model.enums;
 
 public enum TransactionType {
+
     SALE(0),
     PAYMENT(1),
     REFUND(2),
