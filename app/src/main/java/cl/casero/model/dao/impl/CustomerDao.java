@@ -6,6 +6,7 @@ import java.util.List;
 import cl.casero.model.SQLiteOpenHelperImpl;
 import cl.casero.model.Customer;
 import cl.casero.model.dao.AbstractDao;
+import cl.casero.model.util.Util;
 
 public class CustomerDao extends AbstractDao<Customer> {
 
@@ -113,6 +114,8 @@ public class CustomerDao extends AbstractDao<Customer> {
 
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        filter = Util.removeAccentMark(filter);
 
         query =
                 "SELECT * FROM cliente WHERE " +

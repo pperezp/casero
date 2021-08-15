@@ -6,10 +6,12 @@ import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -109,5 +111,11 @@ public class Util {
         }
 
         return diff;
+    }
+
+    public static String removeAccentMark(String filter) {
+        filter = Normalizer.normalize(filter, Normalizer.Form.NFD);
+        filter = filter.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+        return filter;
     }
 }
