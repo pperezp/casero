@@ -7,5 +7,9 @@ public class K {
     public static Date date;
     public static String startDate;
     public static String endDate;
-    public static String searchName = null;
+    public static String searchName;
+    public static int paymentAmount;
+    public static int refundAmount;
+    public static String refundDetailInput;
+    public static String debtForgivenessDetailInput;
 }

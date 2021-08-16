@@ -1,5 +1,6 @@
 package cl.casero.model.util;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,6 +9,8 @@ import android.widget.Spinner;
 
 import java.text.Normalizer;
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -117,5 +120,15 @@ public class Util {
         filter = Normalizer.normalize(filter, Normalizer.Form.NFD);
         filter = filter.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
         return filter;
+    }
+
+    public static Date getDate(int year, int monthOfYear, int dayOfMonth) {
+        try {
+            String datePattern = Resource.getString(R.string.database_date_pattern);
+            SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
+            return dateFormat.parse(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);
+        } catch (ParseException ex) {
+            return null;
+        }
     }
 }

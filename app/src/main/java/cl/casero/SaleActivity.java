@@ -81,187 +81,178 @@ public class SaleActivity extends ActionBarActivity {
     }
 
     private void loadListeners() {
-        saleDateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Revisar todos los showDialog deprecados
-                showDialog(999);
-            }
+        saleDateButton.setOnClickListener(v -> {
+            showDialog(999);
         });
 
-        saleCreateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
+        saleCreateButton.setOnClickListener(v -> {
+            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case DialogInterface.BUTTON_POSITIVE:
 
-                                CustomerService customerService = new CustomerServiceImpl();
-                                TransactionService transactionService = new TransactionServiceImpl();
+                            CustomerService customerService = new CustomerServiceImpl();
+                            TransactionService transactionService = new TransactionServiceImpl();
 
-                                int subtotal = -1;
-                                int itemsCount = -1;
+                            int subtotal = -1;
+                            int itemsCount = -1;
 
-                                try {
-                                    itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
-                                } catch (NumberFormatException ex) {
-                                    Toast.makeText(
-                                            SaleActivity.this,
-                                            Resource.getString(R.string.only_numbers_in_items),
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-                                }
-
-                                if (itemsCount != -1) {
-                                    try {
-                                        subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
-                                    } catch (NumberFormatException ex) {
-                                        Toast.makeText(
-                                                SaleActivity.this,
-                                                Resource.getString(R.string.only_numbers_in_total_price),
-                                                Toast.LENGTH_SHORT
-                                        ).show();
-                                    }
-
-                                    if (subtotal != -1) {
-                                        Transaction transaction = new Transaction();
-
-                                        transaction.setCustomerId((int) K.customerId);
-
-                                        String sailDetail = saleDetailEditText.getText().toString();
-                                        String transactionDetail = Resource.getString(R.string.transaction_detail);
-
-                                        transactionDetail = transactionDetail.replace("{0}", sailDetail);
-                                        transactionDetail = transactionDetail.replace("{1}", String.valueOf(itemsCount));
-                                        transactionDetail = transactionDetail.replace("{2}", Util.formatPrice(subtotal));
-
-                                        transaction.setDetail(transactionDetail);
-                                        transaction.setDate(K.date);
-
-                                        int currentBalance = customerService.getDebt((int) K.customerId);
-
-                                        SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE : SaleType.MAINTENANCE);
-
-                                        currentBalance = currentBalance + subtotal;
-
-                                        transaction.setBalance(currentBalance);
-
-                                        transactionService.createSale(transaction, subtotal, itemsCount, saleType);
-
-                                        String maintenanceCreated = Resource.getString(R.string.maintenance_created);
-
-                                        maintenanceCreated = maintenanceCreated.replace("{0}", Util.formatPrice(currentBalance));
-
-                                        Toast.makeText(
-                                                SaleActivity.this,
-                                                maintenanceCreated,
-                                                Toast.LENGTH_LONG
-                                        ).show();
-
-                                        Intent intent = new Intent(SaleActivity.this, MainActivity.class);
-                                        SaleActivity.this.startActivity(intent);
-                                    }
-                                }
-
-                                break;
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                break;
-                        }
-                    }
-                };
-
-                if (saleDetailEditText.getText().toString().trim().equals("")) {
-                    Toast.makeText(
-                            SaleActivity.this,
-                            Resource.getString(R.string.enter_maintenance_detail),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                } else if (saleItemsCountEditText.getText().toString().trim().equals("")) {
-                    Toast.makeText(
-                            SaleActivity.this,
-                            Resource.getString(R.string.enter_items_count),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                } else if (saleAmountEditText.getText().toString().trim().equals("")) {
-                    Toast.makeText(
-                            SaleActivity.this,
-                            Resource.getString(R.string.enter_total_price),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                } else if (saleDateTextView.getText().toString().equals(Resource.getString(R.string.saleDate))) {
-                    Toast.makeText(
-                            SaleActivity.this,
-                            Resource.getString(R.string.enter_sale_date),
-                            Toast.LENGTH_SHORT
-                    ).show();
-                } else {
-                    try {
-                        int itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
-
-                        if (itemsCount > 0) {
                             try {
-                                int subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
-
-                                if (subtotal > 0) {
-                                    String saleSummary = Resource.getString(R.string.sale_summary);
-
-                                    String saleAmountString = saleAmountEditText.getText().toString();
-                                    Integer saleAmount = Integer.parseInt(saleAmountString);
-
-                                    saleSummary = saleSummary.replace("{0}", customer.getName());
-                                    saleSummary = saleSummary.replace("{1}", saleDetailEditText.getText().toString());
-                                    saleSummary = saleSummary.replace("{2}", saleItemsCountEditText.getText().toString());
-                                    saleSummary = saleSummary.replace("{3}", Util.formatPrice(saleAmount));
-                                    saleSummary = saleSummary.replace("{4}", saleDateTextView.getText().toString());
-
-                                    String saleConfirm = Resource.getString(R.string.sale_confirm);
-
-                                    saleConfirm = saleConfirm.replace("{0}", saleSummary);
-
-                                    new AlertDialog
-                                            .Builder(SaleActivity.this)
-                                            .setMessage(saleConfirm)
-                                            .setPositiveButton(Resource.getString(R.string.yes), dialogClickListener)
-                                            .setNegativeButton(Resource.getString(R.string.no), dialogClickListener)
-                                            .show();
-                                } else {
-                                    Toast.makeText(
-                                            SaleActivity.this,
-                                            Resource.getString(R.string.negative_sale_price),
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-                                }
+                                itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
                             } catch (NumberFormatException ex) {
                                 Toast.makeText(
                                         SaleActivity.this,
-                                        Resource.getString(R.string.only_numbers_in_total_price),
+                                        Resource.getString(R.string.only_numbers_in_items),
                                         Toast.LENGTH_SHORT
                                 ).show();
                             }
-                        } else {
+
+                            if (itemsCount != -1) {
+                                try {
+                                    subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
+                                } catch (NumberFormatException ex) {
+                                    Toast.makeText(
+                                            SaleActivity.this,
+                                            Resource.getString(R.string.only_numbers_in_total_price),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+
+                                if (subtotal != -1) {
+                                    Transaction transaction = new Transaction();
+
+                                    transaction.setCustomerId((int) K.customerId);
+
+                                    String sailDetail = saleDetailEditText.getText().toString();
+                                    String transactionDetail = Resource.getString(R.string.transaction_detail);
+
+                                    transactionDetail = transactionDetail.replace("{0}", sailDetail);
+                                    transactionDetail = transactionDetail.replace("{1}", String.valueOf(itemsCount));
+                                    transactionDetail = transactionDetail.replace("{2}", Util.formatPrice(subtotal));
+
+                                    transaction.setDetail(transactionDetail);
+                                    transaction.setDate(K.date);
+
+                                    int currentBalance = customerService.getDebt((int) K.customerId);
+
+                                    SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE : SaleType.MAINTENANCE);
+
+                                    currentBalance = currentBalance + subtotal;
+
+                                    transaction.setBalance(currentBalance);
+
+                                    transactionService.createSale(transaction, subtotal, itemsCount, saleType);
+
+                                    String maintenanceCreated = Resource.getString(R.string.maintenance_created);
+
+                                    maintenanceCreated = maintenanceCreated.replace("{0}", Util.formatPrice(currentBalance));
+
+                                    Toast.makeText(
+                                            SaleActivity.this,
+                                            maintenanceCreated,
+                                            Toast.LENGTH_LONG
+                                    ).show();
+
+                                    Intent intent = new Intent(SaleActivity.this, MainActivity.class);
+                                    SaleActivity.this.startActivity(intent);
+                                }
+                            }
+
+                            break;
+
+                        case DialogInterface.BUTTON_NEGATIVE:
+                            break;
+                    }
+                }
+            };
+
+            if (saleDetailEditText.getText().toString().trim().equals("")) {
+                Toast.makeText(
+                        SaleActivity.this,
+                        Resource.getString(R.string.enter_maintenance_detail),
+                        Toast.LENGTH_SHORT
+                ).show();
+            } else if (saleItemsCountEditText.getText().toString().trim().equals("")) {
+                Toast.makeText(
+                        SaleActivity.this,
+                        Resource.getString(R.string.enter_items_count),
+                        Toast.LENGTH_SHORT
+                ).show();
+            } else if (saleAmountEditText.getText().toString().trim().equals("")) {
+                Toast.makeText(
+                        SaleActivity.this,
+                        Resource.getString(R.string.enter_total_price),
+                        Toast.LENGTH_SHORT
+                ).show();
+            } else if (saleDateTextView.getText().toString().equals(Resource.getString(R.string.saleDate))) {
+                Toast.makeText(
+                        SaleActivity.this,
+                        Resource.getString(R.string.enter_sale_date),
+                        Toast.LENGTH_SHORT
+                ).show();
+            } else {
+                try {
+                    int itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
+
+                    if (itemsCount > 0) {
+                        try {
+                            int subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
+
+                            if (subtotal > 0) {
+                                String saleSummary = Resource.getString(R.string.sale_summary);
+
+                                String saleAmountString = saleAmountEditText.getText().toString();
+                                Integer saleAmount = Integer.parseInt(saleAmountString);
+
+                                saleSummary = saleSummary.replace("{0}", customer.getName());
+                                saleSummary = saleSummary.replace("{1}", saleDetailEditText.getText().toString());
+                                saleSummary = saleSummary.replace("{2}", saleItemsCountEditText.getText().toString());
+                                saleSummary = saleSummary.replace("{3}", Util.formatPrice(saleAmount));
+                                saleSummary = saleSummary.replace("{4}", saleDateTextView.getText().toString());
+
+                                String saleConfirm = Resource.getString(R.string.sale_confirm);
+
+                                saleConfirm = saleConfirm.replace("{0}", saleSummary);
+
+                                new AlertDialog
+                                        .Builder(SaleActivity.this)
+                                        .setMessage(saleConfirm)
+                                        .setPositiveButton(Resource.getString(R.string.yes), dialogClickListener)
+                                        .setNegativeButton(Resource.getString(R.string.no), dialogClickListener)
+                                        .show();
+                            } else {
+                                Toast.makeText(
+                                        SaleActivity.this,
+                                        Resource.getString(R.string.negative_sale_price),
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        } catch (NumberFormatException ex) {
                             Toast.makeText(
                                     SaleActivity.this,
-                                    Resource.getString(R.string.negative_items_count),
+                                    Resource.getString(R.string.only_numbers_in_total_price),
                                     Toast.LENGTH_SHORT
                             ).show();
                         }
-                    } catch (NumberFormatException ex) {
+                    } else {
                         Toast.makeText(
                                 SaleActivity.this,
-                                Resource.getString(R.string.only_numbers_in_items),
+                                Resource.getString(R.string.negative_items_count),
                                 Toast.LENGTH_SHORT
                         ).show();
                     }
+                } catch (NumberFormatException ex) {
+                    Toast.makeText(
+                            SaleActivity.this,
+                            Resource.getString(R.string.only_numbers_in_items),
+                            Toast.LENGTH_SHORT
+                    ).show();
                 }
             }
         });
     }
 
-    /*FECHA!*/
-    // TODO: deprecated
     @Override
     protected Dialog onCreateDialog(int id) {
         if (id == 999) {
@@ -277,7 +268,6 @@ public class SaleActivity extends ActionBarActivity {
 
         return null;
     }
-    /*FECHA!*/
 
     private void loadComponents() {
         saleCustomerNameTextView = (TextView) findViewById(R.id.saleCustomerNameTextView);

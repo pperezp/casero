@@ -49,4 +49,8 @@ public class Transaction {
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
+
+    public void forgiveDebt() {
+        this.balance = 0;
+    }
 }

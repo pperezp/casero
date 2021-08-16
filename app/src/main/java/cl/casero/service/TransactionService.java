@@ -20,7 +20,7 @@ public interface TransactionService {
 
     void refund(Transaction transaction, int amount);
 
-    void debtCondonation(Transaction transaction, int amount);
+    void forgiveDebt(Transaction transaction, int amount);
 
     void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType);
 }

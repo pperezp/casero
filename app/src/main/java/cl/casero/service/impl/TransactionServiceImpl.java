@@ -51,7 +51,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public void debtCondonation(Transaction transaction, int amount) {
+    public void forgiveDebt(Transaction transaction, int amount) {
         this.transactionDao.debtForgiveness(transaction, amount);
     }
 

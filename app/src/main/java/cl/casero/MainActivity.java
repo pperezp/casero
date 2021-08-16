@@ -2,6 +2,7 @@ package cl.casero;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,30 +15,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import cl.casero.adapter.CustomerAdapter;
+import cl.casero.listener.DebtForgivenessDateListener;
+import cl.casero.listener.PaymentDateListener;
+import cl.casero.listener.ReturnProductDateListener;
 import cl.casero.model.Customer;
 import cl.casero.model.util.K;
-import cl.casero.model.Transaction;
 import cl.casero.model.util.Util;
 import cl.casero.model.Resource;
 import cl.casero.service.CustomerService;
 import cl.casero.service.StatisticsService;
-import cl.casero.service.TransactionService;
 import cl.casero.service.impl.CustomerServiceImpl;
 import cl.casero.service.impl.StatisticsServiceImpl;
-import cl.casero.service.impl.TransactionServiceImpl;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -45,159 +43,14 @@ public class MainActivity extends ActionBarActivity {
     private ListView customersListView;
     private TextView resultTextView;
 
-    private String refundDetailInput;
-    private String condonationDetailInput;
-
-    private int payment;
-    private int refundAmount;
-
     private static MainActivity instance;
 
     private CustomerService customerService;
-    private TransactionService transactionService;
     private StatisticsService statisticsService;
 
-    // TODO: Separar
-    /*FECHA!*/
-    private DatePickerDialog.OnDateSetListener fechaAbonoListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker arg0, int year, int month, int day) {
-            // el mes comienza de 0
-            // esto se llama cuando el usuario presiona OK en la date del payment
-            Transaction transaction = new Transaction();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                transaction.setDate(dateFormat.parse(year + "-" + (month + 1) + "-" + day));
-            } catch (ParseException ex) {
-            }
-
-            transaction.setCustomerId((int) K.customerId);
-            transaction.setDetail("[Abono]: $" + payment);
-
-            int balance = customerService.getDebt(transaction.getCustomerId());
-
-            balance = balance - payment;
-            transaction.setBalance(balance);
-
-            transactionService.pay(transaction, payment);
-
-
-            /*cargo la lista de customers de nuevo*/
-            String searchName = searchNameEditText.getText().toString();
-            K.searchName = searchNameEditText.getText().toString();
-
-            List<Customer> customers = customerService.readBy(searchName);
-
-            // TODO: Ver si funciona solo con customers y no if else
-            if (!customers.isEmpty()) {
-                customersListView.setAdapter(new CustomerAdapter(MainActivity.this, customers));
-            } else {
-                customersListView.setAdapter(new CustomerAdapter(MainActivity.this, new ArrayList<Customer>()));
-            }
-            /*cargo la lista de customers de nuevo*/
-
-        }
-    };
-    /*FECHA!*/
-
-
-    /*LISTENER FECHA DEVOLUCIÓN*/
-    private DatePickerDialog.OnDateSetListener fechaDevolucionListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker arg0, int year, int month, int day) {
-            // el mes comienza de 0
-            // esto se llama cuando el usuario presiona OK en la date del payment
-
-            Transaction transaction = new Transaction();
-
-            String datePattern = Resource.getString(R.string.database_date_pattern);
-            SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
-            try {
-                transaction.setDate(dateFormat.parse(year + "-" + (month + 1) + "-" + day));
-            } catch (ParseException ex) {
-            }
-
-            transaction.setCustomerId((int) K.customerId);
-
-            String refundDetail = Resource.getString(R.string.refund_detail);
-            refundDetail = refundDetail.replace("{0}", Util.formatPrice(refundAmount));
-            refundDetail = refundDetail.replace("{1}", refundDetailInput);
-
-            transaction.setDetail(refundDetail);
-            int balance = customerService.getDebt(transaction.getCustomerId());
-
-            balance = balance - refundAmount;
-            transaction.setBalance(balance);
-
-            transactionService.refund(transaction, refundAmount);
-
-
-            /*cargo la lista de customers de nuevo*/
-            String searchName = searchNameEditText.getText().toString();
-            K.searchName = searchNameEditText.getText().toString();
-
-            List<Customer> customers = customerService.readBy(searchName);
-
-            // TODO: Ver si funciona solo con customers y no if else
-            if (!customers.isEmpty()) {
-                customersListView.setAdapter(new CustomerAdapter(MainActivity.this, customers));
-            } else {
-                customersListView.setAdapter(new CustomerAdapter(MainActivity.this, new ArrayList<Customer>()));
-            }
-            /*cargo la lista de customers de nuevo*/
-
-        }
-    };
-    /*LISTENER FECHA DEVOLUCIÓN*/
-
-
-    /*LISTENER FECHA CONDONACIÓN*/
-    private DatePickerDialog.OnDateSetListener fechaCondonacion = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker arg0, int anio, int mes, int dia) {
-            // el mes comienza de 0
-            //Toast.makeText(MainActivity.this.getApplicationContext(),"["+payment+"]["+anio+" - "+(mes+1)+" - "+dia+"]", Toast.LENGTH_SHORT).show();
-            // esto se llama cuando el usuario presiona OK en la date del payment
-
-            Transaction transaction = new Transaction();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            try {
-                transaction.setDate(dateFormat.parse(anio + "-" + (mes + 1) + "-" + dia));
-            } catch (ParseException ex) {
-            }
-
-            transaction.setCustomerId((int) K.customerId);
-
-            String condonationDetail = Resource.getString(R.string.condonation_detail);
-            condonationDetail = condonationDetail.replace("{0}", condonationDetailInput);
-
-            transaction.setDetail(condonationDetail);
-            int balance = customerService.getDebt(transaction.getCustomerId());
-
-            // TODO: Crear un método que deje el saldo en 0
-            transaction.setBalance(0);
-
-            transactionService.debtCondonation(transaction, balance);
-
-            /*cargo la lista de customers de nuevo*/
-            String searchName = searchNameEditText.getText().toString();
-            K.searchName = searchNameEditText.getText().toString();
-
-            List<Customer> customers = customerService.readBy(searchName);
-
-            // TODO: Ver si funciona solo con customers y no if else
-            if (!customers.isEmpty()) {
-                customersListView.setAdapter(new CustomerAdapter(MainActivity.this, customers));
-            } else {
-                customersListView.setAdapter(new CustomerAdapter(MainActivity.this, new ArrayList<Customer>()));
-            }
-            /*cargo la lista de customers de nuevo*/
-        }
-
-        // TODO: Vi muchas veces repetido todo el código que esta arriba, analizar
-    };
-    /*LISTENER FECHA CONDONACIÓN*/
+    private OnDateSetListener paymentDateListener;
+    private OnDateSetListener returnProductDateListener;
+    private OnDateSetListener debtForgivenessDateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +60,6 @@ public class MainActivity extends ActionBarActivity {
         instance = this;
 
         customerService = new CustomerServiceImpl();
-        transactionService = new TransactionServiceImpl();
         statisticsService = new StatisticsServiceImpl();
 
         loadComponents();
@@ -218,6 +70,10 @@ public class MainActivity extends ActionBarActivity {
             searchNameEditText.setText(K.searchName);
             searchNameEditText.setSelection(K.searchName.length(), K.searchName.length());
         }
+
+        paymentDateListener = new PaymentDateListener();
+        returnProductDateListener = new ReturnProductDateListener();
+        debtForgivenessDateListener = new DebtForgivenessDateListener();
     }
 
     private void loadOnClickCustomerList() {
@@ -251,7 +107,7 @@ public class MainActivity extends ActionBarActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         String paymentString = paymentEditText.getText().toString();
                                         try {
-                                            payment = Integer.parseInt(paymentString);
+                                            K.paymentAmount = Integer.parseInt(paymentString);
 
                                             // TODO deprecated
                                             /*FECHA!*/
@@ -329,10 +185,10 @@ public class MainActivity extends ActionBarActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         String amountString = amountEditText.getText().toString();
-                                        refundDetailInput = detailEditText.getText().toString();
+                                        K.refundDetailInput = detailEditText.getText().toString();
 
                                         try {
-                                            refundAmount = Integer.parseInt(amountString);
+                                            K.refundAmount = Integer.parseInt(amountString);
 
                                             // TODO Deprecated
                                             /*FECHA!*/
@@ -362,7 +218,7 @@ public class MainActivity extends ActionBarActivity {
 
                                 bui = new AlertDialog.Builder(MainActivity.this);
 
-                                String condonationTitle = Resource.getString(R.string.condonation_current_balance);
+                                String condonationTitle = Resource.getString(R.string.debt_forgiveness_current_balance);
                                 condonationTitle = condonationTitle.replace("{0}", Util.formatPrice(currentBalance));
 
                                 bui.setTitle(condonationTitle);
@@ -371,7 +227,7 @@ public class MainActivity extends ActionBarActivity {
 
                                 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
                                 condonationDetailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                condonationDetailEditText.setHint(Resource.getString(R.string.condonation_reason));
+                                condonationDetailEditText.setHint(Resource.getString(R.string.debt_forgiveness_reason));
                                 condonationDetailEditText.requestFocus();
 
                                 bui.setView(condonationDetailEditText);
@@ -380,7 +236,7 @@ public class MainActivity extends ActionBarActivity {
                                 bui.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        condonationDetailInput = condonationDetailEditText.getText().toString();
+                                        K.debtForgivenessDetailInput = condonationDetailEditText.getText().toString();
                                         /*FECHA!*/
                                         // TODO Deprecated
                                         showDialog(2);
@@ -467,7 +323,6 @@ public class MainActivity extends ActionBarActivity {
         });
 
     }
-    /*FECHA!*/
 
     @Override
     protected Dialog onCreateDialog(int id) {
@@ -479,18 +334,16 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == 999) {
             // formulario de date de payment
-            return new DatePickerDialog(this, fechaAbonoListener, year, month, day);
+            return new DatePickerDialog(this, paymentDateListener, year, month, day);
         } else if (id == 1) {
             // formulario de date de devolución
-            return new DatePickerDialog(this, fechaDevolucionListener, year, month, day);
+            return new DatePickerDialog(this, returnProductDateListener, year, month, day);
         } else if (id == 2) {
             // formulario de date de condonacion de debt
-            return new DatePickerDialog(this, fechaCondonacion, year, month, day);
+            return new DatePickerDialog(this, debtForgivenessDateListener, year, month, day);
         }
         return null;
     }
-    /*FECHA!*/
-
 
     private void loadListeners() {
         searchNameEditText.addTextChangedListener(new TextWatcher() {
