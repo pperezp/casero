@@ -211,4 +211,17 @@ public class CustomerDao extends AbstractDao<Customer> {
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.close();
     }
+
+    public void subtractToDebt(long customerId, int amount) {
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        sqLiteDatabase.execSQL(
+                "UPDATE cliente " +
+                        "SET deuda = (deuda - " + amount + ") " +
+                        "WHERE id = " + customerId
+        );
+
+        sqLiteDatabase.close();
+    }
 }

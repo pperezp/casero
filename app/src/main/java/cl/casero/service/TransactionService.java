@@ -23,4 +23,6 @@ public interface TransactionService {
     void forgiveDebt(Transaction transaction, int amount);
 
     void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType);
+
+    void delete(long id);
 }

@@ -64,7 +64,7 @@
     <string name="created_customer">Cliente [{0}] creado!</string>
     <string name="address_of">Dirección de {0}</string>
 
-    <string name="choose_an_option">Escoje una opción:</string>
+    <string name="choose_an_option">Escoge una opción:</string>
     <string name="pay">Abonar</string>
     <string name="pay_amount">Monto a abonar:</string>
     <string name="address_change">Cambiar dirección</string>
@@ -90,6 +90,10 @@
         <item>Ver dirección</item>
         <item>Cambiar dirección</item>
         <item>Ver detalles</item>
+    </string-array>
+
+    <string-array name="transaction_options">
+        <item>Eliminar transacción</item>
     </string-array>
 
     <string-array name="meses_array">

@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.text.Normalizer;
 import java.text.NumberFormat;
@@ -45,6 +46,10 @@ public class Util {
         builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
         builder.create().show();
+    }
+
+    public static void message(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     public static void loadYears(Context context, Spinner spinner) {

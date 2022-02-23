@@ -53,12 +53,45 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
     @Override
     public void delete(Number id) {
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
+        sqLiteDatabase.execSQL("DELETE FROM movimiento WHERE id = " + id);
+        sqLiteDatabase.close();
     }
 
     @Override
     public Transaction readById(Number id) {
-        return null;
+        Transaction transaction = new Transaction();
+
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        query =
+                "SELECT " +
+                        "* " +
+                        "FROM " +
+                        "movimiento " +
+                        "WHERE " +
+                        "id = " + id;
+
+        cursor = sqLiteDatabase.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            transaction.setId(cursor.getInt(0));
+            try {
+                transaction.setDate(dateFormat.parse(cursor.getString(1)));
+            } catch (ParseException ex) {
+            }
+
+            transaction.setDetail(cursor.getString(2));
+            transaction.setBalance(cursor.getInt(3));
+            transaction.setCustomerId(cursor.getInt(4));
+        }
+
+        sqLiteDatabase.close();
+
+        return transaction;
     }
 
     @Override
@@ -161,7 +194,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
         Statistic statistic = new Statistic();
 
         statistic.setAmount(amount);
-        statistic.setType(TransactionType.DEBT_CONDONATION.getId());
+        statistic.setType(TransactionType.DEBT_FORGIVENESS.getId());
         statistic.setDate(transaction.getDate());
         statistic.setSaleType(-1);
         statistic.setItemsCount(-1);

@@ -13,6 +13,7 @@ import cl.casero.model.Customer;
 import cl.casero.model.util.K;
 import cl.casero.model.Transaction;
 import cl.casero.model.Resource;
+import cl.casero.model.util.Util;
 import cl.casero.service.CustomerService;
 import cl.casero.service.TransactionService;
 import cl.casero.service.impl.CustomerServiceImpl;
@@ -38,10 +39,39 @@ public class CustomerViewActivity extends ActionBarActivity {
 
         loadComponents();
         loadListeners();
-        loadCustomers();
+        loadTransactions();
+        loadDetailListViewOnLongClick();
     }
 
-    private void loadCustomers() {
+    private void loadDetailListViewOnLongClick() {
+        detailListView.setOnItemLongClickListener((adapterView, view, position, id) -> {
+            CharSequence[] options = Resource.getStringArray(R.array.transaction_options);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
+            builder.setTitle(Resource.getString(R.string.choose_an_option));
+
+            builder.setItems(options, (dialogInterface, optionIndex) -> {
+                // TODO: Cambiar por enum
+                if (optionIndex == 0) { // eliminar transacción
+                    if (userActionConfirm()){
+                        transactionService.delete(id);
+                        loadTransactions();
+                        Util.message(CustomerViewActivity.this.getApplicationContext(), "Transacción eliminada");
+                    }
+                }
+            });
+
+            builder.show();
+
+            return false;
+        });
+    }
+
+    private boolean userActionConfirm() {
+        return true;
+    }
+
+    private void loadTransactions() {
         // TODO: Investigar como pasar el id del cliente de otra forma, no como atributo estático
         Customer customer = customerService.readById(K.customerId);
 

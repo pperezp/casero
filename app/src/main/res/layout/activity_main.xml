@@ -21,11 +21,11 @@
         android:layout_alignEnd="@+id/customersListView" />
 
     <ListView
+        android:id="@+id/customersListView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/customersListView"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/resultTextView" />
+        android:layout_below="@+id/resultTextView"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
