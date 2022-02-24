@@ -31,10 +31,12 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "movimiento " +
                         "VALUES(" +
                         "NULL, " +
+                        "'" + transaction.getCustomerId() + "'," +
                         "'" + transactionDate + "'," +
                         "'" + transaction.getDetail() + "'," +
+                        "'" + transaction.getAmount() + "'," +
                         "'" + transaction.getBalance() + "'," +
-                        "'" + transaction.getCustomerId() + "'" +
+                        "'" + transaction.getType() + "'" +
                         ")";
 
         sqLiteDatabase.execSQL(query);
@@ -79,14 +81,16 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
         if (cursor.moveToFirst()) {
             transaction.setId(cursor.getInt(0));
+            transaction.setCustomerId(cursor.getInt(1));
             try {
-                transaction.setDate(dateFormat.parse(cursor.getString(1)));
+                transaction.setDate(dateFormat.parse(cursor.getString(2)));
             } catch (ParseException ex) {
             }
 
-            transaction.setDetail(cursor.getString(2));
-            transaction.setBalance(cursor.getInt(3));
-            transaction.setCustomerId(cursor.getInt(4));
+            transaction.setDetail(cursor.getString(3));
+            transaction.setAmount(cursor.getInt(4));
+            transaction.setBalance(cursor.getInt(5));
+            transaction.setType(cursor.getInt(6));
         }
 
         sqLiteDatabase.close();
@@ -122,14 +126,16 @@ public class TransactionDao extends AbstractDao<Transaction> {
                 transaction = new Transaction();
 
                 transaction.setId(cursor.getInt(0));
+                transaction.setCustomerId(cursor.getInt(1));
                 try {
-                    transaction.setDate(dateFormat.parse(cursor.getString(1)));
+                    transaction.setDate(dateFormat.parse(cursor.getString(2)));
                 } catch (ParseException ex) {
                 }
 
-                transaction.setDetail(cursor.getString(2));
-                transaction.setBalance(cursor.getInt(3));
-                transaction.setCustomerId(cursor.getInt(4));
+                transaction.setDetail(cursor.getString(3));
+                transaction.setAmount(cursor.getInt(4));
+                transaction.setBalance(cursor.getInt(5));
+                transaction.setType(cursor.getInt(6));
 
                 transactions.add(transaction);
             } while (cursor.moveToNext());

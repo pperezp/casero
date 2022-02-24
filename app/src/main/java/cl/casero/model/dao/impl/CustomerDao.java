@@ -5,7 +5,9 @@ import java.util.List;
 
 import cl.casero.model.SQLiteOpenHelperImpl;
 import cl.casero.model.Customer;
+import cl.casero.model.Transaction;
 import cl.casero.model.dao.AbstractDao;
+import cl.casero.model.enums.TransactionType;
 import cl.casero.model.util.Util;
 
 public class CustomerDao extends AbstractDao<Customer> {
@@ -212,16 +214,37 @@ public class CustomerDao extends AbstractDao<Customer> {
         sqLiteDatabase.close();
     }
 
-    public void subtractToDebt(long customerId, int amount) {
+    public void updateCustomerBalance(Transaction transaction) {
+        int amount = getNewBalance(transaction);
+        int customerId = transaction.getCustomerId();
+
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         sqLiteDatabase.execSQL(
                 "UPDATE cliente " +
-                        "SET deuda = (deuda - " + amount + ") " +
+                        "SET deuda = (deuda + " + amount + ") " +
                         "WHERE id = " + customerId
         );
 
         sqLiteDatabase.close();
+    }
+
+    private int getNewBalance(Transaction transaction) {
+        int amount = transaction.getAmount();
+        int type = transaction.getType();
+        TransactionType transactionType = TransactionType.getTransactionType(type);
+
+        if(transactionType == TransactionType.SALE){
+            return amount * -1;
+        }else{
+            return amount;
+        }
+        /*
+        0	SALE                restar
+        1	PAYMENT             sumar
+        2	REFUND              sumar
+        3	DEBT_FORGIVENESS    sumar
+        * */
     }
 }

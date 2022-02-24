@@ -8,6 +8,7 @@ import java.util.Date;
 import cl.casero.R;
 import cl.casero.model.Resource;
 import cl.casero.model.Transaction;
+import cl.casero.model.enums.TransactionType;
 import cl.casero.model.util.K;
 import cl.casero.model.util.Util;
 import cl.casero.service.CustomerService;
@@ -34,15 +35,16 @@ public class DebtForgivenessDateListener implements OnDateSetListener {
         Date date = Util.getDate(year, monthOfYear, dayOfMonth);
         String debtForgivenessDetail = Resource.getString(R.string.debt_forgiveness_detail);
         debtForgivenessDetail = debtForgivenessDetail.replace("{0}", K.debtForgivenessDetailInput);
+        int balance = customerService.getDebt((int) K.customerId);
 
         Transaction transaction = new Transaction();
 
         transaction.setDate(date);
         transaction.setCustomerId((int) K.customerId);
-        transaction.forgiveDebt();
         transaction.setDetail(debtForgivenessDetail);
-
-        int balance = customerService.getDebt(transaction.getCustomerId());
+        transaction.setType(TransactionType.DEBT_FORGIVENESS.getId());
+        transaction.setAmount(balance);
+        transaction.forgiveDebt();
 
         transactionService.forgiveDebt(transaction, balance);
 

@@ -15,6 +15,7 @@ import cl.casero.adapter.CustomerAdapter;
 import cl.casero.model.Customer;
 import cl.casero.model.Resource;
 import cl.casero.model.Transaction;
+import cl.casero.model.enums.TransactionType;
 import cl.casero.model.util.K;
 import cl.casero.model.util.Util;
 import cl.casero.service.CustomerService;
@@ -51,6 +52,8 @@ public class ReturnProductDateListener implements OnDateSetListener {
         transaction.setDate(date);
         transaction.setCustomerId((int) K.customerId);
         transaction.setDetail(refundDetail);
+        transaction.setAmount(refundAmount);
+        transaction.setType(TransactionType.REFUND.getId());
 
         int balance = customerService.getDebt(transaction.getCustomerId());
 

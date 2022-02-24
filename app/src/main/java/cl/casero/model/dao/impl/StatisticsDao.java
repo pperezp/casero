@@ -1,12 +1,14 @@
 package cl.casero.model.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cl.casero.model.Customer;
 import cl.casero.model.MonthlyStatistic;
 import cl.casero.model.SQLiteOpenHelperImpl;
 import cl.casero.model.Statistic;
+import cl.casero.model.Transaction;
 import cl.casero.model.dao.AbstractDao;
 import cl.casero.model.enums.SaleType;
 import cl.casero.model.enums.TransactionType;
@@ -565,5 +567,23 @@ public class StatisticsDao extends AbstractDao<Statistic> {
         sqLiteDatabase.close();
 
         return customersCount;
+    }
+
+    public void deleteBy(Transaction transaction) {
+        int type = transaction.getType();
+        int amount = transaction.getAmount();
+        Date date = transaction.getDate();
+
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        sqLiteDatabase.execSQL(
+                "DELETE FROM estadistica " +
+                        "WHERE tipo = '" + type + "' AND " +
+                        "monto = '" + amount + "' AND " +
+                        "fecha = '" + date + "'"
+        );
+
+        sqLiteDatabase.close();
     }
 }

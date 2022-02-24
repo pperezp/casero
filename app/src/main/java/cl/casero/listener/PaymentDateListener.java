@@ -6,6 +6,7 @@ import android.widget.DatePicker;
 import java.util.Date;
 
 import cl.casero.model.Transaction;
+import cl.casero.model.enums.TransactionType;
 import cl.casero.model.util.K;
 import cl.casero.model.util.Util;
 import cl.casero.service.CustomerService;
@@ -31,7 +32,7 @@ public class PaymentDateListener implements OnDateSetListener {
     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
         Date date = Util.getDate(year, monthOfYear, dayOfMonth);
 
-        Transaction transaction = createTransaction(date);
+        Transaction transaction = createPaymentTransaction(date);
 
         int balance = customerService.getDebt(transaction.getCustomerId());
         balance = balance - K.paymentAmount;
@@ -41,12 +42,14 @@ public class PaymentDateListener implements OnDateSetListener {
         viewService.loadCustomerListView();
     }
 
-    private Transaction createTransaction(Date date) {
+    private Transaction createPaymentTransaction(Date date) {
         Transaction transaction = new Transaction();
 
         transaction.setDate(date);
         transaction.setCustomerId((int) K.customerId);
         transaction.setDetail("[Abono]: $" + K.paymentAmount);
+        transaction.setAmount(K.paymentAmount);
+        transaction.setType(TransactionType.PAYMENT.getId());
 
         return transaction;
     }

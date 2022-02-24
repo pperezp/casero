@@ -23,6 +23,7 @@ import cl.casero.model.Customer;
 import cl.casero.model.Resource;
 import cl.casero.model.enums.SaleType;
 import cl.casero.model.Transaction;
+import cl.casero.model.enums.TransactionType;
 import cl.casero.model.util.K;
 import cl.casero.model.util.Util;
 import cl.casero.service.CustomerService;
@@ -141,6 +142,8 @@ public class SaleActivity extends ActionBarActivity {
                                     currentBalance = currentBalance + subtotal;
 
                                     transaction.setBalance(currentBalance);
+                                    transaction.setAmount(subtotal);
+                                    transaction.setType(TransactionType.SALE.getId());
 
                                     transactionService.createSale(transaction, subtotal, itemsCount, saleType);
 
@@ -160,7 +163,6 @@ public class SaleActivity extends ActionBarActivity {
                             }
 
                             break;
-
                         case DialogInterface.BUTTON_NEGATIVE:
                             break;
                     }

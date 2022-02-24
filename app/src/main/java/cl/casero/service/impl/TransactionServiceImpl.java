@@ -3,6 +3,7 @@ package cl.casero.service.impl;
 import java.util.List;
 
 import cl.casero.model.dao.impl.CustomerDao;
+import cl.casero.model.dao.impl.StatisticsDao;
 import cl.casero.model.enums.SaleType;
 import cl.casero.model.Transaction;
 import cl.casero.model.dao.impl.TransactionDao;
@@ -12,9 +13,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     private TransactionDao transactionDao;
     private CustomerDao customerDao;
+    private StatisticsDao statisticsDao;
 
     public TransactionServiceImpl() {
         this.transactionDao = new TransactionDao();
+        this.customerDao = new CustomerDao();
+        this.statisticsDao = new StatisticsDao();
     }
 
     @Override
@@ -65,7 +69,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public void delete(long id) {
         Transaction transaction = transactionDao.readById(id);
-        customerDao.subtractToDebt(transaction.getCustomerId(), transaction.getBalance());
+
+        customerDao.updateCustomerBalance(transaction);
+        statisticsDao.deleteBy(transaction);
         transactionDao.delete(id);
     }
 }
