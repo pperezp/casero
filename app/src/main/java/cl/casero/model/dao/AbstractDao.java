@@ -3,7 +3,6 @@ package cl.casero.model.dao;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 
 import java.text.SimpleDateFormat;
 
@@ -21,15 +20,8 @@ public abstract class AbstractDao<T> implements Dao<T> {
     protected String query;
     protected SimpleDateFormat dateFormat;
 
-    protected final String DATABASE_PATH =
-            Environment
-                    .getExternalStorageDirectory()
-                    .getPath() + "/caseroBD/casero.sqlite";
-
     public AbstractDao() {
         this.context = MainActivity.getInstance().getApplicationContext();
         dateFormat = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
     }
-
-
 }

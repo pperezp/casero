@@ -17,7 +17,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
 
     @Override
     public void create(Statistic statistic) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         String date = dateFormat.format(statistic.getDate());
@@ -64,7 +64,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getFinishCardsCount(String startDate, String endDate, boolean isDateRange) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
         int finishCardsCount = -1;
 
@@ -92,7 +92,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getNewCardsCount(String startDate, String endDate, boolean isDateRange) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
         int newCardsCount = -1;
 
@@ -122,7 +122,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getMaintenanceCount(String startDate, String endDate, boolean isDateRange) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
         int maintenanceCount = -1;
 
@@ -152,7 +152,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getTotalItemsCount(String startDate, String endDate, boolean isDateRange) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
         int totalItemsCount = -1;
 
@@ -181,7 +181,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getPaymentsCount(String startDate, String endDate, boolean isDateRange) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
         int paymentsCount = -1;
 
@@ -210,7 +210,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getSalesCount(String startDate, String endDate, boolean isDateRange) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getReadableDatabase();
         int salesCount = -1;
 
@@ -278,7 +278,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                 "fecha >= '" + year + "-" + (month < 10 ? "0" : "") + month + "-01' AND " +
                         "fecha < '" + endYear + "-" + (endMonth < 10 ? "0" : "") + endMonth + "-01'";
 
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         // 1.- select tarjetas terminadas
@@ -396,7 +396,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getTotalDebt() {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -421,7 +421,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getAverageDebt() {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -446,7 +446,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getCustomersCount(String sector) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -476,7 +476,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
         List<Customer> debtors = new ArrayList<>();
         Customer customer;
 
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -512,7 +512,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
         List<Customer> customers = new ArrayList<>();
         Customer customer;
 
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -545,7 +545,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     }
 
     public int getCustomersCount() {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -574,7 +574,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
         int amount = transaction.getAmount();
         String rawDate = transaction.getRawDate();
 
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         sqLiteDatabase.execSQL(

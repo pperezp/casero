@@ -76,4 +76,4 @@ INSERT INTO movimiento(
 ) SELECT id, cliente, fecha, detalle, amount, saldo, type
 FROM temporal;
 
-
+DROP TABLE temporal;

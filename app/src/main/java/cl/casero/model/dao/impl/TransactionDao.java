@@ -20,7 +20,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
     @Override
     public void create(Transaction transaction) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         String transactionDate = dateFormat.format(transaction.getDate());
@@ -54,7 +54,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
     @Override
     public void delete(Number id) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         sqLiteDatabase.execSQL("DELETE FROM movimiento WHERE id = " + id);
@@ -65,7 +65,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
     public Transaction readById(Number id) {
         Transaction transaction = new Transaction();
 
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -102,7 +102,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
         List<Transaction> transactions = new ArrayList<>();
         Transaction transaction;
 
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
@@ -138,7 +138,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
     }
 
     public void updateDebt(int customerId, int newDebt) {
-        sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         query =
