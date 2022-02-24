@@ -1,6 +1,5 @@
 package cl.casero.model.dao.impl;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,11 +81,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
         if (cursor.moveToFirst()) {
             transaction.setId(cursor.getInt(0));
             transaction.setCustomerId(cursor.getInt(1));
-            try {
-                transaction.setDate(dateFormat.parse(cursor.getString(2)));
-            } catch (ParseException ex) {
-            }
-
+            transaction.setRawDate(cursor.getString(2));
             transaction.setDetail(cursor.getString(3));
             transaction.setAmount(cursor.getInt(4));
             transaction.setBalance(cursor.getInt(5));
@@ -127,11 +122,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
                 transaction.setId(cursor.getInt(0));
                 transaction.setCustomerId(cursor.getInt(1));
-                try {
-                    transaction.setDate(dateFormat.parse(cursor.getString(2)));
-                } catch (ParseException ex) {
-                }
-
+                transaction.setRawDate(cursor.getString(2));
                 transaction.setDetail(cursor.getString(3));
                 transaction.setAmount(cursor.getInt(4));
                 transaction.setBalance(cursor.getInt(5));

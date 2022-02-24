@@ -572,7 +572,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
     public void deleteBy(Transaction transaction) {
         int type = transaction.getType();
         int amount = transaction.getAmount();
-        Date date = transaction.getDate();
+        String rawDate = transaction.getRawDate();
 
         sqLiteOpenHelper = new SQLiteOpenHelperImpl(context, DATABASE_PATH, null, 1);
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
@@ -581,7 +581,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                 "DELETE FROM estadistica " +
                         "WHERE tipo = '" + type + "' AND " +
                         "monto = '" + amount + "' AND " +
-                        "fecha = '" + date + "'"
+                        "fecha = '" + rawDate + "'"
         );
 
         sqLiteDatabase.close();

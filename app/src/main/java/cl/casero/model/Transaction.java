@@ -1,16 +1,23 @@
 package cl.casero.model;
 
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import cl.casero.R;
 
 public class Transaction {
 
     private int id;
     private int customerId;
-    private Date date;
-    private String detail;
     private int amount;
     private int balance;
     private int type;
+    private Date date;
+    private String detail;
+    private String rawDate;
 
     public int getId() {
         return id;
@@ -70,5 +77,19 @@ public class Transaction {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public String getRawDate() {
+        return rawDate;
+    }
+
+    public void setRawDate(String rawDate) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
+            this.rawDate = rawDate;
+            this.date = dateFormat.parse(rawDate);
+        } catch (ParseException ex) {
+            Log.i("ParseException", "ParseException in setRawDate method");
+        }
     }
 }
