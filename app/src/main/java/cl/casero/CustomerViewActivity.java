@@ -53,11 +53,21 @@ public class CustomerViewActivity extends ActionBarActivity {
             builder.setItems(options, (dialogInterface, optionIndex) -> {
                 // TODO: Cambiar por enum
                 if (optionIndex == 0) { // eliminar transacción
-                    if (userActionConfirm()){
-                        transactionService.delete(id);
-                        loadTransactions();
-                        Util.message(CustomerViewActivity.this.getApplicationContext(), "Transacción eliminada");
-                    }
+                    Transaction transaction = transactionService.readById(id);
+                    String deleteTransactionConfirm = Resource.getString(R.string.delete_transaction_confirm);
+                    String deleteTransactionConfirmDetailMessage = getConfirmDetailMessage(transaction);
+                    deleteTransactionConfirm = deleteTransactionConfirm.replace("{0}", deleteTransactionConfirmDetailMessage);
+
+                    new AlertDialog
+                            .Builder(CustomerViewActivity.this)
+                            .setMessage(deleteTransactionConfirm)
+                            .setNegativeButton(Resource.getString(R.string.no), null)
+                            .setPositiveButton(Resource.getString(R.string.yes), (dialog, which) -> {
+                                transactionService.delete(id);
+                                loadTransactions();
+                                Util.message(CustomerViewActivity.this.getApplicationContext(), "Transacción eliminada");
+                            })
+                            .show();
                 }
             });
 
@@ -67,8 +77,8 @@ public class CustomerViewActivity extends ActionBarActivity {
         });
     }
 
-    private boolean userActionConfirm() {
-        return true;
+    private String getConfirmDetailMessage(Transaction transaction) {
+        return transaction.getDetail();
     }
 
     private void loadTransactions() {

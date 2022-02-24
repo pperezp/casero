@@ -38,6 +38,7 @@
     </string>
     <string name="sale_confirm">¿Confirmar venta?\n\n{0}</string>
     <string name="saleDate">[Fecha venta]</string>
+    <string name="delete_transaction_confirm">¿Eliminar transacción?\n\n{0}</string>
 
     <!-- Chart -->
     <string name="bar_width">0.7</string>
