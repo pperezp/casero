@@ -7,7 +7,7 @@ import cl.casero.MainActivity;
 
 public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
 
-    private String customerTable =
+    private static final String CUSTOMER_TABLE =
             "CREATE TABLE cliente(" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "nombre TEXT," +
@@ -16,17 +16,34 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
                     "deuda INTEGER" +
                     ")";
 
-    private String transactionTable =
-            "CREATE TABLE movimiento(" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "fecha TEXT," +// TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS").
-                    "detalle TEXT," +
-                    "saldo INTEGER," +
-                    "cliente INTEGER," +
-                    "FOREIGN KEY(cliente) REFERENCES cliente(id)" +
+    private static final String TRANSACTION_TYPE_TABLE =
+            "CREATE TABLE transactionType(\n" +
+            "    id INTEGER PRIMARY KEY,\n" +
+            "    name TEXT\n" +
+            ")";
+
+    private static final String TRANSACTION_TYPE_INSERT =
+            "INSERT INTO transactionType VALUES\n" +
+                    "(0, 'SALE'),\n" +
+                    "(1, 'PAYMENT'),\n" +
+                    "(2, 'REFUND'),\n" +
+                    "(3, 'DEBT_FORGIVENESS'),\n" +
+                    "(4, 'INITIAL_BALANCE')";
+
+    private static final String TRANSACTION_TABLE =
+            "CREATE TABLE movimiento(\n" +
+                    "   id INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                    "   cliente INTEGER,\n" +
+                    "   fecha TEXT,\n" +
+                    "   detalle TEXT,\n" +
+                    "   amount INTEGER,\n" +
+                    "   saldo INTEGER,\n" +
+                    "   type INTEGER,\n" +
+                    "   FOREIGN KEY(cliente) REFERENCES cliente(id),\n" +
+                    "   FOREIGN KEY(type) REFERENCES transactionType(id)\n" +
                     ")";
 
-    private String statisticsTable =
+    private static final String STATISTICS_TABLE =
             "CREATE TABLE estadistica(" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "tipo INTEGER," + // venta o abono (K.SALE K.PAYMENT)
@@ -48,9 +65,11 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(customerTable);
-        sqLiteDatabase.execSQL(transactionTable);
-        sqLiteDatabase.execSQL(statisticsTable);
+        sqLiteDatabase.execSQL(CUSTOMER_TABLE);
+        sqLiteDatabase.execSQL(TRANSACTION_TYPE_TABLE);
+        sqLiteDatabase.execSQL(TRANSACTION_TYPE_INSERT);
+        sqLiteDatabase.execSQL(TRANSACTION_TABLE);
+        sqLiteDatabase.execSQL(STATISTICS_TABLE);
     }
 
     @Override
