@@ -11,3 +11,4 @@ gradlew.bat
 .DS_Store
 /build
 /captures
+app/release
