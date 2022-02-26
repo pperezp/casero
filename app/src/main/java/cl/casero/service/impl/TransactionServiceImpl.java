@@ -11,9 +11,9 @@ import cl.casero.service.TransactionService;
 
 public class TransactionServiceImpl implements TransactionService {
 
-    private TransactionDao transactionDao;
-    private CustomerDao customerDao;
-    private StatisticsDao statisticsDao;
+    private final TransactionDao transactionDao;
+    private final CustomerDao customerDao;
+    private final StatisticsDao statisticsDao;
 
     public TransactionServiceImpl() {
         this.transactionDao = new TransactionDao();

@@ -1,8 +1,5 @@
 package cl.casero.model;
 
-/**
- * Created by Patricio Pérez Pinto on 06/01/2016.
- */
 public class MonthlyStatistic {
 
     private int finishedCardsCount;

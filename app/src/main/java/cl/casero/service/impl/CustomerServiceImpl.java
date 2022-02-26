@@ -8,7 +8,7 @@ import cl.casero.service.CustomerService;
 
 public class CustomerServiceImpl implements CustomerService {
 
-    private CustomerDao customerDao;
+    private final CustomerDao customerDao;
 
     public CustomerServiceImpl() {
         this.customerDao = new CustomerDao();

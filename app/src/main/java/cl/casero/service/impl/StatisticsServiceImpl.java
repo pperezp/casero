@@ -10,7 +10,7 @@ import cl.casero.service.StatisticsService;
 
 public class StatisticsServiceImpl implements StatisticsService {
 
-    private StatisticsDao statisticsDao;
+    private final StatisticsDao statisticsDao;
 
     public StatisticsServiceImpl() {
         this.statisticsDao = new StatisticsDao();

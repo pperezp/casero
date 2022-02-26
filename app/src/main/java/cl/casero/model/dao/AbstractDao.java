@@ -20,7 +20,7 @@ public abstract class AbstractDao<T> implements Dao<T> {
     protected String query;
     protected SimpleDateFormat dateFormat;
 
-    public AbstractDao() {
+    protected AbstractDao() {
         this.context = MainActivity.getInstance().getApplicationContext();
         dateFormat = new SimpleDateFormat(Resource.getString(R.string.database_date_pattern));
     }

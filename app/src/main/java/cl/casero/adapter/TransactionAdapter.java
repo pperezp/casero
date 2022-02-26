@@ -18,8 +18,8 @@ import cl.casero.model.Resource;
 
 public class TransactionAdapter extends BaseAdapter {
 
-    private List<Transaction> transactions;
-    private Activity activity;
+    private final List<Transaction> transactions;
+    private final Activity activity;
 
     public TransactionAdapter(Activity activity, List<Transaction> transactions) {
         this.activity = activity;

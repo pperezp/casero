@@ -7,9 +7,9 @@ public class Statistic {
     private int id;
     private int type;
     private int amount;
-    private Date date;
     private int saleType;
     private int itemsCount;
+    private Date date;
 
     public int getId() {
         return id;

@@ -18,9 +18,9 @@ import cl.casero.service.impl.CustomerServiceImpl;
 
 public class CustomerAdapter extends BaseAdapter {
 
-    private Activity activity;
-    private List<Customer> customers;
-    private CustomerService customerService;
+    private final Activity activity;
+    private final List<Customer> customers;
+    private final CustomerService customerService;
 
     public CustomerAdapter(Activity activity, List<Customer> customers) {
         this.activity = activity;

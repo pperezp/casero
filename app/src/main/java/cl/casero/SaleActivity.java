@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.InputType;
-import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -82,90 +81,85 @@ public class SaleActivity extends ActionBarActivity {
     }
 
     private void loadListeners() {
-        saleDateButton.setOnClickListener(v -> {
-            showDialog(999);
-        });
+        saleDateButton.setOnClickListener(v -> showDialog(999));
 
         saleCreateButton.setOnClickListener(v -> {
-            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case DialogInterface.BUTTON_POSITIVE:
+            DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE:
 
-                            CustomerService customerService = new CustomerServiceImpl();
-                            TransactionService transactionService = new TransactionServiceImpl();
+                        CustomerService customerService = new CustomerServiceImpl();
+                        TransactionService transactionService = new TransactionServiceImpl();
 
-                            int subtotal = -1;
-                            int itemsCount = -1;
+                        int subtotal = -1;
+                        int itemsCount = -1;
 
+                        try {
+                            itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
+                        } catch (NumberFormatException ex) {
+                            Toast.makeText(
+                                    SaleActivity.this,
+                                    Resource.getString(R.string.only_numbers_in_items),
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        }
+
+                        if (itemsCount != -1) {
                             try {
-                                itemsCount = Integer.parseInt(saleItemsCountEditText.getText().toString());
+                                subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
                             } catch (NumberFormatException ex) {
                                 Toast.makeText(
                                         SaleActivity.this,
-                                        Resource.getString(R.string.only_numbers_in_items),
+                                        Resource.getString(R.string.only_numbers_in_total_price),
                                         Toast.LENGTH_SHORT
                                 ).show();
                             }
 
-                            if (itemsCount != -1) {
-                                try {
-                                    subtotal = Integer.parseInt(saleAmountEditText.getText().toString());
-                                } catch (NumberFormatException ex) {
-                                    Toast.makeText(
-                                            SaleActivity.this,
-                                            Resource.getString(R.string.only_numbers_in_total_price),
-                                            Toast.LENGTH_SHORT
-                                    ).show();
-                                }
+                            if (subtotal != -1) {
+                                Transaction transaction = new Transaction();
 
-                                if (subtotal != -1) {
-                                    Transaction transaction = new Transaction();
+                                transaction.setCustomerId((int) K.customerId);
 
-                                    transaction.setCustomerId((int) K.customerId);
+                                String sailDetail = saleDetailEditText.getText().toString();
+                                String transactionDetail = Resource.getString(R.string.transaction_detail);
 
-                                    String sailDetail = saleDetailEditText.getText().toString();
-                                    String transactionDetail = Resource.getString(R.string.transaction_detail);
+                                transactionDetail = transactionDetail.replace("{0}", sailDetail);
+                                transactionDetail = transactionDetail.replace("{1}", String.valueOf(itemsCount));
+                                transactionDetail = transactionDetail.replace("{2}", Util.formatPrice(subtotal));
 
-                                    transactionDetail = transactionDetail.replace("{0}", sailDetail);
-                                    transactionDetail = transactionDetail.replace("{1}", String.valueOf(itemsCount));
-                                    transactionDetail = transactionDetail.replace("{2}", Util.formatPrice(subtotal));
+                                transaction.setDetail(transactionDetail);
+                                transaction.setDate(K.date);
 
-                                    transaction.setDetail(transactionDetail);
-                                    transaction.setDate(K.date);
+                                int currentBalance = customerService.getDebt((int) K.customerId);
 
-                                    int currentBalance = customerService.getDebt((int) K.customerId);
+                                SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE : SaleType.MAINTENANCE);
 
-                                    SaleType saleType = (currentBalance == 0 ? SaleType.NEW_SALE : SaleType.MAINTENANCE);
+                                currentBalance = currentBalance + subtotal;
 
-                                    currentBalance = currentBalance + subtotal;
+                                transaction.setBalance(currentBalance);
+                                transaction.setAmount(subtotal);
+                                transaction.setType(TransactionType.SALE.getId());
 
-                                    transaction.setBalance(currentBalance);
-                                    transaction.setAmount(subtotal);
-                                    transaction.setType(TransactionType.SALE.getId());
+                                transactionService.createSale(transaction, subtotal, itemsCount, saleType);
 
-                                    transactionService.createSale(transaction, subtotal, itemsCount, saleType);
+                                String maintenanceCreated = Resource.getString(R.string.maintenance_created);
 
-                                    String maintenanceCreated = Resource.getString(R.string.maintenance_created);
+                                maintenanceCreated = maintenanceCreated.replace("{0}", Util.formatPrice(currentBalance));
 
-                                    maintenanceCreated = maintenanceCreated.replace("{0}", Util.formatPrice(currentBalance));
+                                Toast.makeText(
+                                        SaleActivity.this,
+                                        maintenanceCreated,
+                                        Toast.LENGTH_LONG
+                                ).show();
 
-                                    Toast.makeText(
-                                            SaleActivity.this,
-                                            maintenanceCreated,
-                                            Toast.LENGTH_LONG
-                                    ).show();
-
-                                    Intent intent = new Intent(SaleActivity.this, MainActivity.class);
-                                    SaleActivity.this.startActivity(intent);
-                                }
+                                Intent intent = new Intent(SaleActivity.this, MainActivity.class);
+                                SaleActivity.this.startActivity(intent);
                             }
+                        }
 
-                            break;
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            break;
-                    }
+                        break;
+                    case DialogInterface.BUTTON_NEGATIVE:
+                        break;
                 }
             };
 
@@ -281,5 +275,4 @@ public class SaleActivity extends ActionBarActivity {
         saleDateButton = (Button) findViewById(R.id.saleDateButton);
         saleCreateButton = (Button) findViewById(R.id.saleCreateButton);
     }
-
 }

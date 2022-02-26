@@ -1,6 +1,5 @@
 package cl.casero.model.util;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,6 +22,10 @@ import cl.casero.model.CustomDate;
 import cl.casero.model.Resource;
 
 public class Util {
+
+    private Util() {
+        throw new IllegalStateException("Utility class");
+    }
 
     public static String formatPrice(int price) {
         String languageTag = Resource.getString(R.string.language_tag);
@@ -42,7 +44,6 @@ public class Util {
 
         builder.setTitle(title);
         builder.setMessage(message);
-
         builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
         builder.create().show();

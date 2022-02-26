@@ -1,6 +1,7 @@
 package cl.casero.model.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import cl.casero.model.SQLiteOpenHelperImpl;
@@ -12,7 +13,7 @@ import cl.casero.model.enums.TransactionType;
 
 public class TransactionDao extends AbstractDao<Transaction> {
 
-    private StatisticsDao statisticsDao;
+    private final StatisticsDao statisticsDao;
 
     public TransactionDao() {
         statisticsDao = new StatisticsDao();
@@ -44,7 +45,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
     @Override
     public List<Transaction> read() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
@@ -95,7 +96,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
     @Override
     public List<Transaction> readBy(String filter) {
-        return null;
+        return Collections.emptyList();
     }
 
     public List<Transaction> readByCustomer(int customerId, boolean ascending) {
@@ -200,13 +201,6 @@ public class TransactionDao extends AbstractDao<Transaction> {
     }
 
     // TODO: Pensar en hacer clase Sale.java
-
-    /**
-     * @param transaction
-     * @param amount
-     * @param itemCounts
-     * @param saleType    puede ser mantencion o venta nueva
-     */
     public void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType) {
         Statistic statistic = new Statistic();
         updateDebt(transaction.getCustomerId(), transaction.getBalance());

@@ -3,7 +3,6 @@ package cl.casero;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.view.View;
 import android.widget.*;
 
 import java.util.List;
@@ -93,34 +92,28 @@ public class CustomerViewActivity extends ActionBarActivity {
 
     private void loadListeners() {
         // TODO: Separar listeners
-        orderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Customer customer = customerService.readById(K.customerId);
+        orderSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            Customer customer = customerService.readById(K.customerId);
 
-                nameTextView.setText(customer.getName());
+            nameTextView.setText(customer.getName());
 
-                List<Transaction> transactions = transactionService.readByCustomer(customer.getId(), isChecked);
+            List<Transaction> transactions = transactionService.readByCustomer(customer.getId(), isChecked);
 
-                detailListView.setAdapter(new TransactionAdapter(CustomerViewActivity.this, transactions));
-            }
+            detailListView.setAdapter(new TransactionAdapter(CustomerViewActivity.this, transactions));
         });
 
-        addressButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Customer customer = customerService.readById(K.customerId);
+        addressButton.setOnClickListener(view -> {
+            Customer customer = customerService.readById(K.customerId);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
 
-                String addressOf = Resource.getString(R.string.address_of);
-                addressOf = addressOf.replace("{0}", customer.getName());
-                builder.setTitle(addressOf);
+            String addressOf = Resource.getString(R.string.address_of);
+            addressOf = addressOf.replace("{0}", customer.getName());
+            builder.setTitle(addressOf);
 
-                builder.setMessage(customer.getAddress() + ", " + customer.getSector());
-                builder.setPositiveButton(Resource.getString(R.string.ok), null);
-                builder.create().show();
-            }
+            builder.setMessage(customer.getAddress() + ", " + customer.getSector());
+            builder.setPositiveButton(Resource.getString(R.string.ok), null);
+            builder.create().show();
         });
     }
 

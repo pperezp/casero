@@ -3,16 +3,9 @@ package cl.casero.listener;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.widget.DatePicker;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import cl.casero.MainActivity;
 import cl.casero.R;
-import cl.casero.adapter.CustomerAdapter;
-import cl.casero.model.Customer;
 import cl.casero.model.Resource;
 import cl.casero.model.Transaction;
 import cl.casero.model.enums.TransactionType;

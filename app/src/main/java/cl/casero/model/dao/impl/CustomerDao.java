@@ -240,11 +240,5 @@ public class CustomerDao extends AbstractDao<Customer> {
         }else{
             return amount;
         }
-        /*
-        0	SALE                restar
-        1	PAYMENT             sumar
-        2	REFUND              sumar
-        3	DEBT_FORGIVENESS    sumar
-        * */
     }
 }

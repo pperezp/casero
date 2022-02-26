@@ -10,5 +10,4 @@ public class TransactionItem extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transaction_item);
     }
-
 }

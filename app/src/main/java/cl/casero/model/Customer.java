@@ -3,10 +3,10 @@ package cl.casero.model;
 public class Customer {
 
     private int id;
+    private int debt;
     private String name;
     private String sector;
     private String address;
-    private int debt;
 
     public int getId() {
         return id;

@@ -13,8 +13,6 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -77,249 +75,228 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void loadOnClickCustomerList() {
-        customersListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(final AdapterView<?> parent, final View view, final int position, final long id) {
-                K.customerId = id;
+        customersListView.setOnItemLongClickListener((parent, view, position, id) -> {
+            K.customerId = id;
 
-                CharSequence options[] = Resource.getStringArray(R.array.customer_options);
+            CharSequence options[] = Resource.getStringArray(R.array.customer_options);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
 
-                builder.setTitle(Resource.getString(R.string.choose_an_option));
-                builder.setItems(options, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            // TODO: Cambiar numeros por constantes enum
-                            case 0: // pay
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle(Resource.getString(R.string.pay));
-                                final EditText paymentEditText = new EditText(MainActivity.this);
+            builder.setTitle(Resource.getString(R.string.choose_an_option));
+            builder.setItems(options, (dialog, which) -> {
+                switch (which) {
+                    // TODO: Cambiar numeros por constantes enum
+                    case 0: // pay
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+                        builder1.setTitle(Resource.getString(R.string.pay));
+                        final EditText paymentEditText = new EditText(MainActivity.this);
 
-                                paymentEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-                                paymentEditText.setHint(Resource.getString(R.string.pay_amount));
-                                paymentEditText.requestFocus();
-                                builder.setView(paymentEditText);
+                        paymentEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                        paymentEditText.setHint(Resource.getString(R.string.pay_amount));
+                        paymentEditText.requestFocus();
+                        builder1.setView(paymentEditText);
 
-                                builder.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String paymentString = paymentEditText.getText().toString();
-                                        try {
-                                            K.paymentAmount = Integer.parseInt(paymentString);
+                        builder1.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String paymentString = paymentEditText.getText().toString();
+                                try {
+                                    K.paymentAmount = Integer.parseInt(paymentString);
 
-                                            // TODO deprecated
-                                            /*FECHA!*/
-                                            showDialog(999);
-                                            /*FECHA!*/
-                                        } catch (NumberFormatException ex) {
-                                            Toast.makeText(
-                                                    MainActivity.this.getApplicationContext(),
-                                                    Resource.getString(R.string.only_numbers),
-                                                    Toast.LENGTH_SHORT
-                                            ).show();
-                                        }
-                                    }
-                                });
+                                    // TODO deprecated
+                                    /*FECHA!*/
+                                    showDialog(999);
+                                    /*FECHA!*/
+                                } catch (NumberFormatException ex) {
+                                    Toast.makeText(
+                                            MainActivity.this.getApplicationContext(),
+                                            Resource.getString(R.string.only_numbers),
+                                            Toast.LENGTH_SHORT
+                                    ).show();
+                                }
+                            }
+                        });
 
-                                builder.setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        builder1.setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
 
-                                builder.show();
+                        builder1.show();
 
-                                break;
+                        break;
+                    case 1:// Mantención
+                        K.searchName = searchNameEditText.getText().toString();
+                        Intent intent = new Intent(MainActivity.this, SaleActivity.class);
+                        MainActivity.this.startActivity(intent);
 
-                            case 1:// Mantención
-                                K.searchName = searchNameEditText.getText().toString();
-                                Intent intent = new Intent(MainActivity.this, SaleActivity.class);
-                                MainActivity.this.startActivity(intent);
+                        break;
+                    case 2: // Devolución
+                        int currentBalance = customerService.getDebt((int) K.customerId);
 
-                                break;
+                        AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
 
-                            case 2: // Devolución
-                                int currentBalance = customerService.getDebt((int) K.customerId);
+                        String title = Resource.getString(R.string.refund_current_balance);
+                        title = title.replace("{0}", Util.formatPrice(currentBalance));
 
-                                AlertDialog.Builder bui = new AlertDialog.Builder(MainActivity.this);
+                        bui.setTitle(title);
 
-                                String title = Resource.getString(R.string.refund_current_balance);
-                                title = title.replace("{0}", Util.formatPrice(currentBalance));
+                        final AlertDialog.Builder bui2 = new AlertDialog.Builder(MainActivity.this);
+                        bui2.setTitle(title);
 
-                                bui.setTitle(title);
+                        // Set up the input
+                        final EditText detailEditText = new EditText(MainActivity.this);
+                        final EditText amountEditText = new EditText(MainActivity.this);
 
-                                final AlertDialog.Builder bui2 = new AlertDialog.Builder(MainActivity.this);
-                                bui2.setTitle(title);
+                        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                        amountEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
+                        amountEditText.setHint(Resource.getString(R.string.refund_amount));
+                        amountEditText.requestFocus();
+                        bui.setView(amountEditText);
 
-                                // Set up the input
-                                final EditText detailEditText = new EditText(MainActivity.this);
-                                final EditText amountEditText = new EditText(MainActivity.this);
+                        detailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                        detailEditText.setHint(Resource.getString(R.string.refund_detail_hint));
+                        detailEditText.requestFocus();
+                        bui2.setView(detailEditText);
 
-                                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                                amountEditText.setRawInputType(InputType.TYPE_CLASS_NUMBER);
-                                amountEditText.setHint(Resource.getString(R.string.refund_amount));
-                                amountEditText.requestFocus();
-                                bui.setView(amountEditText);
+                        bui.setPositiveButton(
+                                Resource.getString(R.string.ok),
+                                (dialog1, which1) -> bui2.show()
+                        );
 
-                                detailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                detailEditText.setHint(Resource.getString(R.string.refund_detail_hint));
-                                detailEditText.requestFocus();
-                                bui2.setView(detailEditText);
+                        bui.setNegativeButton(
+                                Resource.getString(R.string.cancel),
+                                (dialog12, which12) -> dialog12.cancel()
+                        );
 
-                                bui.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        bui2.show();
-                                    }
-                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        bui2.setPositiveButton(Resource.getString(R.string.ok), (dialog13, which13) -> {
+                            String amountString = amountEditText.getText().toString();
+                            K.refundDetailInput = detailEditText.getText().toString();
 
-                                bui2.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String amountString = amountEditText.getText().toString();
-                                        K.refundDetailInput = detailEditText.getText().toString();
+                            try {
+                                K.refundAmount = Integer.parseInt(amountString);
 
-                                        try {
-                                            K.refundAmount = Integer.parseInt(amountString);
+                                // TODO Deprecated
+                                /*FECHA!*/
+                                showDialog(1);
+                                /*FECHA!*/
+                            } catch (NumberFormatException ex) {
+                                Toast.makeText(
+                                        MainActivity.this.getApplicationContext(),
+                                        Resource.getString(R.string.only_numbers),
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                            }
+                        });
 
-                                            // TODO Deprecated
-                                            /*FECHA!*/
-                                            showDialog(1);
-                                            /*FECHA!*/
-                                        } catch (NumberFormatException ex) {
-                                            Toast.makeText(
-                                                    MainActivity.this.getApplicationContext(),
-                                                    Resource.getString(R.string.only_numbers),
-                                                    Toast.LENGTH_SHORT
-                                            ).show();
-                                        }
-                                    }
-                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        bui2.setNegativeButton(
+                                Resource.getString(R.string.cancel),
+                                (dialog14, which14) -> dialog14.cancel()
+                        );
 
-                                bui.show();
+                        bui.show();
+                        break;
+                    case 3: // CONDONAR DEUDA
+                        currentBalance = customerService.getDebt((int) K.customerId);
 
-                                break;
+                        bui = new AlertDialog.Builder(MainActivity.this);
 
-                            case 3: // CONDONAR DEUDA
-                                currentBalance = customerService.getDebt((int) K.customerId);
+                        String condonationTitle = Resource.getString(R.string.debt_forgiveness_current_balance);
+                        condonationTitle = condonationTitle.replace("{0}", Util.formatPrice(currentBalance));
 
-                                bui = new AlertDialog.Builder(MainActivity.this);
+                        bui.setTitle(condonationTitle);
 
-                                String condonationTitle = Resource.getString(R.string.debt_forgiveness_current_balance);
-                                condonationTitle = condonationTitle.replace("{0}", Util.formatPrice(currentBalance));
+                        final EditText condonationDetailEditText = new EditText(MainActivity.this);
 
-                                bui.setTitle(condonationTitle);
+                        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                        condonationDetailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                        condonationDetailEditText.setHint(Resource.getString(R.string.debt_forgiveness_reason));
+                        condonationDetailEditText.requestFocus();
 
-                                final EditText condonationDetailEditText = new EditText(MainActivity.this);
-
-                                // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-                                condonationDetailEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                condonationDetailEditText.setHint(Resource.getString(R.string.debt_forgiveness_reason));
-                                condonationDetailEditText.requestFocus();
-
-                                bui.setView(condonationDetailEditText);
+                        bui.setView(condonationDetailEditText);
 
 
-                                bui.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        K.debtForgivenessDetailInput = condonationDetailEditText.getText().toString();
-                                        /*FECHA!*/
-                                        // TODO Deprecated
-                                        showDialog(2);
-                                        /*FECHA!*/
-                                    }
-                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        bui.setPositiveButton(Resource.getString(R.string.ok), (dialog15, which15) -> {
+                            K.debtForgivenessDetailInput = condonationDetailEditText.getText().toString();
+                            /*FECHA!*/
+                            // TODO Deprecated
+                            showDialog(2);
+                            /*FECHA!*/
+                        });
 
-                                bui.show();
-                                break;
+                        bui.setNegativeButton(
+                                Resource.getString(R.string.cancel),
+                                (dialog16, which16) -> dialog16.cancel()
+                        );
 
-                            case 4:// ver dirección
-                                Customer customer = customerService.readById(K.customerId);
+                        bui.show();
+                        break;
 
-                                AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
+                    case 4:// ver dirección
+                        Customer customer = customerService.readById(K.customerId);
 
-                                String addressOf = Resource.getString(R.string.address_of);
-                                addressOf = addressOf.replace("{0}", customer.getName());
+                        AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
 
-                                b.setTitle(addressOf);
-                                b.setMessage(customer.getAddress() + ", " + customer.getSector());
-                                b.setPositiveButton(Resource.getString(R.string.ok), null);
-                                b.create().show();
-                                break;
+                        String addressOf = Resource.getString(R.string.address_of);
+                        addressOf = addressOf.replace("{0}", customer.getName());
 
-                            case 5:// cambiar dirección
-                                // TODO: Ojo con los nombres, no se puede poner customer
-                                Customer customer2 = customerService.readById(id);
+                        b.setTitle(addressOf);
+                        b.setMessage(customer.getAddress() + ", " + customer.getSector());
+                        b.setPositiveButton(Resource.getString(R.string.ok), null);
+                        b.create().show();
+                        break;
 
-                                builder = new AlertDialog.Builder(MainActivity.this);
-                                builder.setTitle(Resource.getString(R.string.address_change));
+                    case 5:// cambiar dirección
+                        // TODO: Ojo con los nombres, no se puede poner customer
+                        Customer customer2 = customerService.readById(id);
 
-                                final EditText addressEditText = new EditText(MainActivity.this);
+                        builder1 = new AlertDialog.Builder(MainActivity.this);
+                        builder1.setTitle(Resource.getString(R.string.address_change));
 
-                                addressEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                                addressEditText.setHint(Resource.getString(R.string.new_address));
-                                addressEditText.setText(customer2.getAddress());
-                                addressEditText.requestFocus();
+                        final EditText addressEditText = new EditText(MainActivity.this);
 
-                                builder.setView(addressEditText);
+                        addressEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                        addressEditText.setHint(Resource.getString(R.string.new_address));
+                        addressEditText.setText(customer2.getAddress());
+                        addressEditText.requestFocus();
 
-                                builder.setPositiveButton(Resource.getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        String newAddress = addressEditText.getText().toString();
+                        builder1.setView(addressEditText);
 
-                                        customerService.updateAddress(K.customerId, newAddress);
+                        builder1.setPositiveButton(
+                                Resource.getString(R.string.ok),
+                                (dialog17, which17) -> {
+                            String newAddress = addressEditText.getText().toString();
 
-                                        Toast.makeText(
-                                                MainActivity.this.getApplicationContext(),
-                                                Resource.getString(R.string.address_updated),
-                                                Toast.LENGTH_SHORT
-                                        ).show();
-                                    }
-                                }).setNegativeButton(Resource.getString(R.string.cancel), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                });
+                            customerService.updateAddress(K.customerId, newAddress);
 
-                                builder.show();
+                            Toast.makeText(
+                                    MainActivity.this.getApplicationContext(),
+                                    Resource.getString(R.string.address_updated),
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                        });
 
-                                break;
+                        builder1.setNegativeButton(
+                                Resource.getString(R.string.cancel),
+                                (dialog18, which18) -> dialog18.cancel()
+                        );
 
-                            case 6: // ver detalles
-                                // TODO: lo mismo de los nombres
-                                Intent i2 = new Intent(MainActivity.this, CustomerViewActivity.class);
-                                MainActivity.this.startActivity(i2);
+                        builder1.show();
 
-                                break;
-                        }
-                    }
-                });
+                        break;
+                    case 6: // ver detalles
+                        // TODO: lo mismo de los nombres
+                        Intent i2 = new Intent(MainActivity.this, CustomerViewActivity.class);
+                        MainActivity.this.startActivity(i2);
 
-                builder.show();
+                        break;
+                }
+            });
 
-                return false;
-            }
+            builder.show();
+            return false;
         });
 
     }
@@ -365,7 +342,7 @@ public class MainActivity extends ActionBarActivity {
                         customersListView.setAdapter(
                                 new CustomerAdapter(
                                         MainActivity.this,
-                                        new ArrayList<Customer>()
+                                        new ArrayList<>()
                                 )
                         );
                     } else if (searchNameEditText.getText().toString().charAt(0) == '@') {
@@ -597,7 +574,6 @@ public class MainActivity extends ActionBarActivity {
             int totalDebt = statisticsService.getTotalDebt();
 
             builder.setMessage(Util.formatPrice(totalDebt));
-
             builder.setPositiveButton(Resource.getString(R.string.ok), null);
 
             builder.create().show();
