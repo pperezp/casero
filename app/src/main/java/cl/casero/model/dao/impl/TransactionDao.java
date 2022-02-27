@@ -138,6 +138,10 @@ public class TransactionDao extends AbstractDao<Transaction> {
         return transactions;
     }
 
+    public void updateDebt(Transaction transaction) {
+        updateDebt(transaction.getCustomerId(), transaction.getBalance());
+    }
+
     public void updateDebt(int customerId, int newDebt) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
@@ -152,66 +156,5 @@ public class TransactionDao extends AbstractDao<Transaction> {
 
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.close();
-    }
-
-    public void pay(Transaction transaction, int amount) {
-        create(transaction);
-        updateDebt(transaction.getCustomerId(), transaction.getBalance());
-
-        // TODO: esto se repite mucho en otros métodos, ver que hacer
-        Statistic statistic = new Statistic();
-
-        statistic.setAmount(amount);
-        statistic.setType(TransactionType.PAYMENT.getId());
-        statistic.setDate(transaction.getDate());
-        statistic.setSaleType(-1);
-        statistic.setItemsCount(-1);
-
-        statisticsDao.create(statistic);
-    }
-
-    public void refund(Transaction transaction, int amount) {
-        create(transaction);
-        updateDebt(transaction.getCustomerId(), transaction.getBalance());
-
-        Statistic statistic = new Statistic();
-
-        statistic.setAmount(amount);
-        statistic.setType(TransactionType.REFUND.getId());
-        statistic.setDate(transaction.getDate());
-        statistic.setSaleType(-1);
-        statistic.setItemsCount(-1);
-
-        statisticsDao.create(statistic);
-    }
-
-    public void debtForgiveness(Transaction transaction, int amount) {
-        create(transaction);
-        updateDebt(transaction.getCustomerId(), transaction.getBalance());
-
-        Statistic statistic = new Statistic();
-
-        statistic.setAmount(amount);
-        statistic.setType(TransactionType.DEBT_FORGIVENESS.getId());
-        statistic.setDate(transaction.getDate());
-        statistic.setSaleType(-1);
-        statistic.setItemsCount(-1);
-
-        statisticsDao.create(statistic);
-    }
-
-    // TODO: Pensar en hacer clase Sale.java
-    public void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType) {
-        Statistic statistic = new Statistic();
-        updateDebt(transaction.getCustomerId(), transaction.getBalance());
-
-        statistic.setAmount(amount);
-        statistic.setType(TransactionType.SALE.getId());
-        statistic.setDate(transaction.getDate());
-        statistic.setSaleType(saleType.getId());
-        statistic.setItemsCount(itemCounts);
-
-        create(transaction);
-        statisticsDao.create(statistic);
     }
 }

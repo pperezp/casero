@@ -2,6 +2,8 @@ package cl.casero.model;
 
 import java.util.Date;
 
+import cl.casero.model.enums.SaleType;
+
 public class Statistic {
 
     private int id;
@@ -10,6 +12,20 @@ public class Statistic {
     private int saleType;
     private int itemsCount;
     private Date date;
+
+    public Statistic(Transaction transaction) {
+        this.amount = transaction.getAmount();
+        this.type = transaction.getType();
+        this.date = transaction.getDate();
+        this.saleType = -1;
+        this.itemsCount = -1;
+    }
+
+    public Statistic(Transaction transaction, int itemCounts, SaleType saleType) {
+        this(transaction);
+        this.saleType = saleType.getId();
+        this.itemsCount = itemCounts;
+    }
 
     public int getId() {
         return id;

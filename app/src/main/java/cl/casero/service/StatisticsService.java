@@ -5,9 +5,13 @@ import java.util.List;
 import cl.casero.model.Customer;
 import cl.casero.model.MonthlyStatistic;
 import cl.casero.model.Statistic;
+import cl.casero.model.Transaction;
+import cl.casero.model.enums.SaleType;
 
 public interface StatisticsService {
-    void create(Statistic statistic);
+    void create(Transaction transaction);
+
+    void create(Transaction transaction, int itemCounts, SaleType saleType);
 
     List<Statistic> read();
 
@@ -30,4 +34,6 @@ public interface StatisticsService {
     List<Customer> getBestCustomers(int limit);
 
     int getCustomersCount();
+
+    void deleteBy(Transaction transaction);
 }

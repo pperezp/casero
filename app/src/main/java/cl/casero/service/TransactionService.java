@@ -16,13 +16,13 @@ public interface TransactionService {
 
     void updateDebt(int customerId, int newDebt);
 
-    void pay(Transaction transaction, int amount);
+    void pay(Transaction transaction);
 
-    void refund(Transaction transaction, int amount);
+    void refund(Transaction transaction);
 
-    void forgiveDebt(Transaction transaction, int amount);
+    void forgiveDebt(Transaction transaction);
 
-    void createSale(Transaction transaction, int amount, int itemCounts, SaleType saleType);
+    void createSale(Transaction transaction, int itemCounts, SaleType saleType);
 
     void delete(long id);
 }

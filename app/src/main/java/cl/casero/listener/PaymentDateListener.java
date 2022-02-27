@@ -38,7 +38,7 @@ public class PaymentDateListener implements OnDateSetListener {
         balance = balance - K.paymentAmount;
         transaction.setBalance(balance);
 
-        transactionService.pay(transaction, K.paymentAmount);
+        transactionService.pay(transaction);
         viewService.loadCustomerListView();
     }
 

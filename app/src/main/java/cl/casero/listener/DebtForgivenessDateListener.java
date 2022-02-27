@@ -46,7 +46,7 @@ public class DebtForgivenessDateListener implements OnDateSetListener {
         transaction.setAmount(balance);
         transaction.forgiveDebt();
 
-        transactionService.forgiveDebt(transaction, balance);
+        transactionService.forgiveDebt(transaction);
 
         viewService.loadCustomerListView();
     }

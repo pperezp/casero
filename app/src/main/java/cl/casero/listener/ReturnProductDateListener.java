@@ -53,7 +53,7 @@ public class ReturnProductDateListener implements OnDateSetListener {
         balance = balance - refundAmount;
         transaction.setBalance(balance);
 
-        transactionService.refund(transaction, refundAmount);
+        transactionService.refund(transaction);
 
         viewService.loadCustomerListView();
     }

@@ -140,7 +140,7 @@ public class SaleActivity extends ActionBarActivity {
                                 transaction.setAmount(subtotal);
                                 transaction.setType(TransactionType.SALE.getId());
 
-                                transactionService.createSale(transaction, subtotal, itemsCount, saleType);
+                                transactionService.createSale(transaction, itemsCount, saleType);
 
                                 String maintenanceCreated = Resource.getString(R.string.maintenance_created);
 
