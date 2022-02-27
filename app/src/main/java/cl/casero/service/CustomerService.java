@@ -5,7 +5,7 @@ import java.util.List;
 import cl.casero.model.Customer;
 
 public interface CustomerService {
-    void create(Customer customer);
+    Customer create(Customer customer);
 
     List<Customer> read();
 
