@@ -25,7 +25,6 @@ public class CustomerViewActivity extends ActionBarActivity {
     private TextView debtTextView;
     private ListView detailListView;
     private Switch orderSwitch;
-    private Button addressButton;
 
     private CustomerService customerService;
     private TransactionService transactionService;
@@ -109,9 +108,9 @@ public class CustomerViewActivity extends ActionBarActivity {
             }
         });
 
-        addressButton.setOnClickListener(new View.OnClickListener() {
+        nameTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 Customer customer = customerService.readById(K.customerId);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
@@ -132,6 +131,5 @@ public class CustomerViewActivity extends ActionBarActivity {
         debtTextView = (TextView) findViewById(R.id.customerDebtTextView);
         detailListView = (ListView) findViewById(R.id.detailListView);
         orderSwitch = (Switch) findViewById(R.id.orderSwitch);
-        addressButton = (Button) findViewById(R.id.addressButton);
     }
 }
