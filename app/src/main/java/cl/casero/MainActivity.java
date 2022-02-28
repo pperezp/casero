@@ -612,4 +612,15 @@ public class MainActivity extends ActionBarActivity {
     public static MainActivity getInstance() {
         return instance;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Editable text = searchNameEditText.getText();
+        String string = text.toString();
+
+        searchNameEditText.setText("");
+        searchNameEditText.setText(string);
+        searchNameEditText.setSelection(string.length());
+    }
 }
