@@ -1,71 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="cl.casero.CustomerViewActivity">
 
     <TextView
         android:id="@+id/customerNameTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/detailListView"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:capitalize="words"
-        android:paddingTop="10dp"
         android:paddingBottom="5dp"
         android:text="Customer Name"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ListView
         android:id="@+id/detailListView"
         android:layout_width="wrap_content"
-        android:layout_height="539dp"
-        android:layout_below="@+id/addressButton"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="14dp" />
-
-    <Button
-        android:id="@+id/addressButton"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/customerNameTextView"
-        android:layout_alignStart="@+id/customerNameTextView"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="38dp"
-        android:background="#3f51b5"
-        android:text="Dirección"
-        android:textColor="#ffffff" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.38"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/addressButton" />
 
     <Switch
         android:id="@+id/orderSwitch"
         android:layout_width="wrap_content"
-        android:layout_height="110dp"
-        android:layout_above="@+id/detailListView"
-        android:layout_below="@+id/customerDebtTextView"
-        android:layout_alignEnd="@+id/detailListView"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="-1dp"
-        android:layout_marginBottom="2dp"
-        android:text="Fecha Ascendente" />
+        android:layout_height="45dp"
+        android:layout_marginTop="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toEndOf="@+id/addressButton"
+        app:layout_constraintTop_toBottomOf="@+id/customerDebtTextView" />
+
+    <Button
+        android:id="@+id/addressButton"
+        android:layout_width="47dp"
+        android:layout_height="45dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customerDebtTextView"
+        android:drawableLeft="@drawable/ic_black_home"/>
 
     <TextView
         android:id="@+id/customerDebtTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/customerNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:paddingBottom="10dp"
         android:text="${debt}"
         android:textColor="@color/c1"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.562"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customerNameTextView" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
