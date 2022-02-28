@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_crear_cliente">Crear Cliente</string>
     <string name="title_activity_cliente_item">ClienteItem</string>
-    <string name="title_activity_visualizar_cliente">Historial de cliente</string>
+    <string name="title_activity_visualizar_cliente">Transacciones</string>
     <string name="title_activity_movimiento_item">MovimientoItem</string>
     <string name="title_activity_abonar">AbonarActivity</string>
     <string name="title_activity_venta">Venta</string>
@@ -65,7 +65,7 @@
     <string name="created_customer">Cliente [{0}] creado!</string>
     <string name="address_of">Dirección de {0}</string>
 
-    <string name="choose_an_option">Escoge una opción:</string>
+    <string name="choose_an_option">¿Qué desea hacer?</string>
     <string name="pay">Abonar</string>
     <string name="pay_amount">Monto a abonar:</string>
     <string name="address_change">Cambiar dirección</string>
@@ -90,7 +90,7 @@
         <item>CONDONAR DEUDA</item>
         <item>Ver dirección</item>
         <item>Cambiar dirección</item>
-        <item>Ver detalles</item>
+        <item>Transacciones</item>
     </string-array>
 
     <string-array name="transaction_options">
