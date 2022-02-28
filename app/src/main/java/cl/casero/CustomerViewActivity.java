@@ -22,6 +22,7 @@ import cl.casero.service.impl.TransactionServiceImpl;
 public class CustomerViewActivity extends ActionBarActivity {
 
     private TextView nameTextView;
+    private TextView debtTextView;
     private ListView detailListView;
     private Switch orderSwitch;
     private Button addressButton;
@@ -86,6 +87,8 @@ public class CustomerViewActivity extends ActionBarActivity {
         Customer customer = customerService.readById(K.customerId);
 
         nameTextView.setText(customer.getName());
+        debtTextView.setText(customer.getFormattedDebt());
+
         List<Transaction> transactions = transactionService.readByCustomer(customer.getId(), false);
 
         detailListView.setAdapter(new TransactionAdapter(CustomerViewActivity.this, transactions));
@@ -125,7 +128,8 @@ public class CustomerViewActivity extends ActionBarActivity {
     }
 
     private void loadComponents() {
-        nameTextView = (TextView) findViewById(R.id.nameCustomerView);
+        nameTextView = (TextView) findViewById(R.id.customerNameTextView);
+        debtTextView = (TextView) findViewById(R.id.customerDebtTextView);
         detailListView = (ListView) findViewById(R.id.detailListView);
         orderSwitch = (Switch) findViewById(R.id.orderSwitch);
         addressButton = (Button) findViewById(R.id.addressButton);

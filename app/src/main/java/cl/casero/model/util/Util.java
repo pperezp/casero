@@ -34,7 +34,7 @@ public class Util {
         String formatPrice = numberFormat.format(price);
         formatPrice = formatPrice.replace(languagePriceSymbol, "");
 
-        return formatPrice;
+        return formatPrice.replace("$", "$ ");
     }
 
     public static void message(Activity activity, String title, String message) {

@@ -1,5 +1,7 @@
 package cl.casero.model;
 
+import cl.casero.model.util.Util;
+
 public class Customer {
 
     private int id;
@@ -46,5 +48,9 @@ public class Customer {
 
     public void setDebt(int debt) {
         this.debt = debt;
+    }
+
+    public String getFormattedDebt() {
+        return Util.formatPrice(debt);
     }
 }
