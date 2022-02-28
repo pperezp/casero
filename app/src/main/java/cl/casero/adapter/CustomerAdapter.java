@@ -45,20 +45,8 @@ public class CustomerAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View contentView, ViewGroup parent) {
-        View view = contentView;
+        View view = inflate(contentView, parent);
 
-        /*Acá cargo el layout del item customer*/
-        if (contentView == null) {
-            LayoutInflater inflater =
-                    (LayoutInflater) activity
-                            .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            if (inflater != null) {
-                view = inflater.inflate(R.layout.activity_customer_item, null);
-            }
-        }
-
-        /*obtengo el customer en la posición determinada*/
         Customer customer = customers.get(position);
 
         TextView customerNameTextView = (TextView) view.findViewById(R.id.nameTextView);
@@ -74,5 +62,16 @@ public class CustomerAdapter extends BaseAdapter {
         balanceTextView.setText(Util.formatPrice(balance));
 
         return view;
+    }
+
+    private View inflate(View view, ViewGroup parent) {
+        if (view != null) {
+            return view;
+        }
+
+        LayoutInflater layoutInflater = (LayoutInflater)
+                activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        return layoutInflater.inflate(R.layout.activity_customer_item, parent, false);
     }
 }

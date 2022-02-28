@@ -17,7 +17,11 @@ public class Customer {
     }
 
     public String getName() {
-        return name;
+        if (name == null) {
+            return "";
+        }
+
+        return name.trim();
     }
 
     public void setName(String name) {
