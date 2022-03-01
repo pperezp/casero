@@ -3,6 +3,7 @@ package cl.casero;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
 import android.widget.*;
 
 import java.util.List;
@@ -24,7 +25,6 @@ public class CustomerViewActivity extends ActionBarActivity {
     private TextView debtTextView;
     private ListView detailListView;
     private Switch orderSwitch;
-    private Button addressButton;
 
     private CustomerService customerService;
     private TransactionService transactionService;
@@ -105,26 +105,28 @@ public class CustomerViewActivity extends ActionBarActivity {
             detailListView.setAdapter(new TransactionAdapter(CustomerViewActivity.this, transactions));
         });
 
-        addressButton.setOnClickListener(view -> {
-            Customer customer = customerService.readById(K.customerId);
+        nameTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Customer customer = customerService.readById(K.customerId);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(CustomerViewActivity.this);
 
-            String addressOf = Resource.getString(R.string.address_of);
-            addressOf = addressOf.replace("{0}", customer.getName());
-            builder.setTitle(addressOf);
+                String addressOf = Resource.getString(R.string.address_of);
+                addressOf = addressOf.replace("{0}", customer.getName());
+                builder.setTitle(addressOf);
 
-            builder.setMessage(customer.getAddress() + ", " + customer.getSector());
-            builder.setPositiveButton(Resource.getString(R.string.ok), null);
-            builder.create().show();
+                builder.setMessage(customer.getAddress() + ", " + customer.getSector());
+                builder.setPositiveButton(Resource.getString(R.string.ok), null);
+                builder.create().show();
+            }
         });
     }
 
-    private void loadComponents() {
+    private void loadComponents () {
         nameTextView = (TextView) findViewById(R.id.customerNameTextView);
         debtTextView = (TextView) findViewById(R.id.customerDebtTextView);
         detailListView = (ListView) findViewById(R.id.detailListView);
         orderSwitch = (Switch) findViewById(R.id.orderSwitch);
-        addressButton = (Button) findViewById(R.id.addressButton);
     }
 }

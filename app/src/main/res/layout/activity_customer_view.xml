@@ -26,35 +26,26 @@
 
     <ListView
         android:id="@+id/detailListView"
-        android:layout_width="wrap_content"
+        android:layout_width="376dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.38"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addressButton" />
+        app:layout_constraintTop_toBottomOf="@+id/customerDebtTextView" />
 
     <Switch
         android:id="@+id/orderSwitch"
         android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.041"
-        app:layout_constraintStart_toEndOf="@+id/addressButton"
-        app:layout_constraintTop_toBottomOf="@+id/customerDebtTextView" />
-
-    <Button
-        android:id="@+id/addressButton"
-        android:layout_width="47dp"
-        android:layout_height="45dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/customerDebtTextView"
-        android:drawableLeft="@drawable/ic_black_home"/>
+        app:layout_constraintHorizontal_bias="0.975"
+        app:layout_constraintStart_toEndOf="@+id/customerDebtTextView"
+        app:layout_constraintTop_toBottomOf="@+id/customerNameTextView" />
 
     <TextView
         android:id="@+id/customerDebtTextView"
-        android:layout_width="match_parent"
+        android:layout_width="145dp"
         android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:paddingBottom="10dp"
@@ -62,7 +53,7 @@
         android:textColor="@color/c1"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.562"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/customerNameTextView" />
 
