@@ -10,15 +10,16 @@
     tools:context="cl.casero.CreateCustomerActivity">
 
     <EditText
+        android:id="@+id/nameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:ems="10"
-        android:id="@+id/nameTextView"
-        android:hint="Nombre:"
         android:layout_below="@+id/sectorSpinner"
+        android:layout_alignEnd="@+id/sectorSpinner"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/sectorSpinner" />
+        android:ems="10"
+        android:hint="Nombre:"
+        android:inputType="textPersonName"
+        android:minHeight="48dp" />
 
     <Button
         android:layout_width="150dp"
@@ -41,13 +42,13 @@
         android:layout_alignEnd="@+id/addressEditText" />
 
     <TextView
+        android:id="@+id/countTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Clientes: "
-        android:id="@+id/countTextView"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/backButton" />
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/backButton"
+        android:text="Clientes: " />
 
     <Spinner
         android:layout_width="match_parent"
@@ -58,14 +59,15 @@
         android:layout_alignParentStart="true" />
 
     <EditText
+        android:id="@+id/addressEditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:id="@+id/addressEditText"
-        android:hint="Dirección"
         android:layout_below="@+id/nameTextView"
+        android:layout_alignEnd="@+id/nameTextView"
         android:layout_alignParentStart="true"
-        android:layout_alignEnd="@+id/nameTextView" />
+        android:ems="10"
+        android:hint="Dirección"
+        android:inputType="textMultiLine"
+        android:minHeight="48dp" />
 
 </RelativeLayout>

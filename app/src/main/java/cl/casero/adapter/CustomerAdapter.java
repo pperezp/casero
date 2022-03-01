@@ -12,6 +12,7 @@ import java.util.List;
 
 import cl.casero.R;
 import cl.casero.model.Customer;
+import cl.casero.model.Resource;
 import cl.casero.model.util.Util;
 import cl.casero.service.CustomerService;
 import cl.casero.service.impl.CustomerServiceImpl;
@@ -60,6 +61,12 @@ public class CustomerAdapter extends BaseAdapter {
 
         TextView balanceTextView = (TextView) view.findViewById(R.id.customerBalanceTextView);
         balanceTextView.setText(Util.formatPrice(balance));
+
+        if (balance <= 0) {
+            balanceTextView.setTextColor(Resource.getColor(R.color.zeroBalance));
+        }else{
+            balanceTextView.setTextColor(Resource.getColor(R.color.positiveBalance));
+        }
 
         return view;
     }

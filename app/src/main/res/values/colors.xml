@@ -20,4 +20,7 @@
     <color name="payment">#f44336</color>
     <color name="sale">#4caf50</color>
     <color name="transaction">#3f51b5</color>
+
+    <color name="zeroBalance">#FF1100</color>
+    <color name="positiveBalance">#ff0099cc</color>
 </resources>
