@@ -10,25 +10,27 @@
     tools:context="cl.casero.TransactionItem">
 
     <TextView
+        android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/dateTextView"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/detailTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/negro"
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/detailTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Medium Text"
-        android:id="@+id/detailTextView"
         android:layout_below="@+id/dateTextView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/negro" />
 
     <TextView
         android:layout_width="wrap_content"
