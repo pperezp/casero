@@ -13,10 +13,8 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +40,7 @@ public class MainActivity extends ActionBarActivity {
     private EditText searchNameEditText;
     private ListView customersListView;
     private TextView resultTextView;
+    private TextView versionTextView;
 
     private static MainActivity instance;
 
@@ -74,6 +73,8 @@ public class MainActivity extends ActionBarActivity {
         paymentDateListener = new PaymentDateListener();
         returnProductDateListener = new ReturnProductDateListener();
         debtForgivenessDateListener = new DebtForgivenessDateListener();
+
+        versionTextView.setText("v" + BuildConfig.VERSION_NAME);
     }
 
     private void loadOnClickCustomerList() {
@@ -544,16 +545,13 @@ public class MainActivity extends ActionBarActivity {
         searchNameEditText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         customersListView = (ListView) findViewById(R.id.customersListView);
         resultTextView = (TextView) findViewById(R.id.resultTextView);
+        versionTextView = (TextView) findViewById(R.id.versionTextView);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
-        MenuItem menuItem = menu.findItem(R.id.version_action);
-        menuItem.setTitle("v" + BuildConfig.VERSION_NAME);
-
         return true;
     }
 
