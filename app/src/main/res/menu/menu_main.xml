@@ -25,4 +25,10 @@
         android:orderInCategory="4"
         android:title="Deuda TOTAL"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/version_action"
+        android:orderInCategory="5"
+        android:title="v"
+        app:showAsAction="never" />
 </menu>
