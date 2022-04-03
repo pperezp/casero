@@ -18,4 +18,6 @@ public interface CustomerService {
     int getDebt(int customerId);
 
     void updateAddress(long customerId, String newAddress);
+
+    void delete(int id);
 }

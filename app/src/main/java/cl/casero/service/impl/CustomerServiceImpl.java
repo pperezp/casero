@@ -50,4 +50,9 @@ public class CustomerServiceImpl implements CustomerService {
     public void updateAddress(long customerId, String newAddress) {
         this.customerDao.updateAddress(customerId, newAddress);
     }
+
+    @Override
+    public void delete(int id) {
+        this.customerDao.delete(id);
+    }
 }

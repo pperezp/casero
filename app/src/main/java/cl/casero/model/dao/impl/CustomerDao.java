@@ -25,7 +25,7 @@ public class CustomerDao extends AbstractDao<Customer> {
                         "'" + customer.getName() + "', " +
                         "'" + customer.getSector() + "', " +
                         "'" + customer.getAddress() + "', " +
-                        "'" + customer.getDebt() + "'" +
+                        "'" + customer.getDebt() + "', false" +
                         ")";
 
         sqLiteDatabase.execSQL(query);
@@ -44,7 +44,8 @@ public class CustomerDao extends AbstractDao<Customer> {
                 "SELECT " +
                         "* " +
                         "FROM " +
-                        "cliente";
+                        "cliente " +
+                        "WHERE deleted = false";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -73,6 +74,19 @@ public class CustomerDao extends AbstractDao<Customer> {
 
     @Override
     public void delete(Number id) {
+        sqLiteOpenHelper = new SQLiteOpenHelperImpl();
+        sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
+
+        query =
+                "UPDATE " +
+                        "cliente " +
+                        "SET " +
+                        "deleted = true " +
+                        "WHERE " +
+                        "id = '" + id + "'";
+
+        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.close();
     }
 
     @Override
@@ -88,7 +102,8 @@ public class CustomerDao extends AbstractDao<Customer> {
                         "FROM " +
                         "cliente " +
                         "WHERE " +
-                        "id = '" + id + "'";
+                        "id = '" + id + "' AND " +
+                        "deleted = false";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -121,6 +136,7 @@ public class CustomerDao extends AbstractDao<Customer> {
 
         query =
                 "SELECT * FROM cliente WHERE " +
+                        "deleted = false AND " +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' " +

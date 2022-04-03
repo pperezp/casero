@@ -18,9 +18,9 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
 
     private static final String TRANSACTION_TYPE_TABLE =
             "CREATE TABLE transactionType(\n" +
-            "    id INTEGER PRIMARY KEY,\n" +
-            "    name TEXT\n" +
-            ")";
+                    "    id INTEGER PRIMARY KEY,\n" +
+                    "    name TEXT\n" +
+                    ")";
 
     private static final String TRANSACTION_TYPE_INSERT =
             "INSERT INTO transactionType VALUES\n" +
@@ -74,7 +74,7 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
-        if (newVersion == 2){
+        if (newVersion == 2) {
             sqLiteDatabase.execSQL("ALTER TABLE movimiento\n" +
                     "ADD COLUMN amount INTEGER;");
             sqLiteDatabase.execSQL("ALTER TABLE movimiento\n" +
@@ -139,6 +139,14 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
                     ") SELECT id, cliente, fecha, detalle, amount, saldo, type\n" +
                     "FROM temporal;\n");
             sqLiteDatabase.execSQL("DROP TABLE temporal");
+        }
+
+        if (newVersion == 3) {
+            sqLiteDatabase.execSQL("ALTER TABLE cliente \n" +
+                    "ADD COLUMN deleted BOOLEAN;");
+
+            sqLiteDatabase.execSQL("UPDATE cliente\n" +
+                    "SET deleted = false;");
         }
     }
 
