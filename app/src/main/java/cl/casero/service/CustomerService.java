@@ -19,5 +19,5 @@ public interface CustomerService {
 
     void updateAddress(long customerId, String newAddress);
 
-    void delete(int id);
+    void delete(Number id);
 }

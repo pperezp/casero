@@ -149,6 +149,10 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        reloadCustomerList();
+    }
+
+    public void reloadCustomerList() {
         Editable text = searchNameEditText.getText();
         String string = text.toString();
 

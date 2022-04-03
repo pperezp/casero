@@ -136,10 +136,10 @@ public class CustomerDao extends AbstractDao<Customer> {
 
         query =
                 "SELECT * FROM cliente WHERE " +
-                        "deleted = false AND " +
+                        "deleted = false AND (" +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
-                        "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' " +
+                        "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%') " +
                         "ORDER BY nombre ASC";
 
         cursor = sqLiteDatabase.rawQuery(query, null);

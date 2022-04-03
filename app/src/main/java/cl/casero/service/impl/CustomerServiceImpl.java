@@ -52,7 +52,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(Number id) {
         this.customerDao.delete(id);
     }
 }

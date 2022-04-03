@@ -15,7 +15,7 @@ public class Database {
 
     static {
         PATH = getPath() + "/caseroBD/casero.sqlite";
-        VERSION = 2;
+        VERSION = 3;
     }
 
     private static String getPath() {

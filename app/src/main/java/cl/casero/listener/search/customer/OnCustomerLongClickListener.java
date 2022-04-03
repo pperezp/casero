@@ -244,7 +244,25 @@ public class OnCustomerLongClickListener implements AdapterView.OnItemLongClickL
                     builder1.show();
 
                     break;
-                case 6: // ver detalles
+
+                case 6: // Eliminar cliente
+                    Customer customerToDelete = customerService.readById(id);
+                    String deleteCustomerConfig = Resource.getString(R.string.delete_customer_confirm);
+                    deleteCustomerConfig = deleteCustomerConfig.replace("{0}", customerToDelete.getName());
+
+                    new AlertDialog
+                            .Builder(MainActivity.getInstance())
+                            .setMessage(deleteCustomerConfig)
+                            .setNegativeButton(Resource.getString(R.string.no), null)
+                            .setPositiveButton(Resource.getString(R.string.yes), (dialogOption, whichOption) -> {
+                                customerService.delete(id);
+                                mainActivity.reloadCustomerList();
+                                Util.message("Cliente eliminado");
+                            })
+                            .show();
+                    break;
+
+                case 7: // Transacciones
                     // TODO: lo mismo de los nombres
                     Intent i2 = new Intent(mainActivity, CustomerViewActivity.class);
                     mainActivity.startActivity(i2);
