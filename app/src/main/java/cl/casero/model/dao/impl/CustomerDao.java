@@ -1,5 +1,7 @@
 package cl.casero.model.dao.impl;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +47,7 @@ public class CustomerDao extends AbstractDao<Customer> {
                         "* " +
                         "FROM " +
                         "cliente " +
-                        "WHERE deleted = false";
+                        "WHERE deleted = 0";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -79,7 +81,7 @@ public class CustomerDao extends AbstractDao<Customer> {
         sqLiteDatabase.execSQL("UPDATE " +
                 "cliente " +
                 "SET " +
-                "deleted = TRUE " +
+                "deleted = 1 " +
                 "WHERE " +
                 "id = " + id);
         sqLiteDatabase.close();
@@ -99,7 +101,7 @@ public class CustomerDao extends AbstractDao<Customer> {
                         "cliente " +
                         "WHERE " +
                         "id = '" + id + "' AND " +
-                        "deleted = false";
+                        "deleted = 0";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -132,7 +134,7 @@ public class CustomerDao extends AbstractDao<Customer> {
 
         query =
                 "SELECT * FROM cliente WHERE " +
-                        "deleted = false AND (" +
+                        "deleted = 0 AND (" +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(nombre),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(direccion),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%' OR " +
                         "REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(LOWER(sector),'á','a'), 'é','e'),'í','i'),'ó','o'),'ú','u'),'ñ','n') LIKE '%" + filter + "%') " +

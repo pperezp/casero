@@ -5,13 +5,16 @@ import java.util.List;
 import cl.casero.model.Customer;
 import cl.casero.model.dao.impl.CustomerDao;
 import cl.casero.service.CustomerService;
+import cl.casero.service.TransactionService;
 
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerDao customerDao;
+    private final TransactionService transactionService;
 
     public CustomerServiceImpl() {
         this.customerDao = new CustomerDao();
+        this.transactionService = new TransactionServiceImpl();
     }
 
     @Override
@@ -53,6 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public void delete(Number id) {
+        this.transactionService.deleteAll(id);
         this.customerDao.delete(id);
     }
 }

@@ -142,9 +142,9 @@ public class SQLiteOpenHelperImpl extends SQLiteOpenHelper {
         }
 
         if (newVersion == 3) {
-            sqLiteDatabase.execSQL("ALTER TABLE cliente ADD COLUMN deleted BOOLEAN DEFAULT FALSE");
-            sqLiteDatabase.execSQL("ALTER TABLE movimiento ADD COLUMN deleted BOOLEAN DEFAULT FALSE");
-            sqLiteDatabase.execSQL("ALTER TABLE estadistica ADD COLUMN deleted BOOLEAN DEFAULT FALSE");
+            sqLiteDatabase.execSQL("ALTER TABLE cliente ADD COLUMN deleted BOOLEAN DEFAULT 0");
+            sqLiteDatabase.execSQL("ALTER TABLE movimiento ADD COLUMN deleted BOOLEAN DEFAULT 0");
+            sqLiteDatabase.execSQL("ALTER TABLE estadistica ADD COLUMN deleted BOOLEAN DEFAULT 0");
         }
     }
 

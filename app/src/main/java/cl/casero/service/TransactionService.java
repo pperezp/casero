@@ -25,4 +25,6 @@ public interface TransactionService {
     void createSale(Transaction transaction, int itemCounts, SaleType saleType);
 
     void delete(long id);
+
+    void deleteAll(Number customerId);
 }

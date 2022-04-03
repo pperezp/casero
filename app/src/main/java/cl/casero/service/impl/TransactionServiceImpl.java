@@ -73,4 +73,13 @@ public class TransactionServiceImpl implements TransactionService {
         statisticsService.deleteBy(transaction);
         transactionDao.delete(id);
     }
+
+    @Override
+    public void deleteAll(Number customerId) {
+        List<Transaction> transactions = transactionDao.readByCustomer(customerId.intValue(), true);
+
+        for (Transaction transaction : transactions) {
+            delete(transaction.getId());
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package cl.casero.model.dao.impl;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +32,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "'" + transaction.getDetail() + "'," +
                         "'" + transaction.getAmount() + "'," +
                         "'" + transaction.getBalance() + "'," +
-                        "'" + transaction.getType() + "', FALSE" +
+                        "'" + transaction.getType() + "', 0" +
                         ")";
 
         sqLiteDatabase.execSQL(query);
@@ -54,7 +56,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
         sqLiteDatabase.execSQL("UPDATE " +
                 "movimiento " +
                 "SET " +
-                "deleted = TRUE " +
+                "deleted = 1 " +
                 "WHERE " +
                 "id = " + id);
         sqLiteDatabase.close();
@@ -72,7 +74,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "* " +
                         "FROM " +
                         "movimiento " +
-                        "WHERE deleted = FALSE AND " +
+                        "WHERE deleted = 0 AND " +
                         "id = " + id;
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -110,7 +112,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "FROM " +
                         "movimiento " +
                         "WHERE " +
-                        "deleted = FALSE AND " +
+                        "deleted = 0 AND " +
                         "cliente = '" + customerId + "' " +
                         "ORDER BY fecha " + (ascending ? "ASC" : "DESC");
 
