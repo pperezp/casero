@@ -30,7 +30,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "'" + statistic.getAmount() + "'," +
                         "'" + date + "'," +
                         "'" + statistic.getSaleType() + "'," +
-                        "'" + statistic.getItemsCount() + "'" +
+                        "'" + statistic.getItemsCount() + "', FALSE" +
                         ")";
 
         sqLiteDatabase.execSQL(query);
@@ -73,6 +73,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "   movimiento " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "saldo = 0 AND " +
                         "fecha >= '" + startDate + "' AND " +
                         "fecha <" + (isDateRange ? "=" : "") + " '" + endDate + "'";
@@ -101,6 +102,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " +
                         "tipoVenta = '" + SaleType.NEW_SALE.getId() + "' AND " +
                         "fecha >= '" + startDate + "' AND " +
@@ -131,6 +133,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " +
                         "tipoVenta = '" + SaleType.MAINTENANCE.getId() + "' AND " +
                         "fecha >= '" + startDate + "' AND " +
@@ -161,6 +164,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " +
                         "fecha >= '" + startDate + "' AND " +
                         "fecha <" + (isDateRange ? "=" : "") + " '" + endDate + "'";
@@ -190,6 +194,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.PAYMENT.getId() + "' AND " +
                         "fecha >= '" + startDate + "' AND " +
                         "fecha <" + (isDateRange ? "=" : "") + " '" + endDate + "'";
@@ -219,6 +224,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " +
                         "fecha >= '" + startDate + "' AND " +
                         "fecha <" + (isDateRange ? "=" : "") + " '" + endDate + "'";
@@ -287,6 +293,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "movimiento " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "saldo = 0 AND " + dateQuery;
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -305,6 +312,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " +
                         "tipoVenta = '" + SaleType.NEW_SALE.getId() + "' AND " + dateQuery;
 
@@ -324,6 +332,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " +
                         "tipoVenta = '" + SaleType.MAINTENANCE.getId() + "' AND " + dateQuery;
 
@@ -343,6 +352,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " + dateQuery;
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -361,6 +371,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.PAYMENT.getId() + "' AND " + dateQuery;
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -379,6 +390,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "estadistica " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "tipo = '" + TransactionType.SALE.getId() + "' AND " + dateQuery;
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -402,7 +414,9 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                 "SELECT " +
                         "SUM(deuda) " +
                         "FROM " +
-                        "cliente";
+                        "cliente " +
+                        "WHERE " +
+                        "deleted = FALSE";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -427,7 +441,9 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                 "SELECT " +
                         "AVG(deuda) " +
                         "FROM " +
-                        "cliente";
+                        "cliente " +
+                        "WHERE " +
+                        "deleted = FALSE";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -454,6 +470,7 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "FROM " +
                         "cliente " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "sector = '" + sector + "'";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -483,6 +500,8 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "* " +
                         "FROM " +
                         "cliente " +
+                        "WHERE " +
+                        "deleted = FALSE " +
                         "ORDER BY deuda DESC " +
                         "LIMIT " + limit;
 
@@ -519,6 +538,8 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                         "* " +
                         "FROM " +
                         "cliente " +
+                        "WHERE " +
+                        "deleted = FALSE " +
                         "ORDER BY deuda ASC " +
                         "LIMIT " + limit;
 
@@ -551,7 +572,9 @@ public class StatisticsDao extends AbstractDao<Statistic> {
                 "SELECT " +
                         "COUNT(0) " +
                         "FROM " +
-                        "cliente";
+                        "cliente " +
+                        "WHERE " +
+                        "deleted = FALSE";
 
         cursor = sqLiteDatabase.rawQuery(query, null);
 
@@ -577,7 +600,8 @@ public class StatisticsDao extends AbstractDao<Statistic> {
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
 
         sqLiteDatabase.execSQL(
-                "DELETE FROM estadistica " +
+                "UPDATE estadistica " +
+                        "SET deleted = TRUE " +
                         "WHERE tipo = '" + type + "' AND " +
                         "monto = '" + amount + "' AND " +
                         "fecha = '" + rawDate + "'"

@@ -13,12 +13,6 @@ import cl.casero.model.enums.TransactionType;
 
 public class TransactionDao extends AbstractDao<Transaction> {
 
-    private final StatisticsDao statisticsDao;
-
-    public TransactionDao() {
-        statisticsDao = new StatisticsDao();
-    }
-
     @Override
     public void create(Transaction transaction) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl();
@@ -36,7 +30,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "'" + transaction.getDetail() + "'," +
                         "'" + transaction.getAmount() + "'," +
                         "'" + transaction.getBalance() + "'," +
-                        "'" + transaction.getType() + "'" +
+                        "'" + transaction.getType() + "', FALSE" +
                         ")";
 
         sqLiteDatabase.execSQL(query);
@@ -57,8 +51,12 @@ public class TransactionDao extends AbstractDao<Transaction> {
     public void delete(Number id) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
-
-        sqLiteDatabase.execSQL("DELETE FROM movimiento WHERE id = " + id);
+        sqLiteDatabase.execSQL("UPDATE " +
+                "movimiento " +
+                "SET " +
+                "deleted = TRUE " +
+                "WHERE " +
+                "id = " + id);
         sqLiteDatabase.close();
     }
 
@@ -74,7 +72,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "* " +
                         "FROM " +
                         "movimiento " +
-                        "WHERE " +
+                        "WHERE deleted = FALSE AND " +
                         "id = " + id;
 
         cursor = sqLiteDatabase.rawQuery(query, null);
@@ -112,6 +110,7 @@ public class TransactionDao extends AbstractDao<Transaction> {
                         "FROM " +
                         "movimiento " +
                         "WHERE " +
+                        "deleted = FALSE AND " +
                         "cliente = '" + customerId + "' " +
                         "ORDER BY fecha " + (ascending ? "ASC" : "DESC");
 

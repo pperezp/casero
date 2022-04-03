@@ -76,16 +76,12 @@ public class CustomerDao extends AbstractDao<Customer> {
     public void delete(Number id) {
         sqLiteOpenHelper = new SQLiteOpenHelperImpl();
         sqLiteDatabase = sqLiteOpenHelper.getWritableDatabase();
-
-        query =
-                "UPDATE " +
-                        "cliente " +
-                        "SET " +
-                        "deleted = true " +
-                        "WHERE " +
-                        "id = '" + id + "'";
-
-        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.execSQL("UPDATE " +
+                "cliente " +
+                "SET " +
+                "deleted = TRUE " +
+                "WHERE " +
+                "id = " + id);
         sqLiteDatabase.close();
     }
 
